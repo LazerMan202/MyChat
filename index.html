@@ -1,991 +1,1783 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyChat</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyChat</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #111827;
-      color: white;
-      min-height: 100vh;
-    }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #111827;
+  color: white;
+}
 
-    .container {
-      width: 100%;
-      max-width: 500px;
-      margin: auto;
-      padding: 25px;
-    }
+.container {
+  max-width: 650px;
+  margin: auto;
+  padding: 20px;
+}
 
-    .card {
-      background: #1f2937;
-      border-radius: 16px;
-      padding: 25px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
+.card {
+  background: #1f2937;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.3);
+}
 
-    h1 {
-      text-align: center;
-      margin-top: 0;
-      font-size: 32px;
-    }
+h1 {
+  text-align: center;
+  margin-top: 0;
+}
 
-    h2 {
-      text-align: center;
-    }
+h2 {
+  margin-top: 0;
+}
 
-    input {
-      width: 100%;
-      padding: 13px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 8px;
-      background: #374151;
-      color: white;
-      font-size: 16px;
-      outline: none;
-    }
+input {
+  width: 100%;
+  padding: 13px;
+  margin: 7px 0;
+  border: 0;
+  border-radius: 8px;
+  background: #374151;
+  color: white;
+  font-size: 16px;
+}
 
-    input:focus {
-      outline: 2px solid #60a5fa;
-    }
+button {
+  width: 100%;
+  padding: 13px;
+  margin-top: 9px;
+  border: 0;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-    button {
-      width: 100%;
-      padding: 13px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 8px;
-      background: #2563eb;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+button:hover {
+  background: #1d4ed8;
+}
 
-    button:hover {
-      background: #1d4ed8;
-    }
+.secondary {
+  background: #374151;
+}
 
-    .secondary {
-      background: #374151;
-    }
+.secondary:hover {
+  background: #4b5563;
+}
 
-    .secondary:hover {
-      background: #4b5563;
-    }
+.danger {
+  background: #dc2626;
+}
 
-    .danger {
-      background: #dc2626;
-    }
+.hidden {
+  display: none !important;
+}
 
-    .danger:hover {
-      background: #b91c1c;
-    }
+.error {
+  color: #f87171;
+  text-align: center;
+  margin-top: 10px;
+}
 
-    .hidden {
-      display: none;
-    }
+.success {
+  color: #4ade80;
+  text-align: center;
+  margin-top: 10px;
+}
 
-    .error {
-      color: #f87171;
-      text-align: center;
-      margin-top: 12px;
-    }
+.small-text {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  margin-top: 15px;
+}
 
-    .success {
-      color: #4ade80;
-      text-align: center;
-      margin-top: 12px;
-    }
+.link-button {
+  width: auto;
+  background: none;
+  color: #60a5fa;
+  padding: 0;
+  margin: 5px 0 0;
+  font-weight: normal;
+}
 
-    .room-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
 
-    .room-header h2 {
-      margin: 0;
-      flex: 1;
-      text-align: left;
-    }
+.tabs button {
+  margin: 0;
+  background: #374151;
+}
 
-    .logout-small {
-      width: auto;
-      padding: 8px 12px;
-      margin: 0;
-      font-size: 13px;
-    }
+.tabs button.active {
+  background: #2563eb;
+}
 
-    #messages {
-      height: 400px;
-      overflow-y: auto;
-      background: #111827;
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 12px;
-    }
+.account-info {
+  text-align: center;
+  color: #9ca3af;
+  margin-bottom: 15px;
+}
 
-    .message {
-      margin-bottom: 10px;
-      padding: 9px 11px;
-      background: #374151;
-      border-radius: 10px;
-      word-wrap: break-word;
-    }
+.section-title {
+  color: #9ca3af;
+  margin-top: 22px;
+  margin-bottom: 8px;
+}
 
-    .message .username {
-      font-weight: bold;
-      color: #60a5fa;
-      margin-bottom: 3px;
-    }
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #374151;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 8px;
+}
 
-    .message .text {
-      color: white;
-    }
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
 
-    .system {
-      text-align: center;
-      color: #9ca3af;
-      font-size: 13px;
-      margin: 8px 0;
-    }
+.item-info {
+  flex: 1;
+}
 
-    .send-row {
-      display: flex;
-      gap: 8px;
-    }
+.item-name {
+  font-weight: bold;
+}
 
-    .send-row input {
-      margin: 0;
-      flex: 1;
-    }
+.item-subtitle {
+  color: #9ca3af;
+  font-size: 13px;
+  margin-top: 3px;
+}
 
-    .send-row button {
-      width: auto;
-      margin: 0;
-      padding-left: 20px;
-      padding-right: 20px;
-    }
+.item-button {
+  width: auto;
+  padding: 8px 12px;
+  margin: 0;
+  font-size: 13px;
+}
 
-    .account-info {
-      text-align: center;
-      color: #9ca3af;
-      font-size: 14px;
-      margin-bottom: 15px;
-    }
+.empty {
+  text-align: center;
+  color: #9ca3af;
+  padding: 20px;
+}
 
-    .switch-text {
-      text-align: center;
-      color: #9ca3af;
-      margin-top: 15px;
-      font-size: 14px;
-    }
+.dm-header,
+.room-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
 
-    .switch-button {
-      background: none;
-      color: #60a5fa;
-      padding: 0;
-      margin: 5px 0 0 0;
-      width: auto;
-      font-weight: normal;
-    }
+.dm-header button,
+.room-header button {
+  width: auto;
+  margin: 0;
+  padding: 8px 12px;
+}
 
-    .switch-button:hover {
-      background: none;
-      text-decoration: underline;
-    }
+.dm-header h2,
+.room-header h2 {
+  flex: 1;
+  margin: 0;
+}
 
-    .warning {
-      background: #422006;
-      color: #fdba74;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 13px;
-      margin-top: 12px;
-      text-align: center;
-    }
-  </style>
+#dmMessages,
+#messages {
+  height: 400px;
+  overflow-y: auto;
+  background: #111827;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.dm-message {
+  display: flex;
+  margin-bottom: 9px;
+}
+
+.dm-message.mine {
+  justify-content: flex-end;
+}
+
+.bubble {
+  max-width: 75%;
+  padding: 10px 13px;
+  border-radius: 15px;
+  background: #374151;
+}
+
+.mine .bubble {
+  background: #2563eb;
+}
+
+.bubble-name {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-bottom: 3px;
+}
+
+.mine .bubble-name {
+  color: #dbeafe;
+}
+
+.bubble-time {
+  font-size: 10px;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+.mine .bubble-time {
+  color: #bfdbfe;
+}
+
+.message {
+  background: #374151;
+  border-radius: 10px;
+  padding: 9px 11px;
+  margin-bottom: 10px;
+}
+
+.message .username {
+  color: #60a5fa;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+.send-row {
+  display: flex;
+  gap: 8px;
+}
+
+.send-row input {
+  flex: 1;
+  margin: 0;
+}
+
+.send-row button {
+  width: auto;
+  margin: 0;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <!-- LOGIN -->
-    <div id="loginScreen" class="card">
-      <h1>💬 MyChat</h1>
-      <h2>Log In</h2>
+  <!-- LOGIN -->
+  <div id="loginScreen" class="card">
+    <h1>💬 MyChat</h1>
+    <h2>Log In</h2>
 
-      <input
-        id="loginUsername"
-        type="text"
-        placeholder="Username"
-        maxlength="20"
-        autocomplete="username"
-      >
+    <input id="loginUsername"
+           type="text"
+           placeholder="Username"
+           maxlength="20">
 
-      <input
-        id="loginPassword"
-        type="password"
-        placeholder="Password"
-        maxlength="100"
-        autocomplete="current-password"
-      >
+    <input id="loginPassword"
+           type="password"
+           placeholder="Password"
+           maxlength="100">
 
-      <button onclick="login()">Log In</button>
+    <button id="loginButton">Log In</button>
 
-      <div id="loginError" class="error"></div>
+    <div id="loginError" class="error"></div>
 
-      <div class="switch-text">
-        Don't have an account?
-        <br>
-        <button class="switch-button" onclick="showCreateAccount()">
-          Create one
-        </button>
-      </div>
+    <div class="small-text">
+      Don't have an account?<br>
+      <button id="showCreateButton" class="link-button">
+        Create one
+      </button>
+    </div>
+  </div>
+
+
+  <!-- CREATE ACCOUNT -->
+  <div id="createScreen" class="card hidden">
+    <h1>💬 MyChat</h1>
+    <h2>Create Account</h2>
+
+    <input id="createUsername"
+           type="text"
+           placeholder="Choose a username"
+           maxlength="20">
+
+    <input id="createPassword"
+           type="password"
+           placeholder="Choose a password"
+           maxlength="100">
+
+    <input id="confirmPassword"
+           type="password"
+           placeholder="Confirm password"
+           maxlength="100">
+
+    <button id="createButton">Create Account</button>
+
+    <div id="createError" class="error"></div>
+    <div id="createSuccess" class="success"></div>
+
+    <div class="small-text">
+      Already have an account?<br>
+      <button id="showLoginButton" class="link-button">
+        Log In
+      </button>
+    </div>
+  </div>
+
+
+  <!-- HOME -->
+  <div id="homeScreen" class="card hidden">
+
+    <h1>💬 MyChat</h1>
+
+    <div class="account-info">
+      Logged in as <strong id="homeUsername"></strong>
     </div>
 
-
-    <!-- CREATE ACCOUNT -->
-    <div id="createScreen" class="card hidden">
-      <h1>💬 MyChat</h1>
-      <h2>Create Account</h2>
-
-      <input
-        id="createUsername"
-        type="text"
-        placeholder="Choose a username"
-        maxlength="20"
-        autocomplete="username"
-      >
-
-      <input
-        id="createPassword"
-        type="password"
-        placeholder="Choose a password"
-        maxlength="100"
-        autocomplete="new-password"
-      >
-
-      <input
-        id="confirmPassword"
-        type="password"
-        placeholder="Confirm password"
-        maxlength="100"
-        autocomplete="new-password"
-      >
-
-      <button onclick="createAccount()">Create Account</button>
-
-      <div id="createError" class="error"></div>
-      <div id="createSuccess" class="success"></div>
-
-      <div class="switch-text">
-        Already have an account?
-        <br>
-        <button class="switch-button" onclick="showLogin()">
-          Log In
-        </button>
-      </div>
+    <div class="tabs">
+      <button id="friendsTab">👥 Friends</button>
+      <button id="roomsTab">💬 Rooms</button>
     </div>
 
+    <!-- FRIENDS -->
+    <div id="friendsContent">
 
-    <!-- ROOM JOIN -->
-    <div id="roomScreen" class="card hidden">
-      <h1>💬 MyChat</h1>
+      <h2>Friends</h2>
 
-      <div class="account-info">
-        Logged in as <strong id="currentUsername"></strong>
-      </div>
+      <input id="friendSearch"
+             type="text"
+             placeholder="Enter username"
+             maxlength="20">
 
-      <h2>Join a Chat Room</h2>
+      <button id="addFriendButton">
+        Add Friend
+      </button>
 
-      <input
-        id="roomCode"
-        type="text"
-        inputmode="numeric"
-        placeholder="4-digit room code"
-        maxlength="4"
-      >
+      <div id="friendError" class="error"></div>
+      <div id="friendSuccess" class="success"></div>
 
-      <button onclick="joinRoom()">Join Room</button>
+      <div class="section-title">Friend Requests</div>
+      <div id="requestsList"></div>
 
-      <button class="secondary" onclick="logout()">
+      <div class="section-title">Your Friends</div>
+      <div id="friendsList"></div>
+
+      <div class="section-title">Direct Messages</div>
+      <div id="dmList"></div>
+
+      <button id="logoutButton" class="secondary">
         Log Out
       </button>
 
-      <div id="roomError" class="error"></div>
     </div>
 
 
-    <!-- CHAT -->
-    <div id="chatScreen" class="card hidden">
+    <!-- ROOMS -->
+    <div id="roomsContent" class="hidden">
 
-      <div class="room-header">
-        <h2>💬 Room <span id="displayRoomCode"></span></h2>
-        <button class="secondary logout-small" onclick="leaveRoom()">
-          Leave
-        </button>
-      </div>
+      <h2>Join a Chat Room</h2>
 
-      <div class="account-info">
-        You are <strong id="chatUsername"></strong>
-      </div>
+      <input id="roomCode"
+             type="text"
+             inputmode="numeric"
+             placeholder="4-digit room code"
+             maxlength="4">
 
-      <div id="messages"></div>
+      <button id="joinRoomButton">
+        Join Room
+      </button>
 
-      <div class="send-row">
-        <input
-          id="messageInput"
-          type="text"
-          placeholder="Type a message..."
-          maxlength="500"
-          autocomplete="off"
-        >
+      <div id="roomError" class="error"></div>
 
-        <button onclick="sendMessage()">Send</button>
-      </div>
-
-      <div id="chatError" class="error"></div>
+      <button id="logoutButton2" class="secondary">
+        Log Out
+      </button>
 
     </div>
 
   </div>
 
 
-  <!-- FIREBASE -->
-  <script type="module">
+  <!-- DM -->
+  <div id="dmScreen" class="card hidden">
 
-    import { initializeApp }
-      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    <div class="dm-header">
+      <button id="backDMButton" class="secondary">←</button>
+      <h2 id="dmTitle"></h2>
+    </div>
 
-    import {
-      getDatabase,
-      ref,
-      get,
-      set,
-      push,
-      onChildAdded
+    <div id="dmMessages"></div>
+
+    <div class="send-row">
+      <input id="dmInput"
+             type="text"
+             placeholder="Type a message..."
+             maxlength="500">
+
+      <button id="sendDMButton">Send</button>
+    </div>
+
+    <div id="dmError" class="error"></div>
+
+  </div>
+
+
+  <!-- ROOM CHAT -->
+  <div id="chatScreen" class="card hidden">
+
+    <div class="room-header">
+      <h2>💬 Room <span id="displayRoomCode"></span></h2>
+      <button id="leaveRoomButton" class="secondary">
+        Leave
+      </button>
+    </div>
+
+    <div class="account-info">
+      You are <strong id="chatUsername"></strong>
+    </div>
+
+    <div id="messages"></div>
+
+    <div class="send-row">
+      <input id="messageInput"
+             type="text"
+             placeholder="Type a message..."
+             maxlength="500">
+
+      <button id="sendMessageButton">Send</button>
+    </div>
+
+    <div id="chatError" class="error"></div>
+
+  </div>
+
+</div>
+
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  get,
+  set,
+  push,
+  onChildAdded
+}
+from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
+
+
+/* FIREBASE */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDFun3M-6mzjBL8DFcfmJzDv7blNODQd0",
+  authDomain: "mychat-8dac2.firebaseapp.com",
+  databaseURL: "https://mychat-8dac2-default-rtdb.firebaseio.com",
+  projectId: "mychat-8dac2",
+  storageBucket: "mychat-8dac2.firebasestorage.app",
+  messagingSenderId: "906137277444",
+  appId: "1:906137277444:web:b9d52ef4ec1f76afe09151"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+
+/* VARIABLES */
+
+let currentUser = null;
+let currentRoom = null;
+let currentDMUser = null;
+
+let roomListener = null;
+let dmListener = null;
+
+
+/* HELPERS */
+
+function key(username) {
+  return username.toLowerCase();
+}
+
+function hideScreens() {
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("createScreen").classList.add("hidden");
+  document.getElementById("homeScreen").classList.add("hidden");
+  document.getElementById("dmScreen").classList.add("hidden");
+  document.getElementById("chatScreen").classList.add("hidden");
+}
+
+
+/* LOGIN SCREEN */
+
+function showLogin() {
+  hideScreens();
+
+  document.getElementById("loginScreen")
+    .classList.remove("hidden");
+
+  document.getElementById("loginError")
+    .textContent = "";
+}
+
+function showCreate() {
+  hideScreens();
+
+  document.getElementById("createScreen")
+    .classList.remove("hidden");
+
+  document.getElementById("createError")
+    .textContent = "";
+
+  document.getElementById("createSuccess")
+    .textContent = "";
+}
+
+
+/* HASH PASSWORD */
+
+async function hashPassword(password) {
+
+  const data =
+    new TextEncoder().encode(password);
+
+  const hash =
+    await crypto.subtle.digest("SHA-256", data);
+
+  return Array.from(new Uint8Array(hash))
+    .map(x => x.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+
+/* CREATE ACCOUNT */
+
+async function createAccount() {
+
+  const username =
+    document.getElementById("createUsername")
+      .value.trim();
+
+  const password =
+    document.getElementById("createPassword")
+      .value;
+
+  const confirm =
+    document.getElementById("confirmPassword")
+      .value;
+
+  const error =
+    document.getElementById("createError");
+
+  const success =
+    document.getElementById("createSuccess");
+
+
+  error.textContent = "";
+  success.textContent = "";
+
+
+  if (username.length < 3) {
+    error.textContent =
+      "Username must be at least 3 characters.";
+    return;
+  }
+
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    error.textContent =
+      "Username can only contain letters, numbers, and _.";
+    return;
+  }
+
+  if (password.length < 4) {
+    error.textContent =
+      "Password must be at least 4 characters.";
+    return;
+  }
+
+  if (password !== confirm) {
+    error.textContent =
+      "Passwords do not match.";
+    return;
+  }
+
+
+  try {
+
+    const usernameKey = key(username);
+
+    const userRef =
+      ref(db, "users/" + usernameKey);
+
+    const existing =
+      await get(userRef);
+
+    if (existing.exists()) {
+      error.textContent =
+        "That username is already taken.";
+      return;
     }
-      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
 
 
-    // YOUR FIREBASE CONFIG
-    const firebaseConfig = {
-      apiKey: "AIzaSyDFun3M-6mzjBL8DFcfmJzDv7blNODQd0",
-      authDomain: "mychat-8dac2.firebaseapp.com",
-      databaseURL: "https://mychat-8dac2-default-rtdb.firebaseio.com",
-      projectId: "mychat-8dac2",
-      storageBucket: "mychat-8dac2.firebasestorage.app",
-      messagingSenderId: "906137277444",
-      appId: "1:906137277444:web:b9d52ef4ec1f76afe09151"
-    };
+    const passwordHash =
+      await hashPassword(password);
 
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    await set(userRef, {
+      username: username,
+      passwordHash: passwordHash
+    });
 
 
-    let currentUser = null;
-    let currentRoom = null;
+    success.textContent =
+      "Account created! You can now log in.";
+
+    document.getElementById("createUsername").value = "";
+    document.getElementById("createPassword").value = "";
+    document.getElementById("confirmPassword").value = "";
+
+  } catch (errorObject) {
+
+    console.error(errorObject);
+
+    error.textContent =
+      "Could not create account.";
+  }
+}
 
 
-    // -------------------------
-    // SCREEN SWITCHING
-    // -------------------------
+/* LOGIN */
 
-    window.showLogin = function() {
+async function login() {
 
-      document.getElementById("loginScreen").classList.remove("hidden");
-      document.getElementById("createScreen").classList.add("hidden");
-      document.getElementById("roomScreen").classList.add("hidden");
-      document.getElementById("chatScreen").classList.add("hidden");
+  const username =
+    document.getElementById("loginUsername")
+      .value.trim();
 
-      document.getElementById("loginError").textContent = "";
-      document.getElementById("createError").textContent = "";
-      document.getElementById("createSuccess").textContent = "";
-    };
+  const password =
+    document.getElementById("loginPassword")
+      .value;
 
-
-    window.showCreateAccount = function() {
-
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("createScreen").classList.remove("hidden");
-      document.getElementById("roomScreen").classList.add("hidden");
-      document.getElementById("chatScreen").classList.add("hidden");
-
-      document.getElementById("createError").textContent = "";
-      document.getElementById("createSuccess").textContent = "";
-    };
+  const error =
+    document.getElementById("loginError");
 
 
-    function showRoomScreen() {
+  error.textContent = "";
 
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("createScreen").classList.add("hidden");
-      document.getElementById("roomScreen").classList.remove("hidden");
-      document.getElementById("chatScreen").classList.add("hidden");
 
-      document.getElementById("currentUsername").textContent =
-        currentUser;
+  if (!username || !password) {
+    error.textContent =
+      "Enter your username and password.";
+    return;
+  }
+
+
+  try {
+
+    const userRef =
+      ref(db, "users/" + key(username));
+
+    const snapshot =
+      await get(userRef);
+
+
+    if (!snapshot.exists()) {
+      error.textContent =
+        "Username or password is incorrect.";
+      return;
     }
 
 
-    // -------------------------
-    // PASSWORD HASHING
-    // -------------------------
+    const account =
+      snapshot.val();
 
-    async function hashPassword(password) {
+    const passwordHash =
+      await hashPassword(password);
 
-      const encoder = new TextEncoder();
 
-      const data = encoder.encode(password);
-
-      const hashBuffer =
-        await crypto.subtle.digest("SHA-256", data);
-
-      const hashArray =
-        Array.from(new Uint8Array(hashBuffer));
-
-      return hashArray
-        .map(byte => byte.toString(16).padStart(2, "0"))
-        .join("");
+    if (passwordHash !== account.passwordHash) {
+      error.textContent =
+        "Username or password is incorrect.";
+      return;
     }
 
 
-    // -------------------------
-    // CREATE ACCOUNT
-    // -------------------------
+    currentUser = account.username;
 
-    window.createAccount = async function() {
+    document.getElementById("loginPassword")
+      .value = "";
 
-      const username =
-        document.getElementById("createUsername")
-          .value.trim();
+    showHome();
 
-      const password =
-        document.getElementById("createPassword")
-          .value;
+  } catch (errorObject) {
 
-      const confirmPassword =
-        document.getElementById("confirmPassword")
-          .value;
+    console.error(errorObject);
 
-      const error =
-        document.getElementById("createError");
+    error.textContent =
+      "Could not log in. Please try again.";
+  }
+}
 
-      const success =
-        document.getElementById("createSuccess");
 
-      error.textContent = "";
-      success.textContent = "";
+/* HOME */
 
+function showHome() {
 
-      if (username.length < 3) {
+  hideScreens();
 
-        error.textContent =
-          "Username must be at least 3 characters.";
+  document.getElementById("homeScreen")
+    .classList.remove("hidden");
 
-        return;
-      }
+  document.getElementById("homeUsername")
+    .textContent = currentUser;
 
+  showFriendsTab();
 
-      if (username.length > 20) {
+  loadFriends();
+  loadRequests();
+  loadConversations();
+}
 
-        error.textContent =
-          "Username must be 20 characters or less.";
 
-        return;
-      }
+/* TABS */
 
+function showFriendsTab() {
 
-      if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+  document.getElementById("friendsContent")
+    .classList.remove("hidden");
 
-        error.textContent =
-          "Username can only use letters, numbers, and _.";
+  document.getElementById("roomsContent")
+    .classList.add("hidden");
 
-        return;
-      }
+  document.getElementById("friendsTab")
+    .classList.add("active");
 
+  document.getElementById("roomsTab")
+    .classList.remove("active");
+}
 
-      if (password.length < 4) {
+function showRoomsTab() {
 
-        error.textContent =
-          "Password must be at least 4 characters.";
+  document.getElementById("friendsContent")
+    .classList.add("hidden");
 
-        return;
-      }
+  document.getElementById("roomsContent")
+    .classList.remove("hidden");
 
+  document.getElementById("friendsTab")
+    .classList.remove("active");
 
-      if (password !== confirmPassword) {
+  document.getElementById("roomsTab")
+    .classList.add("active");
+}
 
-        error.textContent =
-          "Passwords do not match.";
 
-        return;
-      }
+/* FRIEND REQUEST */
 
+async function addFriend() {
 
-      const usernameKey =
-        username.toLowerCase();
+  const username =
+    document.getElementById("friendSearch")
+      .value.trim();
 
+  const error =
+    document.getElementById("friendError");
 
-      try {
+  const success =
+    document.getElementById("friendSuccess");
 
-        const userRef =
-          ref(db, "users/" + usernameKey);
 
-        const snapshot =
-          await get(userRef);
+  error.textContent = "";
+  success.textContent = "";
 
 
-        if (snapshot.exists()) {
+  if (!username) {
+    error.textContent =
+      "Enter a username.";
+    return;
+  }
 
-          error.textContent =
-            "That username is already taken.";
 
-          return;
-        }
+  if (key(username) === key(currentUser)) {
+    error.textContent =
+      "You can't add yourself.";
+    return;
+  }
 
 
-        const passwordHash =
-          await hashPassword(password);
+  try {
 
+    const targetRef =
+      ref(db, "users/" + key(username));
 
-        await set(userRef, {
+    const target =
+      await get(targetRef);
 
-          username: username,
 
-          passwordHash: passwordHash
+    if (!target.exists()) {
+      error.textContent =
+        "That user doesn't exist.";
+      return;
+    }
 
-        });
 
+    const targetUser =
+      target.val().username;
 
-        success.textContent =
-          "Account created! You can now log in.";
 
-        document.getElementById("createUsername").value = "";
-        document.getElementById("createPassword").value = "";
-        document.getElementById("confirmPassword").value = "";
-
-      }
-
-      catch (err) {
-
-        console.error(err);
-
-        error.textContent =
-          "Something went wrong. Please try again.";
-
-      }
-
-    };
-
-
-    // -------------------------
-    // LOGIN
-    // -------------------------
-
-    window.login = async function() {
-
-      const username =
-        document.getElementById("loginUsername")
-          .value.trim();
-
-      const password =
-        document.getElementById("loginPassword")
-          .value;
-
-      const error =
-        document.getElementById("loginError");
-
-      error.textContent = "";
-
-
-      if (!username || !password) {
-
-        error.textContent =
-          "Enter your username and password.";
-
-        return;
-      }
-
-
-      try {
-
-        const usernameKey =
-          username.toLowerCase();
-
-        const userRef =
-          ref(db, "users/" + usernameKey);
-
-        const snapshot =
-          await get(userRef);
-
-
-        if (!snapshot.exists()) {
-
-          error.textContent =
-            "Username or password is incorrect.";
-
-          return;
-        }
-
-
-        const account =
-          snapshot.val();
-
-
-        const passwordHash =
-          await hashPassword(password);
-
-
-        if (passwordHash !== account.passwordHash) {
-
-          error.textContent =
-            "Username or password is incorrect.";
-
-          return;
-        }
-
-
-        currentUser =
-          account.username;
-
-
-        document.getElementById("loginPassword").value = "";
-
-        showRoomScreen();
-
-      }
-
-      catch (err) {
-
-        console.error(err);
-
-        error.textContent =
-          "Something went wrong. Please try again.";
-
-      }
-
-    };
-
-
-    // -------------------------
-    // LOG OUT
-    // -------------------------
-
-    window.logout = function() {
-
-      currentUser = null;
-      currentRoom = null;
-
-      document.getElementById("loginUsername").value = "";
-      document.getElementById("loginPassword").value = "";
-      document.getElementById("roomCode").value = "";
-
-      showLogin();
-
-    };
-
-
-    // -------------------------
-    // JOIN ROOM
-    // -------------------------
-
-    window.joinRoom = async function() {
-
-      const code =
-        document.getElementById("roomCode")
-          .value.trim();
-
-      const error =
-        document.getElementById("roomError");
-
-      error.textContent = "";
-
-
-      if (!/^\d{4}$/.test(code)) {
-
-        error.textContent =
-          "Room code must be exactly 4 digits.";
-
-        return;
-      }
-
-
-      currentRoom = code;
-
-
-      document.getElementById("displayRoomCode")
-        .textContent = code;
-
-      document.getElementById("chatUsername")
-        .textContent = currentUser;
-
-
-      document.getElementById("roomScreen")
-        .classList.add("hidden");
-
-      document.getElementById("chatScreen")
-        .classList.remove("hidden");
-
-
-      document.getElementById("messages").innerHTML = "";
-
-
-      const messagesRef =
-        ref(db, "rooms/" + code + "/messages");
-
-
-      onChildAdded(messagesRef, (snapshot) => {
-
-        const message =
-          snapshot.val();
-
-        displayMessage(message);
-
-      });
-
-
-      await addSystemMessage(
-        currentUser + " joined the room."
+    const alreadyFriend =
+      await get(
+        ref(
+          db,
+          "users/" +
+          key(currentUser) +
+          "/friends/" +
+          key(targetUser)
+        )
       );
 
-    };
 
-
-    // -------------------------
-    // DISPLAY MESSAGE
-    // -------------------------
-
-    function displayMessage(message) {
-
-      const messages =
-        document.getElementById("messages");
-
-      const div =
-        document.createElement("div");
-
-      div.className = "message";
-
-
-      const username =
-        document.createElement("div");
-
-      username.className = "username";
-
-      username.textContent =
-        message.username;
-
-
-      const text =
-        document.createElement("div");
-
-      text.className = "text";
-
-      text.textContent =
-        message.text;
-
-
-      div.appendChild(username);
-      div.appendChild(text);
-
-      messages.appendChild(div);
-
-
-      messages.scrollTop =
-        messages.scrollHeight;
-
+    if (alreadyFriend.exists()) {
+      error.textContent =
+        "You're already friends.";
+      return;
     }
 
 
-    // -------------------------
-    // SYSTEM MESSAGE
-    // -------------------------
-
-    async function addSystemMessage(text) {
-
-      if (!currentRoom) return;
-
-      const messagesRef =
-        ref(db, "rooms/" + currentRoom + "/messages");
-
-      await push(messagesRef, {
-
-        username: "MyChat",
-        text: text,
-        system: true,
+    await set(
+      ref(
+        db,
+        "users/" +
+        key(targetUser) +
+        "/friendRequests/" +
+        key(currentUser)
+      ),
+      {
+        username: currentUser,
         timestamp: Date.now()
+      }
+    );
 
-      });
 
+    document.getElementById("friendSearch")
+      .value = "";
+
+    success.textContent =
+      "Friend request sent!";
+
+  } catch (errorObject) {
+
+    console.error(errorObject);
+
+    error.textContent =
+      "Couldn't send friend request.";
+  }
+}
+
+
+/* LOAD REQUESTS */
+
+async function loadRequests() {
+
+  const list =
+    document.getElementById("requestsList");
+
+  list.innerHTML = "";
+
+
+  try {
+
+    const snapshot =
+      await get(
+        ref(
+          db,
+          "users/" +
+          key(currentUser) +
+          "/friendRequests"
+        )
+      );
+
+
+    if (!snapshot.exists()) {
+
+      list.innerHTML =
+        '<div class="empty">No friend requests.</div>';
+
+      return;
     }
 
 
-    // -------------------------
-    // SEND MESSAGE
-    // -------------------------
+    snapshot.forEach(child => {
 
-    window.sendMessage = async function() {
+      const request = child.val();
 
-      const input =
-        document.getElementById("messageInput");
+      const item =
+        document.createElement("div");
 
-      const error =
-        document.getElementById("chatError");
-
-      const text =
-        input.value.trim();
-
-      error.textContent = "";
+      item.className = "list-item";
 
 
-      if (!text) return;
+      const avatar =
+        document.createElement("div");
+
+      avatar.className = "avatar";
+
+      avatar.textContent =
+        request.username[0].toUpperCase();
 
 
-      if (!currentRoom || !currentUser) {
+      const info =
+        document.createElement("div");
 
-        error.textContent =
-          "You are not in a chat room.";
+      info.className = "item-info";
 
-        return;
+      info.innerHTML =
+        `<div class="item-name">${escapeHTML(request.username)}</div>
+         <div class="item-subtitle">Friend request</div>`;
+
+
+      const accept =
+        document.createElement("button");
+
+      accept.className = "item-button";
+
+      accept.textContent = "Accept";
+
+      accept.onclick =
+        () => acceptFriend(request.username);
+
+
+      const decline =
+        document.createElement("button");
+
+      decline.className =
+        "item-button danger";
+
+      decline.textContent = "Decline";
+
+      decline.onclick =
+        () => declineFriend(request.username);
+
+
+      item.appendChild(avatar);
+      item.appendChild(info);
+      item.appendChild(accept);
+      item.appendChild(decline);
+
+      list.appendChild(item);
+    });
+
+  } catch (errorObject) {
+
+    console.error(errorObject);
+  }
+}
+
+
+/* ACCEPT FRIEND */
+
+async function acceptFriend(username) {
+
+  try {
+
+    await set(
+      ref(
+        db,
+        "users/" +
+        key(currentUser) +
+        "/friends/" +
+        key(username)
+      ),
+      {
+        username: username,
+        timestamp: Date.now()
       }
+    );
 
 
-      try {
-
-        const messagesRef =
-          ref(db, "rooms/" + currentRoom + "/messages");
-
-
-        await push(messagesRef, {
-
-          username: currentUser,
-
-          text: text,
-
-          timestamp: Date.now()
-
-        });
-
-
-        input.value = "";
-
-        input.focus();
-
+    await set(
+      ref(
+        db,
+        "users/" +
+        key(username) +
+        "/friends/" +
+        key(currentUser)
+      ),
+      {
+        username: currentUser,
+        timestamp: Date.now()
       }
-
-      catch (err) {
-
-        console.error(err);
-
-        error.textContent =
-          "Message could not be sent.";
-
-      }
-
-    };
+    );
 
 
-    // -------------------------
-    // LEAVE ROOM
-    // -------------------------
-
-    window.leaveRoom = async function() {
-
-      if (currentRoom && currentUser) {
-
-        try {
-
-          await addSystemMessage(
-            currentUser + " left the room."
-          );
-
-        }
-
-        catch (err) {
-
-          console.error(err);
-
-        }
-
-      }
+    await set(
+      ref(
+        db,
+        "users/" +
+        key(currentUser) +
+        "/friendRequests/" +
+        key(username)
+      ),
+      null
+    );
 
 
-      currentRoom = null;
+    loadRequests();
+    loadFriends();
 
-      document.getElementById("messages")
-        .innerHTML = "";
+  } catch (errorObject) {
 
-      document.getElementById("roomCode")
-        .value = "";
-
-      showRoomScreen();
-
-    };
+    console.error(errorObject);
+  }
+}
 
 
-    // -------------------------
-    // ENTER KEY SUPPORT
-    // -------------------------
+/* DECLINE */
 
-    document.addEventListener("keydown", function(event) {
+async function declineFriend(username) {
 
-      if (event.key !== "Enter") return;
+  await set(
+    ref(
+      db,
+      "users/" +
+      key(currentUser) +
+      "/friendRequests/" +
+      key(username)
+    ),
+    null
+  );
+
+  loadRequests();
+}
 
 
-      if (
-        !document.getElementById("loginScreen")
-          .classList.contains("hidden")
-      ) {
+/* LOAD FRIENDS */
 
-        login();
+async function loadFriends() {
 
-      }
+  const list =
+    document.getElementById("friendsList");
 
-      else if (
-        !document.getElementById("createScreen")
-          .classList.contains("hidden")
-      ) {
+  list.innerHTML = "";
 
-        createAccount();
 
-      }
+  const snapshot =
+    await get(
+      ref(
+        db,
+        "users/" +
+        key(currentUser) +
+        "/friends"
+      )
+    );
 
-      else if (
-        !document.getElementById("roomScreen")
-          .classList.contains("hidden")
-      ) {
 
-        joinRoom();
+  if (!snapshot.exists()) {
 
-      }
+    list.innerHTML =
+      '<div class="empty">You don\'t have any friends yet.</div>';
 
-      else if (
-        !document.getElementById("chatScreen")
-          .classList.contains("hidden")
-      ) {
+    return;
+  }
 
-        sendMessage();
 
-      }
+  snapshot.forEach(child => {
+
+    const friend =
+      child.val().username;
+
+
+    const item =
+      document.createElement("div");
+
+    item.className = "list-item";
+
+
+    const avatar =
+      document.createElement("div");
+
+    avatar.className = "avatar";
+
+    avatar.textContent =
+      friend[0].toUpperCase();
+
+
+    const info =
+      document.createElement("div");
+
+    info.className = "item-info";
+
+    info.innerHTML =
+      `<div class="item-name">${escapeHTML(friend)}</div>
+       <div class="item-subtitle">Friend</div>`;
+
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "item-button";
+
+    button.textContent =
+      "Message";
+
+    button.onclick =
+      () => openDM(friend);
+
+
+    item.appendChild(avatar);
+    item.appendChild(info);
+    item.appendChild(button);
+
+    list.appendChild(item);
+  });
+}
+
+
+/* DM ID */
+
+function dmID(a, b) {
+
+  const first = key(a);
+  const second = key(b);
+
+  return first < second
+    ? first + "_" + second
+    : second + "_" + first;
+}
+
+
+/* OPEN DM */
+
+async function openDM(username) {
+
+  currentDMUser = username;
+
+  hideScreens();
+
+  document.getElementById("dmScreen")
+    .classList.remove("hidden");
+
+  document.getElementById("dmTitle")
+    .textContent = username;
+
+  document.getElementById("dmMessages")
+    .innerHTML = "";
+
+
+  const messagesRef =
+    ref(
+      db,
+      "directMessages/" +
+      dmID(currentUser, username) +
+      "/messages"
+    );
+
+
+  dmListener =
+    onChildAdded(messagesRef, snapshot => {
+
+      displayDM(snapshot.val());
 
     });
 
-  </script>
+
+  document.getElementById("dmInput")
+    .focus();
+}
+
+
+/* DISPLAY DM */
+
+function displayDM(message) {
+
+  const box =
+    document.getElementById("dmMessages");
+
+
+  const wrapper =
+    document.createElement("div");
+
+  wrapper.className =
+    "dm-message " +
+    (message.username === currentUser
+      ? "mine"
+      : "");
+
+
+  const bubble =
+    document.createElement("div");
+
+  bubble.className = "bubble";
+
+
+  const name =
+    document.createElement("div");
+
+  name.className = "bubble-name";
+
+  name.textContent =
+    message.username;
+
+
+  const text =
+    document.createElement("div");
+
+  text.textContent =
+    message.text;
+
+
+  const time =
+    document.createElement("div");
+
+  time.className = "bubble-time";
+
+  if (message.timestamp) {
+
+    time.textContent =
+      new Date(message.timestamp)
+        .toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit"
+        });
+  }
+
+
+  bubble.appendChild(name);
+  bubble.appendChild(text);
+  bubble.appendChild(time);
+
+  wrapper.appendChild(bubble);
+
+  box.appendChild(wrapper);
+
+  box.scrollTop =
+    box.scrollHeight;
+}
+
+
+/* SEND DM */
+
+async function sendDM() {
+
+  const input =
+    document.getElementById("dmInput");
+
+  const text =
+    input.value.trim();
+
+
+  if (!text || !currentDMUser) return;
+
+
+  try {
+
+    const id =
+      dmID(currentUser, currentDMUser);
+
+
+    await push(
+      ref(
+        db,
+        "directMessages/" +
+        id +
+        "/messages"
+      ),
+      {
+        username: currentUser,
+        text: text,
+        timestamp: Date.now()
+      }
+    );
+
+
+    await set(
+      ref(
+        db,
+        "users/" +
+        key(currentUser) +
+        "/conversations/" +
+        key(currentDMUser)
+      ),
+      {
+        username: currentDMUser,
+        timestamp: Date.now()
+      }
+    );
+
+
+    await set(
+      ref(
+        db,
+        "users/" +
+        key(currentDMUser) +
+        "/conversations/" +
+        key(currentUser)
+      ),
+      {
+        username: currentUser,
+        timestamp: Date.now()
+      }
+    );
+
+
+    input.value = "";
+    input.focus();
+
+    loadConversations();
+
+  } catch (errorObject) {
+
+    console.error(errorObject);
+
+    document.getElementById("dmError")
+      .textContent =
+      "Message could not be sent.";
+  }
+}
+
+
+/* CLOSE DM */
+
+function closeDM() {
+
+  currentDMUser = null;
+
+  document.getElementById("dmInput")
+    .value = "";
+
+  showHome();
+}
+
+
+/* LOAD CONVERSATIONS */
+
+async function loadConversations() {
+
+  const list =
+    document.getElementById("dmList");
+
+  list.innerHTML = "";
+
+
+  const snapshot =
+    await get(
+      ref(
+        db,
+        "users/" +
+        key(currentUser) +
+        "/conversations"
+      )
+    );
+
+
+  if (!snapshot.exists()) {
+
+    list.innerHTML =
+      '<div class="empty">No direct messages yet.</div>';
+
+    return;
+  }
+
+
+  const conversations = [];
+
+  snapshot.forEach(child => {
+    conversations.push(child.val());
+  });
+
+
+  conversations.sort(
+    (a,b) =>
+      (b.timestamp || 0) -
+      (a.timestamp || 0)
+  );
+
+
+  conversations.forEach(conversation => {
+
+    const item =
+      document.createElement("div");
+
+    item.className =
+      "list-item";
+
+
+    const avatar =
+      document.createElement("div");
+
+    avatar.className = "avatar";
+
+    avatar.textContent =
+      conversation.username[0].toUpperCase();
+
+
+    const info =
+      document.createElement("div");
+
+    info.className = "item-info";
+
+    info.innerHTML =
+      `<div class="item-name">${escapeHTML(conversation.username)}</div>
+       <div class="item-subtitle">Direct message</div>`;
+
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "item-button";
+
+    button.textContent = "Open";
+
+    button.onclick =
+      () => openDM(conversation.username);
+
+
+    item.appendChild(avatar);
+    item.appendChild(info);
+    item.appendChild(button);
+
+    list.appendChild(item);
+  });
+}
+
+
+/* ROOMS */
+
+async function joinRoom() {
+
+  const code =
+    document.getElementById("roomCode")
+      .value.trim();
+
+  const error =
+    document.getElementById("roomError");
+
+
+  error.textContent = "";
+
+
+  if (!/^\d{4}$/.test(code)) {
+
+    error.textContent =
+      "Room code must be exactly 4 digits.";
+
+    return;
+  }
+
+
+  currentRoom = code;
+
+  hideScreens();
+
+  document.getElementById("chatScreen")
+    .classList.remove("hidden");
+
+  document.getElementById("displayRoomCode")
+    .textContent = code;
+
+  document.getElementById("chatUsername")
+    .textContent = currentUser;
+
+  document.getElementById("messages")
+    .innerHTML = "";
+
+
+  const messagesRef =
+    ref(
+      db,
+      "rooms/" +
+      code +
+      "/messages"
+    );
+
+
+  roomListener =
+    onChildAdded(messagesRef, snapshot => {
+
+      displayRoomMessage(snapshot.val());
+
+    });
+
+
+  await push(messagesRef, {
+
+    username: "MyChat",
+    text: currentUser + " joined the room.",
+    system: true,
+    timestamp: Date.now()
+
+  });
+}
+
+
+/* ROOM MESSAGE */
+
+function displayRoomMessage(message) {
+
+  const box =
+    document.getElementById("messages");
+
+
+  const div =
+    document.createElement("div");
+
+  div.className = "message";
+
+
+  const username =
+    document.createElement("div");
+
+  username.className = "username";
+
+  username.textContent =
+    message.username;
+
+
+  const text =
+    document.createElement("div");
+
+  text.textContent =
+    message.text;
+
+
+  div.appendChild(username);
+  div.appendChild(text);
+
+  box.appendChild(div);
+
+  box.scrollTop =
+    box.scrollHeight;
+}
+
+
+/* SEND ROOM MESSAGE */
+
+async function sendMessage() {
+
+  const input =
+    document.getElementById("messageInput");
+
+  const text =
+    input.value.trim();
+
+
+  if (!text || !currentRoom) return;
+
+
+  try {
+
+    await push(
+      ref(
+        db,
+        "rooms/" +
+        currentRoom +
+        "/messages"
+      ),
+      {
+        username: currentUser,
+        text: text,
+        timestamp: Date.now()
+      }
+    );
+
+
+    input.value = "";
+    input.focus();
+
+  } catch (errorObject) {
+
+    console.error(errorObject);
+
+    document.getElementById("chatError")
+      .textContent =
+      "Message could not be sent.";
+  }
+}
+
+
+/* LEAVE ROOM */
+
+async function leaveRoom() {
+
+  if (currentRoom) {
+
+    try {
+
+      await push(
+        ref(
+          db,
+          "rooms/" +
+          currentRoom +
+          "/messages"
+        ),
+        {
+          username: "MyChat",
+          text: currentUser + " left the room.",
+          system: true,
+          timestamp: Date.now()
+        }
+      );
+
+    } catch (errorObject) {
+
+      console.error(errorObject);
+    }
+  }
+
+
+  currentRoom = null;
+
+  document.getElementById("messageInput")
+    .value = "";
+
+  showHome();
+}
+
+
+/* LOG OUT */
+
+function logout() {
+
+  currentUser = null;
+  currentRoom = null;
+  currentDMUser = null;
+
+  document.getElementById("loginUsername")
+    .value = "";
+
+  document.getElementById("loginPassword")
+    .value = "";
+
+  showLogin();
+}
+
+
+/* ESCAPE HTML */
+
+function escapeHTML(text) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent = text;
+
+  return div.innerHTML;
+}
+
+
+/* BUTTONS */
+
+document.getElementById("loginButton")
+  .addEventListener("click", login);
+
+document.getElementById("showCreateButton")
+  .addEventListener("click", showCreate);
+
+document.getElementById("createButton")
+  .addEventListener("click", createAccount);
+
+document.getElementById("showLoginButton")
+  .addEventListener("click", showLogin);
+
+document.getElementById("friendsTab")
+  .addEventListener("click", showFriendsTab);
+
+document.getElementById("roomsTab")
+  .addEventListener("click", showRoomsTab);
+
+document.getElementById("addFriendButton")
+  .addEventListener("click", addFriend);
+
+document.getElementById("logoutButton")
+  .addEventListener("click", logout);
+
+document.getElementById("logoutButton2")
+  .addEventListener("click", logout);
+
+document.getElementById("joinRoomButton")
+  .addEventListener("click", joinRoom);
+
+document.getElementById("backDMButton")
+  .addEventListener("click", closeDM);
+
+document.getElementById("sendDMButton")
+  .addEventListener("click", sendDM);
+
+document.getElementById("leaveRoomButton")
+  .addEventListener("click", leaveRoom);
+
+document.getElementById("sendMessageButton")
+  .addEventListener("click", sendMessage);
+
+
+/* ENTER KEY */
+
+document.addEventListener("keydown", event => {
+
+  if (event.key !== "Enter") return;
+
+
+  if (!document.getElementById("loginScreen")
+      .classList.contains("hidden")) {
+
+    login();
+
+  } else if (!document.getElementById("createScreen")
+      .classList.contains("hidden")) {
+
+    createAccount();
+
+  } else if (!document.getElementById("dmScreen")
+      .classList.contains("hidden")) {
+
+    sendDM();
+
+  } else if (!document.getElementById("chatScreen")
+      .classList.contains("hidden")) {
+
+    sendMessage();
+
+  }
+
+});
+
+</script>
 
 </body>
 </html>
+```
