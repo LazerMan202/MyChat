@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MyChat 1.4</title>
+<title>MyChat 1.5</title>
 
 <style>
 * {
@@ -13,8 +13,8 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #0f1117;
-  color: #f5f7fa;
+  background: #111827;
+  color: white;
 }
 
 button,
@@ -31,99 +31,173 @@ button {
   display: none !important;
 }
 
-/* AUTH */
+/* LOGIN */
 
-.auth-screen {
+.auth-container {
   min-height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   padding: 20px;
 }
 
-.auth-card {
+.auth-box {
   width: 100%;
   max-width: 400px;
-  background: #181c25;
-  border: 1px solid #292f3d;
-  border-radius: 18px;
+  background: #1f2937;
   padding: 30px;
-  box-shadow: 0 15px 50px rgba(0,0,0,.35);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.3);
 }
 
-.logo {
+.auth-box h1 {
   text-align: center;
-  font-size: 34px;
-  font-weight: bold;
-  margin-bottom: 8px;
+  margin-top: 0;
 }
 
-.subtitle {
-  text-align: center;
-  color: #9ca3af;
-  margin-bottom: 25px;
-}
-
-.auth-card input {
+.auth-box input {
   width: 100%;
-  padding: 13px;
-  margin: 7px 0;
-  border: 1px solid #343b4b;
-  border-radius: 10px;
-  background: #10131a;
+  padding: 12px;
+  margin: 8px 0;
+  border: 0;
+  border-radius: 8px;
+  background: #374151;
   color: white;
-  outline: none;
 }
 
-.auth-card input:focus,
-textarea:focus {
-  border-color: #6675ff;
-}
-
-.primary-btn {
+.auth-box button {
   width: 100%;
-  border: none;
-  padding: 13px;
+  padding: 12px;
   margin-top: 10px;
-  border-radius: 10px;
-  background: #5865f2;
+  border: 0;
+  border-radius: 8px;
+  background: #2563eb;
   color: white;
-  font-weight: bold;
 }
 
-.primary-btn:hover {
-  background: #6975f5;
+.auth-box button.secondary {
+  background: #374151;
 }
 
-.link-btn {
-  background: none;
-  border: none;
-  color: #7c8cff;
-  margin-top: 16px;
-  width: 100%;
+.auth-message {
+  color: #f87171;
+  min-height: 20px;
+  margin-top: 8px;
 }
 
 /* APP */
 
 .app {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-.topbar {
-  height: 64px;
-  background: #181c25;
-  border-bottom: 1px solid #292f3d;
+.header {
+  height: 60px;
+  background: #1f2937;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 18px;
+  padding: 0 16px;
+  border-bottom: 1px solid #374151;
 }
 
-.topbar-logo {
-  font-size: 22px;
-  font-weight: bold;
+.header h2 {
+  margin: 0;
+}
+
+.header button {
+  background: #374151;
+  border: 0;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+/* TABS */
+
+.tabs {
+  display: flex;
+  background: #1f2937;
+  border-bottom: 1px solid #374151;
+}
+
+.tab {
+  flex: 1;
+  padding: 13px;
+  border: 0;
+  background: transparent;
+  color: #9ca3af;
+}
+
+.tab.active {
+  color: white;
+  background: #374151;
+}
+
+/* CONTENT */
+
+.content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+}
+
+.panel {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.card {
+  background: #1f2937;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+/* FRIENDS */
+
+.search-row {
+  display: flex;
+  gap: 8px;
+}
+
+.search-row input {
+  flex: 1;
+}
+
+input,
+textarea {
+  background: #374151;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.search-row button,
+.action-button {
+  border: 0;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  padding: 10px 14px;
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #374151;
+}
+
+.user-row:last-child {
+  border-bottom: 0;
 }
 
 .user-info {
@@ -133,384 +207,309 @@ textarea:focus {
 }
 
 .avatar {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: #5865f2;
+  background: #2563eb;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-}
-
-.logout-btn {
-  background: #272d39;
-  color: white;
-  border: none;
-  padding: 9px 13px;
-  border-radius: 9px;
-}
-
-.main {
-  flex: 1;
-  display: flex;
-  min-height: calc(100vh - 64px);
-}
-
-/* SIDEBAR */
-
-.sidebar {
-  width: 280px;
-  background: #151922;
-  border-right: 1px solid #292f3d;
-  padding: 15px;
-}
-
-.tabs {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 15px;
-}
-
-.tab {
-  flex: 1;
-  border: none;
-  background: #202530;
-  color: #aeb5c2;
-  padding: 10px 5px;
-  border-radius: 9px;
-}
-
-.tab.active {
-  background: #5865f2;
-  color: white;
-}
-
-.panel-title {
-  font-size: 18px;
-  font-weight: bold;
-  margin: 15px 3px 10px;
-}
-
-.search-box {
-  width: 100%;
-  padding: 11px;
-  background: #10131a;
-  color: white;
-  border: 1px solid #343b4b;
-  border-radius: 9px;
-  outline: none;
-}
-
-.list {
-  margin-top: 10px;
-}
-
-.list-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px;
-  border-radius: 10px;
-  margin-bottom: 4px;
-  cursor: pointer;
-}
-
-.list-item:hover {
-  background: #202530;
-}
-
-.list-item.active {
-  background: #282e3b;
-}
-
-.list-avatar {
-  width: 34px;
-  height: 34px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: #5865f2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-}
-
-.list-info {
-  min-width: 0;
-  flex: 1;
-}
-
-.list-name {
-  font-weight: bold;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .status {
   font-size: 12px;
-  color: #8e97a8;
 }
 
 .online {
-  color: #55d68a;
+  color: #4ade80;
+}
+
+.offline {
+  color: #9ca3af;
+}
+
+/* ROOMS */
+
+.room-input {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.room-button {
+  width: 100%;
+  padding: 12px;
+  border: 0;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+}
+
+.room-chat {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 180px);
+}
+
+.room-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  background: #111827;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.message-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.message-input-row input {
+  flex: 1;
+}
+
+/* DMs */
+
+.dm-layout {
+  height: 100%;
+  display: flex;
+  gap: 12px;
+}
+
+.conversations {
+  width: 240px;
+  background: #1f2937;
+  border-radius: 12px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.conversation {
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+.conversation:hover,
+.conversation.active {
+  background: #374151;
 }
 
 .unread {
-  min-width: 22px;
-  height: 22px;
-  border-radius: 11px;
-  background: #ed4245;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: bold;
+  float: right;
+  background: #2563eb;
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-size: 11px;
 }
 
-/* CONTENT */
-
-.content {
+.dm-chat {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
+  background: #1f2937;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-.empty-state {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #8e97a8;
-  text-align: center;
-  padding: 30px;
-}
-
-/* CHAT */
-
-.chat-header {
-  min-height: 64px;
-  border-bottom: 1px solid #292f3d;
-  background: #181c25;
-  display: flex;
-  align-items: center;
-  padding: 10px 18px;
-  gap: 12px;
-}
-
-.chat-title {
-  font-size: 18px;
+.dm-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #374151;
   font-weight: bold;
 }
 
-.chat-subtitle {
-  color: #8e97a8;
-  font-size: 13px;
-}
-
-.messages {
+.dm-messages {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
+  padding: 14px;
 }
 
-.message {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-  max-width: 850px;
+.dm-input-area {
+  border-top: 1px solid #374151;
+  padding: 10px;
 }
 
-.message-avatar {
-  width: 36px;
-  height: 36px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: #5865f2;
+/* REPLY BAR */
+
+.replying-bar {
+  background: #374151;
+  border-left: 4px solid #3b82f6;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-weight: bold;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-.message-content {
+.replying-text {
   min-width: 0;
 }
 
-.message-top {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.message-user {
+.replying-title {
+  font-size: 12px;
+  color: #60a5fa;
   font-weight: bold;
 }
 
-.message-time {
-  color: #737c8d;
-  font-size: 11px;
+.replying-preview {
+  font-size: 13px;
+  color: #d1d5db;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.message-text {
-  margin-top: 3px;
-  color: #e2e6ec;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+.cancel-reply {
+  background: transparent;
+  border: 0;
+  color: #9ca3af;
+  font-size: 18px;
+}
+
+/* MESSAGE */
+
+.dm-message {
+  margin-bottom: 12px;
+  max-width: 80%;
+}
+
+.dm-message.mine {
+  margin-left: auto;
+}
+
+.message-bubble {
+  background: #374151;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.dm-message.mine .message-bubble {
+  background: #2563eb;
+}
+
+.message-author {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.message-time {
+  font-size: 10px;
+  color: #9ca3af;
+  margin-top: 4px;
 }
 
 .edited {
-  color: #737c8d;
   font-size: 10px;
-  margin-left: 5px;
+  color: #9ca3af;
+  margin-left: 4px;
+}
+
+/* REPLY PREVIEW INSIDE MESSAGE */
+
+.message-reply {
+  background: rgba(0,0,0,.2);
+  border-left: 3px solid #60a5fa;
+  padding: 6px 8px;
+  margin-bottom: 7px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.message-reply-author {
+  color: #60a5fa;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.message-reply-text {
+  color: #d1d5db;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* MESSAGE ACTIONS */
 
 .message-actions {
-  margin-top: 6px;
   display: flex;
-  gap: 5px;
   flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
 }
 
-.message-action {
-  border: 1px solid #343b4b;
-  background: #1b202a;
-  color: #b8c0cc;
-  border-radius: 7px;
-  padding: 3px 7px;
-  font-size: 12px;
+.message-actions button {
+  background: #374151;
+  color: #d1d5db;
+  border: 0;
+  border-radius: 6px;
+  padding: 4px 7px;
+  font-size: 11px;
 }
 
-.message-action:hover {
-  background: #272e3b;
-  color: white;
+.dm-message.mine .message-actions button {
+  background: #1d4ed8;
 }
 
 /* REACTIONS */
 
 .reactions {
   display: flex;
-  gap: 5px;
   flex-wrap: wrap;
+  gap: 4px;
   margin-top: 6px;
 }
 
 .reaction {
-  border: 1px solid #343b4b;
-  background: #1a1f29;
-  color: #e7ebf0;
-  border-radius: 12px;
-  padding: 3px 8px;
-  font-size: 13px;
-}
-
-.reaction:hover {
-  background: #292f3c;
+  border: 0;
+  border-radius: 999px;
+  padding: 3px 7px;
+  background: #111827;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
 }
 
 .reaction-picker {
   display: flex;
-  gap: 4px;
-  background: #181c25;
-  border: 1px solid #343b4b;
-  border-radius: 9px;
+  flex-wrap: wrap;
+  gap: 3px;
+  background: #111827;
   padding: 5px;
+  border-radius: 8px;
 }
 
 .reaction-picker button {
-  background: none;
-  border: none;
-  font-size: 18px;
-  padding: 4px;
-  border-radius: 6px;
-}
-
-.reaction-picker button:hover {
-  background: #292f3c;
-}
-
-/* INPUT */
-
-.chat-input-area {
-  padding: 12px 16px;
-  border-top: 1px solid #292f3d;
-  background: #181c25;
-}
-
-.chat-input-row {
-  display: flex;
-  gap: 8px;
-}
-
-.chat-input {
-  flex: 1;
-  min-width: 0;
-  padding: 12px;
-  background: #10131a;
-  border: 1px solid #343b4b;
-  border-radius: 10px;
-  color: white;
-  outline: none;
-}
-
-.send-btn {
-  border: none;
-  background: #5865f2;
-  color: white;
-  padding: 0 18px;
-  border-radius: 10px;
-  font-weight: bold;
+  background: transparent !important;
+  font-size: 16px !important;
+  padding: 4px !important;
 }
 
 /* PROFILE */
 
-.profile {
-  max-width: 650px;
-  width: 100%;
-  margin: 30px auto;
-  padding: 25px;
-}
-
-.profile-card {
-  background: #181c25;
-  border: 1px solid #292f3d;
-  border-radius: 15px;
-  padding: 25px;
-}
-
-.profile-big-avatar {
+.profile-avatar {
   width: 80px;
   height: 80px;
+  background: #2563eb;
   border-radius: 50%;
-  background: #5865f2;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 32px;
   font-weight: bold;
-  margin-bottom: 15px;
-}
-
-.profile-card label {
-  display: block;
-  color: #aeb5c2;
-  margin-top: 15px;
-  margin-bottom: 6px;
+  margin: 0 auto 15px;
 }
 
 .profile-card input,
 .profile-card textarea {
   width: 100%;
-  background: #10131a;
-  color: white;
-  border: 1px solid #343b4b;
-  border-radius: 9px;
-  padding: 11px;
-  outline: none;
+  margin-bottom: 10px;
 }
 
 .profile-card textarea {
@@ -519,126 +518,47 @@ textarea:focus {
 }
 
 .save-profile {
-  margin-top: 15px;
-  border: none;
-  background: #5865f2;
+  width: 100%;
+  padding: 12px;
+  background: #2563eb;
+  border: 0;
   color: white;
-  padding: 11px 17px;
-  border-radius: 9px;
-  font-weight: bold;
-}
-
-/* FRIENDS */
-
-.friend-actions {
-  display: flex;
-  gap: 6px;
-  margin-top: 6px;
-}
-
-.small-btn {
-  border: none;
-  background: #303745;
-  color: white;
-  padding: 6px 9px;
-  border-radius: 7px;
-  font-size: 12px;
-}
-
-.small-btn:hover {
-  background: #414b5d;
-}
-
-.danger-btn {
-  background: #7c3034;
-}
-
-.danger-btn:hover {
-  background: #983a3f;
-}
-
-/* EDIT */
-
-.edit-box {
-  display: flex;
-  gap: 6px;
-  margin-top: 5px;
-}
-
-.edit-box input {
-  flex: 1;
-  background: #10131a;
-  color: white;
-  border: 1px solid #5865f2;
-  border-radius: 7px;
-  padding: 7px;
-  outline: none;
-}
-
-/* ROOM */
-
-.room-controls {
-  display: flex;
-  gap: 7px;
-  margin-bottom: 12px;
-}
-
-.room-controls input {
-  flex: 1;
-  min-width: 0;
-  background: #10131a;
-  color: white;
-  border: 1px solid #343b4b;
   border-radius: 8px;
-  padding: 10px;
-  outline: none;
 }
 
-.room-controls button {
-  border: none;
-  background: #5865f2;
-  color: white;
-  padding: 0 13px;
-  border-radius: 8px;
+/* HIGHLIGHT */
+
+.highlight {
+  animation: highlightMessage 1.5s ease;
+}
+
+@keyframes highlightMessage {
+  0% {
+    background: rgba(59,130,246,.5);
+  }
+  100% {
+    background: transparent;
+  }
 }
 
 /* MOBILE */
 
 @media (max-width: 700px) {
-  .sidebar {
-    width: 100%;
-    max-width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #292f3d;
-  }
-
-  .main {
+  .dm-layout {
     flex-direction: column;
   }
 
-  .sidebar {
-    max-height: 300px;
-    overflow-y: auto;
+  .conversations {
+    width: 100%;
+    max-height: 140px;
   }
 
-  .content {
-    min-height: 500px;
+  .dm-chat {
+    min-height: 400px;
   }
 
-  .topbar-logo {
-    font-size: 19px;
-  }
-
-  .topbar {
-    padding: 0 10px;
-  }
-
-  .user-info span {
-    display: none;
-  }
-
-  .messages {
-    padding: 14px;
+  .dm-message {
+    max-width: 90%;
   }
 }
 </style>
@@ -646,38 +566,35 @@ textarea:focus {
 
 <body>
 
-<!-- LOGIN -->
+<!-- AUTH -->
 
-<div id="loginScreen" class="auth-screen">
-  <div class="auth-card">
-    <div class="logo">MyChat</div>
-    <div class="subtitle">Chat with friends. Keep it simple.</div>
+<div id="authScreen" class="auth-container">
+  <div class="auth-box">
 
-    <input id="loginUsername" placeholder="Username" autocomplete="username">
-    <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
+    <div id="loginBox">
+      <h1>💬 MyChat</h1>
 
-    <button id="loginBtn" class="primary-btn">Log In</button>
-    <button id="showCreateBtn" class="link-btn">Create an account</button>
+      <input id="loginUsername" placeholder="Username">
+      <input id="loginPassword" type="password" placeholder="Password">
 
-    <div id="loginMessage" class="subtitle"></div>
-  </div>
-</div>
+      <button id="loginButton">Log In</button>
+      <button id="showCreateButton" class="secondary">Create Account</button>
 
-<!-- CREATE ACCOUNT -->
+      <div id="loginMessage" class="auth-message"></div>
+    </div>
 
-<div id="createScreen" class="auth-screen hidden">
-  <div class="auth-card">
-    <div class="logo">Create Account</div>
-    <div class="subtitle">Join MyChat</div>
+    <div id="createBox" class="hidden">
+      <h1>Create Account</h1>
 
-    <input id="createUsername" placeholder="Username">
-    <input id="createPassword" type="password" placeholder="Password">
-    <input id="createPassword2" type="password" placeholder="Confirm password">
+      <input id="createUsername" placeholder="Username">
+      <input id="createPassword" type="password" placeholder="Password">
 
-    <button id="createBtn" class="primary-btn">Create Account</button>
-    <button id="showLoginBtn" class="link-btn">Back to login</button>
+      <button id="createButton">Create Account</button>
+      <button id="showLoginButton" class="secondary">Back to Login</button>
 
-    <div id="createMessage" class="subtitle"></div>
+      <div id="createMessage" class="auth-message"></div>
+    </div>
+
   </div>
 </div>
 
@@ -685,151 +602,174 @@ textarea:focus {
 
 <div id="app" class="app hidden">
 
-  <div class="topbar">
-    <div class="topbar-logo">MyChat</div>
+  <div class="header">
+    <h2>💬 MyChat</h2>
+    <button id="logoutButton">Log Out</button>
+  </div>
 
-    <div class="user-info">
-      <div id="topAvatar" class="avatar">?</div>
-      <span id="topUsername"></span>
-      <button id="logoutBtn" class="logout-btn">Log out</button>
+  <div class="tabs">
+    <button class="tab active" data-tab="friends">👥 Friends</button>
+    <button class="tab" data-tab="rooms">🚪 Rooms</button>
+    <button class="tab" data-tab="dms">💬 DMs</button>
+    <button class="tab" data-tab="profile">👤 Profile</button>
+  </div>
+
+  <div class="content">
+
+    <!-- FRIENDS -->
+
+    <div id="friendsPanel" class="panel">
+
+      <div class="card">
+        <h3>Add Friend</h3>
+
+        <div class="search-row">
+          <input id="friendSearch" placeholder="Username">
+          <button id="friendSearchButton">Search</button>
+        </div>
+
+        <div id="friendSearchResult"></div>
+      </div>
+
+      <div class="card">
+        <h3>Friend Requests</h3>
+        <div id="friendRequests"></div>
+      </div>
+
+      <div class="card">
+        <h3>Friends</h3>
+        <div id="friendsList"></div>
+      </div>
+
     </div>
+
+    <!-- ROOMS -->
+
+    <div id="roomsPanel" class="panel hidden">
+
+      <div id="roomJoin">
+        <div class="card">
+          <h3>Join a Room</h3>
+
+          <input
+            id="roomCode"
+            class="room-input"
+            maxlength="4"
+            inputmode="numeric"
+            placeholder="4-digit room code"
+          >
+
+          <button id="joinRoomButton" class="room-button">
+            Join Room
+          </button>
+
+          <div id="roomMessage" class="auth-message"></div>
+        </div>
+      </div>
+
+      <div id="roomChat" class="room-chat hidden">
+
+        <div class="card">
+          <strong>Room <span id="currentRoomDisplay"></span></strong>
+          <button id="leaveRoomButton" class="action-button">
+            Leave
+          </button>
+        </div>
+
+        <div id="roomMessages" class="room-messages"></div>
+
+        <div class="message-input-row">
+          <input id="roomInput" placeholder="Type a message...">
+          <button id="sendRoomButton" class="action-button">Send</button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- DMS -->
+
+    <div id="dmsPanel" class="panel hidden">
+
+      <div class="dm-layout">
+
+        <div class="conversations">
+          <h3>Conversations</h3>
+          <div id="conversationList"></div>
+        </div>
+
+        <div class="dm-chat">
+
+          <div id="dmHeader" class="dm-header">
+            Select a conversation
+          </div>
+
+          <div id="dmMessages" class="dm-messages">
+            <div style="color:#9ca3af;text-align:center;margin-top:40px;">
+              Select a conversation to start chatting.
+            </div>
+          </div>
+
+          <div class="dm-input-area">
+
+            <div id="replyingBar" class="replying-bar hidden">
+              <div class="replying-text">
+                <div class="replying-title">Replying to <span id="replyingName"></span></div>
+                <div id="replyingPreview" class="replying-preview"></div>
+              </div>
+
+              <button id="cancelReplyButton" class="cancel-reply">
+                ✕
+              </button>
+            </div>
+
+            <div class="message-input-row">
+              <input id="dmInput" placeholder="Type a message...">
+              <button id="sendDMButton" class="action-button">Send</button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- PROFILE -->
+
+    <div id="profilePanel" class="panel hidden">
+
+      <div class="card profile-card">
+
+        <div id="profileAvatar" class="profile-avatar"></div>
+
+        <h3 style="text-align:center;">
+          @<span id="profileUsername"></span>
+        </h3>
+
+        <input id="displayNameInput" placeholder="Display name">
+
+        <textarea id="bioInput" placeholder="Bio"></textarea>
+
+        <button id="saveProfileButton" class="save-profile">
+          Save Profile
+        </button>
+
+        <div id="profileMessage" style="text-align:center;margin-top:10px;"></div>
+
+      </div>
+
+    </div>
+
   </div>
 
-  <div class="main">
-
-    <!-- SIDEBAR -->
-
-    <aside class="sidebar">
-
-      <div class="tabs">
-        <button id="friendsTab" class="tab active">Friends</button>
-        <button id="roomsTab" class="tab">Rooms</button>
-        <button id="profileTab" class="tab">Profile</button>
-      </div>
-
-      <!-- FRIENDS PANEL -->
-
-      <div id="friendsPanel">
-
-        <input id="friendSearch" class="search-box" placeholder="Search username">
-
-        <button id="addFriendBtn" class="primary-btn">Add Friend</button>
-
-        <div class="panel-title">Friends</div>
-        <div id="friendsList" class="list"></div>
-
-        <div class="panel-title">Requests</div>
-        <div id="requestsList" class="list"></div>
-
-        <div class="panel-title">Messages</div>
-        <div id="conversationsList" class="list"></div>
-
-      </div>
-
-      <!-- ROOMS PANEL -->
-
-      <div id="roomsPanel" class="hidden">
-
-        <div class="panel-title">Join a Room</div>
-
-        <div class="room-controls">
-          <input id="roomCodeInput" maxlength="4" placeholder="4-digit code">
-          <button id="joinRoomBtn">Join</button>
-        </div>
-
-        <div class="panel-title">Current Room</div>
-        <div id="currentRoomInfo" class="status">No room joined.</div>
-
-      </div>
-
-      <!-- PROFILE PANEL -->
-
-      <div id="profilePanel" class="hidden">
-
-        <div class="panel-title">Your Profile</div>
-
-        <div id="profileSidebarAvatar" class="profile-big-avatar">?</div>
-
-        <div id="profileSidebarName"></div>
-
-      </div>
-
-    </aside>
-
-    <!-- CONTENT -->
-
-    <section class="content">
-
-      <div id="emptyState" class="empty-state">
-        <div>
-          <h2>Welcome to MyChat</h2>
-          <p>Select a friend, conversation, or room to start chatting.</p>
-        </div>
-      </div>
-
-      <!-- CHAT -->
-
-      <div id="chatView" class="hidden" style="height:100%; display:flex; flex-direction:column;">
-
-        <div class="chat-header">
-          <div id="chatAvatar" class="avatar">?</div>
-
-          <div>
-            <div id="chatTitle" class="chat-title"></div>
-            <div id="chatSubtitle" class="chat-subtitle"></div>
-          </div>
-        </div>
-
-        <div id="messages" class="messages"></div>
-
-        <div class="chat-input-area">
-          <div class="chat-input-row">
-            <input id="messageInput" class="chat-input" placeholder="Type a message...">
-            <button id="sendBtn" class="send-btn">Send</button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- PROFILE -->
-
-      <div id="profileView" class="hidden">
-
-        <div class="profile">
-
-          <div class="profile-card">
-
-            <div id="bigProfileAvatar" class="profile-big-avatar">?</div>
-
-            <label>Username</label>
-            <input id="profileUsername" disabled>
-
-            <label>Display Name</label>
-            <input id="displayNameInput" maxlength="30">
-
-            <label>Bio</label>
-            <textarea id="bioInput" maxlength="200"></textarea>
-
-            <button id="saveProfileBtn" class="save-profile">
-              Save Profile
-            </button>
-
-            <div id="profileMessage" class="status"></div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-  </div>
 </div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 
 import {
   getDatabase,
@@ -841,8 +781,10 @@ import {
   onChildAdded,
   onChildChanged,
   onChildRemoved,
+  onValue,
   onDisconnect
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
+}
+from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
 
 
 /* FIREBASE */
@@ -857,8 +799,8 @@ const firebaseConfig = {
   appId: "1:906137277444:web:b9d52ef4ec1f76afe09151"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const appFirebase = initializeApp(firebaseConfig);
+const db = getDatabase(appFirebase);
 
 
 /* STATE */
@@ -870,17 +812,13 @@ let currentDMUser = null;
 let stopDMListener = null;
 let stopRoomListener = null;
 
+let currentReply = null;
+
 
 /* HELPERS */
 
 function key(username) {
   return username.toLowerCase();
-}
-
-function escapeHTML(text) {
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
 }
 
 async function hashPassword(password) {
@@ -892,83 +830,88 @@ async function hashPassword(password) {
     .join("");
 }
 
-function conversationId(a, b) {
-  return [key(a), key(b)].sort().join("_");
+function escapeHTML(text) {
+  const div = document.createElement("div");
+  div.textContent = text ?? "";
+  return div.innerHTML;
 }
 
 function formatTime(timestamp) {
   if (!timestamp) return "";
 
-  const date = new Date(timestamp);
-
-  return date.toLocaleTimeString([], {
+  return new Date(timestamp).toLocaleString([], {
+    month: "short",
+    day: "numeric",
     hour: "numeric",
     minute: "2-digit"
   });
 }
 
+function conversationId(a, b) {
+  return [key(a), key(b)].sort().join("_");
+}
 
-/* SCREENS */
+
+/* AUTH SCREEN */
 
 function showLogin() {
-  document.getElementById("loginScreen").classList.remove("hidden");
-  document.getElementById("createScreen").classList.add("hidden");
-  document.getElementById("app").classList.add("hidden");
+  document.getElementById("loginBox").classList.remove("hidden");
+  document.getElementById("createBox").classList.add("hidden");
 }
 
 function showCreate() {
-  document.getElementById("loginScreen").classList.add("hidden");
-  document.getElementById("createScreen").classList.remove("hidden");
+  document.getElementById("loginBox").classList.add("hidden");
+  document.getElementById("createBox").classList.remove("hidden");
 }
 
-function showHome() {
-  document.getElementById("loginScreen").classList.add("hidden");
-  document.getElementById("createScreen").classList.add("hidden");
-  document.getElementById("app").classList.remove("hidden");
+document.getElementById("showCreateButton")
+  .addEventListener("click", showCreate);
 
-  updateTopBar();
-  loadFriends();
-  loadRequests();
-  loadConversations();
-}
+document.getElementById("showLoginButton")
+  .addEventListener("click", showLogin);
 
 
-/* ACCOUNT CREATION */
+/* CREATE ACCOUNT */
 
 async function createAccount() {
 
-  const username = document.getElementById("createUsername").value.trim();
-  const password = document.getElementById("createPassword").value;
-  const password2 = document.getElementById("createPassword2").value;
+  const username =
+    document.getElementById("createUsername").value.trim();
 
-  const msg = document.getElementById("createMessage");
+  const password =
+    document.getElementById("createPassword").value;
+
+  const message =
+    document.getElementById("createMessage");
+
+  message.textContent = "";
 
   if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) {
-    msg.textContent = "Username must be 3–20 characters.";
+    message.textContent =
+      "Username must be 3–20 characters and use only letters, numbers, or _.";
     return;
   }
 
   if (password.length < 4) {
-    msg.textContent = "Password must be at least 4 characters.";
+    message.textContent =
+      "Password must be at least 4 characters.";
     return;
   }
 
-  if (password !== password2) {
-    msg.textContent = "Passwords do not match.";
+  const userKey = key(username);
+
+  const existing =
+    await get(ref(db, `users/${userKey}`));
+
+  if (existing.exists()) {
+    message.textContent = "That username already exists.";
     return;
   }
 
-  const userRef = ref(db, "users/" + key(username));
-  const snapshot = await get(userRef);
+  const passwordHash =
+    await hashPassword(password);
 
-  if (snapshot.exists()) {
-    msg.textContent = "That username is already taken.";
-    return;
-  }
-
-  const passwordHash = await hashPassword(password);
-
-  await set(userRef, {
+  await set(ref(db, `users/${userKey}`), {
     username: username,
     passwordHash: passwordHash,
     displayName: username,
@@ -976,111 +919,318 @@ async function createAccount() {
     online: false
   });
 
-  msg.textContent = "Account created!";
+  message.style.color = "#4ade80";
+  message.textContent =
+    "Account created! You can now log in.";
 
-  setTimeout(() => {
-    showLogin();
-  }, 700);
+  document.getElementById("createUsername").value = "";
+  document.getElementById("createPassword").value = "";
+
+  setTimeout(showLogin, 700);
 }
+
+document.getElementById("createButton")
+  .addEventListener("click", createAccount);
 
 
 /* LOGIN */
 
 async function login() {
 
-  const username = document.getElementById("loginUsername").value.trim();
-  const password = document.getElementById("loginPassword").value;
+  const username =
+    document.getElementById("loginUsername").value.trim();
 
-  const msg = document.getElementById("loginMessage");
+  const password =
+    document.getElementById("loginPassword").value;
+
+  const message =
+    document.getElementById("loginMessage");
+
+  message.textContent = "";
 
   if (!username || !password) {
-    msg.textContent = "Enter your username and password.";
+    message.textContent =
+      "Enter your username and password.";
     return;
   }
 
-  const userRef = ref(db, "users/" + key(username));
-  const snapshot = await get(userRef);
+  const userKey = key(username);
+
+  const snapshot =
+    await get(ref(db, `users/${userKey}`));
 
   if (!snapshot.exists()) {
-    msg.textContent = "Invalid username or password.";
+    message.textContent =
+      "Username or password is incorrect.";
     return;
   }
 
-  const user = snapshot.val();
-  const passwordHash = await hashPassword(password);
+  const data = snapshot.val();
 
-  if (user.passwordHash !== passwordHash) {
-    msg.textContent = "Invalid username or password.";
+  const passwordHash =
+    await hashPassword(password);
+
+  if (data.passwordHash !== passwordHash) {
+    message.textContent =
+      "Username or password is incorrect.";
     return;
   }
 
-  currentUser = username;
+  currentUser = {
+    key: userKey,
+    username: data.username
+  };
 
-  await set(ref(db, "users/" + key(username) + "/online"), true);
+  await set(
+    ref(db, `users/${userKey}/online`),
+    true
+  );
 
   onDisconnect(
-    ref(db, "users/" + key(username) + "/online")
+    ref(db, `users/${userKey}/online`)
   ).set(false);
 
   showHome();
 }
 
+document.getElementById("loginButton")
+  .addEventListener("click", login);
 
-/* TOP BAR */
 
-async function updateTopBar() {
+/* ENTER TO LOGIN */
 
-  const snapshot = await get(
-    ref(db, "users/" + key(currentUser))
-  );
+document.getElementById("loginPassword")
+  .addEventListener("keydown", e => {
+    if (e.key === "Enter") login();
+  });
 
-  if (!snapshot.exists()) return;
+document.getElementById("createPassword")
+  .addEventListener("keydown", e => {
+    if (e.key === "Enter") createAccount();
+  });
 
-  const user = snapshot.val();
 
-  const displayName = user.displayName || currentUser;
+/* HOME */
 
-  document.getElementById("topUsername").textContent = displayName;
+function showHome() {
 
-  document.getElementById("topAvatar").textContent =
-    displayName.charAt(0).toUpperCase();
+  document.getElementById("authScreen")
+    .classList.add("hidden");
 
-  document.getElementById("profileSidebarAvatar").textContent =
-    displayName.charAt(0).toUpperCase();
+  document.getElementById("app")
+    .classList.remove("hidden");
 
-  document.getElementById("profileSidebarName").textContent =
-    displayName;
+  loadFriends();
+  loadFriendRequests();
+  loadConversations();
+  loadProfile();
+
+  switchTab("friends");
 }
 
 
 /* TABS */
 
-function selectTab(tab) {
+function switchTab(tab) {
 
-  document.querySelectorAll(".tab").forEach(btn => {
-    btn.classList.remove("active");
+  document.querySelectorAll(".tab")
+    .forEach(button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.tab === tab
+      );
+    });
+
+  document.getElementById("friendsPanel")
+    .classList.toggle("hidden", tab !== "friends");
+
+  document.getElementById("roomsPanel")
+    .classList.toggle("hidden", tab !== "rooms");
+
+  document.getElementById("dmsPanel")
+    .classList.toggle("hidden", tab !== "dms");
+
+  document.getElementById("profilePanel")
+    .classList.toggle("hidden", tab !== "profile");
+}
+
+document.querySelectorAll(".tab")
+  .forEach(button => {
+    button.addEventListener("click", () => {
+      switchTab(button.dataset.tab);
+    });
   });
 
-  document.getElementById(tab + "Tab").classList.add("active");
 
-  document.getElementById("friendsPanel").classList.add("hidden");
-  document.getElementById("roomsPanel").classList.add("hidden");
-  document.getElementById("profilePanel").classList.add("hidden");
+/* FRIEND SEARCH */
 
-  document.getElementById("profileView").classList.add("hidden");
+document.getElementById("friendSearchButton")
+  .addEventListener("click", searchFriend);
 
-  if (tab === "friends") {
-    document.getElementById("friendsPanel").classList.remove("hidden");
+async function searchFriend() {
+
+  const username =
+    document.getElementById("friendSearch")
+      .value.trim();
+
+  const result =
+    document.getElementById("friendSearchResult");
+
+  result.innerHTML = "";
+
+  if (!username) return;
+
+  const userSnapshot =
+    await get(ref(db, `users/${key(username)}`));
+
+  if (!userSnapshot.exists()) {
+    result.innerHTML =
+      `<p style="color:#9ca3af;">User not found.</p>`;
+    return;
   }
 
-  if (tab === "rooms") {
-    document.getElementById("roomsPanel").classList.remove("hidden");
+  if (key(username) === currentUser.key) {
+    result.innerHTML =
+      `<p style="color:#9ca3af;">That's you!</p>`;
+    return;
   }
 
-  if (tab === "profile") {
-    document.getElementById("profilePanel").classList.remove("hidden");
-    openProfile();
+  const friendSnapshot =
+    await get(
+      ref(
+        db,
+        `users/${currentUser.key}/friends/${key(username)}`
+      )
+    );
+
+  if (friendSnapshot.exists()) {
+    result.innerHTML =
+      `<p style="color:#4ade80;">Already friends.</p>`;
+    return;
   }
+
+  const button =
+    document.createElement("button");
+
+  button.className = "action-button";
+  button.textContent = `Add ${userSnapshot.val().username}`;
+
+  button.addEventListener("click", async () => {
+
+    await set(
+      ref(
+        db,
+        `users/${key(username)}/friendRequests/${currentUser.key}`
+      ),
+      {
+        username: currentUser.username,
+        timestamp: Date.now()
+      }
+    );
+
+    result.innerHTML =
+      `<p style="color:#4ade80;">Friend request sent!</p>`;
+  });
+
+  result.appendChild(button);
+}
+
+
+/* FRIEND REQUESTS */
+
+async function loadFriendRequests() {
+
+  const container =
+    document.getElementById("friendRequests");
+
+  container.innerHTML = "";
+
+  const snapshot =
+    await get(
+      ref(
+        db,
+        `users/${currentUser.key}/friendRequests`
+      )
+    );
+
+  if (!snapshot.exists()) {
+    container.innerHTML =
+      `<p style="color:#9ca3af;">No friend requests.</p>`;
+    return;
+  }
+
+  Object.entries(snapshot.val())
+    .forEach(([requestKey, request]) => {
+
+      const row =
+        document.createElement("div");
+
+      row.className = "user-row";
+
+      row.innerHTML = `
+        <div class="user-info">
+          <div class="avatar">
+            ${escapeHTML(request.username[0]?.toUpperCase() || "?")}
+          </div>
+
+          <div>
+            <strong>${escapeHTML(request.username)}</strong>
+          </div>
+        </div>
+
+        <div>
+          <button class="action-button">Accept</button>
+          <button class="action-button" style="background:#4b5563;">
+            Decline
+          </button>
+        </div>
+      `;
+
+      const buttons = row.querySelectorAll("button");
+
+      buttons[0].addEventListener("click", async () => {
+
+        await set(
+          ref(
+            db,
+            `users/${currentUser.key}/friends/${requestKey}`
+          ),
+          true
+        );
+
+        await set(
+          ref(
+            db,
+            `users/${requestKey}/friends/${currentUser.key}`
+          ),
+          true
+        );
+
+        await remove(
+          ref(
+            db,
+            `users/${currentUser.key}/friendRequests/${requestKey}`
+          )
+        );
+
+        loadFriendRequests();
+        loadFriends();
+      });
+
+      buttons[1].addEventListener("click", async () => {
+
+        await remove(
+          ref(
+            db,
+            `users/${currentUser.key}/friendRequests/${requestKey}`
+          )
+        );
+
+        loadFriendRequests();
+      });
+
+      container.appendChild(row);
+    });
 }
 
 
@@ -1088,173 +1238,107 @@ function selectTab(tab) {
 
 async function loadFriends() {
 
-  const list = document.getElementById("friendsList");
-  list.innerHTML = "";
+  const container =
+    document.getElementById("friendsList");
 
-  const snapshot = await get(
-    ref(db, "users/" + key(currentUser) + "/friends")
-  );
+  container.innerHTML = "";
+
+  const snapshot =
+    await get(
+      ref(
+        db,
+        `users/${currentUser.key}/friends`
+      )
+    );
 
   if (!snapshot.exists()) {
-    list.innerHTML = `<div class="status">No friends yet.</div>`;
+    container.innerHTML =
+      `<p style="color:#9ca3af;">No friends yet.</p>`;
     return;
   }
 
-  const friends = snapshot.val();
+  for (const friendKey of Object.keys(snapshot.val())) {
 
-  for (const friendKey of Object.keys(friends)) {
-
-    const friendSnapshot = await get(
-      ref(db, "users/" + friendKey)
-    );
+    const friendSnapshot =
+      await get(ref(db, `users/${friendKey}`));
 
     if (!friendSnapshot.exists()) continue;
 
-    const friend = friendSnapshot.val();
+    const friend =
+      friendSnapshot.val();
 
-    const item = document.createElement("div");
-    item.className = "list-item";
+    const row =
+      document.createElement("div");
 
-    const displayName = friend.displayName || friend.username;
+    row.className = "user-row";
 
-    item.innerHTML = `
-      <div class="list-avatar">
-        ${escapeHTML(displayName.charAt(0).toUpperCase())}
+    row.innerHTML = `
+      <div class="user-info">
+
+        <div class="avatar">
+          ${escapeHTML(
+            (friend.displayName || friend.username)[0]
+              ?.toUpperCase() || "?"
+          )}
+        </div>
+
+        <div>
+          <strong>
+            ${escapeHTML(friend.displayName || friend.username)}
+          </strong>
+
+          <div class="status ${
+            friend.online ? "online" : "offline"
+          }">
+            ${friend.online ? "● Online" : "● Offline"}
+          </div>
+        </div>
+
       </div>
 
-      <div class="list-info">
-        <div class="list-name">${escapeHTML(displayName)}</div>
+      <div>
+        <button class="action-button dm-button">
+          Message
+        </button>
 
-        <div class="status ${friend.online ? "online" : ""}">
-          ${friend.online ? "● Online" : "Offline"}
-        </div>
+        <button
+          class="action-button remove-friend"
+          style="background:#4b5563;"
+        >
+          Remove
+        </button>
       </div>
     `;
 
-    item.addEventListener("click", () => {
-      openDM(friend.username);
-    });
+    row.querySelector(".dm-button")
+      .addEventListener("click", () => {
 
-    list.appendChild(item);
+        switchTab("dms");
+        openDM(friend.username);
+      });
+
+    row.querySelector(".remove-friend")
+      .addEventListener("click", async () => {
+
+        await remove(
+          ref(
+            db,
+            `users/${currentUser.key}/friends/${friendKey}`
+          )
+        );
+
+        await remove(
+          ref(
+            db,
+            `users/${friendKey}/friends/${currentUser.key}`
+          )
+        );
+
+        loadFriends();
+      });
+
+    container.appendChild(row);
   }
-}
-
-
-/* FRIEND REQUESTS */
-
-async function loadRequests() {
-
-  const list = document.getElementById("requestsList");
-  list.innerHTML = "";
-
-  const snapshot = await get(
-    ref(db, "users/" + key(currentUser) + "/friendRequests")
-  );
-
-  if (!snapshot.exists()) {
-    list.innerHTML = `<div class="status">No pending requests.</div>`;
-    return;
-  }
-
-  const requests = snapshot.val();
-
-  for (const requesterKey of Object.keys(requests)) {
-
-    const userSnapshot = await get(
-      ref(db, "users/" + requesterKey)
-    );
-
-    if (!userSnapshot.exists()) continue;
-
-    const user = userSnapshot.val();
-
-    const item = document.createElement("div");
-    item.className = "list-item";
-
-    item.innerHTML = `
-      <div class="list-avatar">
-        ${escapeHTML((user.displayName || user.username).charAt(0).toUpperCase())}
-      </div>
-
-      <div class="list-info">
-        <div class="list-name">
-          ${escapeHTML(user.displayName || user.username)}
-        </div>
-
-        <div class="friend-actions">
-          <button class="small-btn accept">Accept</button>
-          <button class="small-btn danger-btn decline">Decline</button>
-        </div>
-      </div>
-    `;
-
-    item.querySelector(".accept").addEventListener("click", async e => {
-      e.stopPropagation();
-
-      await set(
-        ref(db, `users/${key(currentUser)}/friends/${requesterKey}`),
-        true
-      );
-
-      await set(
-        ref(db, `users/${requesterKey}/friends/${key(currentUser)}`),
-        true
-      );
-
-      await remove(
-        ref(db, `users/${key(currentUser)}/friendRequests/${requesterKey}`)
-      );
-
-      loadRequests();
-      loadFriends();
-    });
-
-    item.querySelector(".decline").addEventListener("click", async e => {
-      e.stopPropagation();
-
-      await remove(
-        ref(db, `users/${key(currentUser)}/friendRequests/${requesterKey}`)
-      );
-
-      loadRequests();
-    });
-
-    list.appendChild(item);
-  }
-}
-
-
-/* ADD FRIEND */
-
-async function addFriend() {
-
-  const username =
-    document.getElementById("friendSearch").value.trim();
-
-  if (!username) return;
-
-  if (key(username) === key(currentUser)) {
-    alert("You can't add yourself.");
-    return;
-  }
-
-  const userSnapshot = await get(
-    ref(db, "users/" + key(username))
-  );
-
-  if (!userSnapshot.exists()) {
-    alert("User not found.");
-    return;
-  }
-
-  await set(
-    ref(db, `users/${key(username)}/friendRequests/${key(currentUser)}`),
-    true
-  );
-
-  document.getElementById("friendSearch").value = "";
-
-  alert("Friend request sent!");
 }
 
 
@@ -1262,61 +1346,76 @@ async function addFriend() {
 
 async function loadConversations() {
 
-  const list = document.getElementById("conversationsList");
-  list.innerHTML = "";
+  const container =
+    document.getElementById("conversationList");
 
-  const snapshot = await get(
-    ref(db, "users/" + key(currentUser) + "/conversations")
-  );
+  container.innerHTML = "";
+
+  const snapshot =
+    await get(
+      ref(
+        db,
+        `users/${currentUser.key}/conversations`
+      )
+    );
 
   if (!snapshot.exists()) {
-    list.innerHTML = `<div class="status">No conversations yet.</div>`;
+    container.innerHTML =
+      `<p style="color:#9ca3af;padding:8px;">No conversations.</p>`;
     return;
   }
 
-  const conversations = snapshot.val();
+  const conversations =
+    snapshot.val();
 
-  for (const otherKey of Object.keys(conversations)) {
-
-    const userSnapshot = await get(
-      ref(db, "users/" + otherKey)
+  const unreadSnapshot =
+    await get(
+      ref(
+        db,
+        `users/${currentUser.key}/unread`
+      )
     );
 
-    if (!userSnapshot.exists()) continue;
-
-    const user = userSnapshot.val();
-
-    const unreadSnapshot = await get(
-      ref(db, `users/${key(currentUser)}/unread/${otherKey}`)
-    );
-
-    const unread = unreadSnapshot.exists()
+  const unread =
+    unreadSnapshot.exists()
       ? unreadSnapshot.val()
-      : 0;
+      : {};
 
-    const displayName = user.displayName || user.username;
+  Object.keys(conversations)
+    .forEach(friendKey => {
 
-    const item = document.createElement("div");
-    item.className = "list-item";
+      const row =
+        document.createElement("div");
 
-    item.innerHTML = `
-      <div class="list-avatar">
-        ${escapeHTML(displayName.charAt(0).toUpperCase())}
-      </div>
+      row.className = "conversation";
 
-      <div class="list-info">
-        <div class="list-name">${escapeHTML(displayName)}</div>
-      </div>
+      const count =
+        unread[friendKey] || 0;
 
-      ${unread > 0 ? `<div class="unread">${unread}</div>` : ""}
-    `;
+      row.innerHTML = `
+        ${escapeHTML(
+          conversations[friendKey].displayName ||
+          conversations[friendKey].username ||
+          friendKey
+        )}
 
-    item.addEventListener("click", () => {
-      openDM(user.username);
+        ${
+          count > 0
+            ? `<span class="unread">${count}</span>`
+            : ""
+        }
+      `;
+
+      row.addEventListener("click", () => {
+
+        openDM(
+          conversations[friendKey].username ||
+          friendKey
+        );
+      });
+
+      container.appendChild(row);
     });
-
-    list.appendChild(item);
-  }
 }
 
 
@@ -1326,390 +1425,512 @@ async function openDM(username) {
 
   currentDMUser = username;
 
+  cancelReply();
+
   if (stopDMListener) {
     stopDMListener();
     stopDMListener = null;
   }
 
-  if (stopRoomListener) {
-    stopRoomListener();
-    stopRoomListener = null;
-  }
+  document.getElementById("dmHeader")
+    .textContent = `💬 ${username}`;
 
-  currentRoom = null;
+  const messagesContainer =
+    document.getElementById("dmMessages");
 
-  document.getElementById("emptyState").classList.add("hidden");
-  document.getElementById("profileView").classList.add("hidden");
-  document.getElementById("chatView").classList.remove("hidden");
+  messagesContainer.innerHTML = "";
 
-  const userSnapshot = await get(
-    ref(db, "users/" + key(username))
-  );
-
-  const user = userSnapshot.exists()
-    ? userSnapshot.val()
-    : {};
-
-  const displayName = user.displayName || username;
-
-  document.getElementById("chatTitle").textContent =
-    displayName;
-
-  document.getElementById("chatSubtitle").textContent =
-    user.online ? "● Online" : "Offline";
-
-  document.getElementById("chatSubtitle").className =
-    "chat-subtitle " + (user.online ? "online" : "");
-
-  document.getElementById("chatAvatar").textContent =
-    displayName.charAt(0).toUpperCase();
-
-  const messages = document.getElementById("messages");
-  messages.innerHTML = "";
-
-  const conv = conversationId(currentUser, username);
+  const convoId =
+    conversationId(
+      currentUser.username,
+      username
+    );
 
   await set(
-    ref(db, `users/${key(currentUser)}/unread/${key(username)}`),
+    ref(
+      db,
+      `users/${currentUser.key}/unread/${key(username)}`
+    ),
     0
   );
+
+  const friendSnapshot =
+    await get(
+      ref(
+        db,
+        `users/${key(username)}`
+      )
+    );
+
+  if (friendSnapshot.exists()) {
+
+    await set(
+      ref(
+        db,
+        `users/${currentUser.key}/conversations/${key(username)}`
+      ),
+      {
+        username: friendSnapshot.val().username,
+        displayName:
+          friendSnapshot.val().displayName ||
+          friendSnapshot.val().username
+      }
+    );
+  }
 
   loadConversations();
 
   const messagesRef =
-    ref(db, `directMessages/${conv}/messages`);
-
-  stopDMListener = onChildAdded(messagesRef, snapshot => {
-    renderDMMessage(snapshot.key, snapshot.val());
-  });
-
-  onChildChanged(messagesRef, snapshot => {
-    updateDMMessage(snapshot.key, snapshot.val());
-  });
-
-  onChildRemoved(messagesRef, snapshot => {
-    const element = document.querySelector(
-      `[data-message-id="${snapshot.key}"]`
+    ref(
+      db,
+      `directMessages/${convoId}/messages`
     );
 
-    if (element) {
-      element.remove();
+  const messageElements = new Map();
+
+  function renderMessage(id, data) {
+
+    const existing =
+      messageElements.get(id);
+
+    if (existing) {
+      updateMessageElement(existing, id, data);
+      return;
     }
-  });
-}
 
+    const element =
+      document.createElement("div");
 
-/* RENDER DM MESSAGE */
+    element.className =
+      "dm-message " +
+      (data.username === currentUser.username
+        ? "mine"
+        : "");
 
-function renderDMMessage(id, data) {
+    element.dataset.id = id;
 
-  const messages = document.getElementById("messages");
+    updateMessageElement(element, id, data);
 
-  if (document.querySelector(`[data-message-id="${id}"]`)) {
-    return;
+    messageElements.set(id, element);
+
+    messagesContainer.appendChild(element);
+
+    messagesContainer.scrollTop =
+      messagesContainer.scrollHeight;
   }
 
-  const wrapper = document.createElement("div");
-  wrapper.className = "message";
-  wrapper.dataset.messageId = id;
+  function updateMessageElement(element, id, data) {
 
-  const displayName = data.username || "Unknown";
+    const mine =
+      data.username === currentUser.username;
 
-  wrapper.innerHTML = `
-    <div class="message-avatar">
-      ${escapeHTML(displayName.charAt(0).toUpperCase())}
-    </div>
+    const reply =
+      data.replyTo;
 
-    <div class="message-content">
+    let reactionsHTML = "";
 
-      <div class="message-top">
-        <span class="message-user">
-          ${escapeHTML(displayName)}
-        </span>
+    if (data.reactions) {
 
-        <span class="message-time">
+      const counts = {};
+
+      Object.values(data.reactions)
+        .forEach(emoji => {
+          counts[emoji] =
+            (counts[emoji] || 0) + 1;
+        });
+
+      reactionsHTML =
+        `<div class="reactions">` +
+        Object.entries(counts)
+          .map(([emoji, count]) =>
+            `<button class="reaction" data-reaction="${emoji}">
+              ${emoji} ${count}
+            </button>`
+          )
+          .join("") +
+        `</div>`;
+    }
+
+    const replyHTML =
+      reply
+        ? `
+          <div class="message-reply" data-reply-id="${escapeHTML(reply.id)}">
+            <div class="message-reply-author">
+              ↩ ${escapeHTML(reply.username)}
+            </div>
+
+            <div class="message-reply-text">
+              ${escapeHTML(reply.text)}
+            </div>
+          </div>
+        `
+        : "";
+
+    element.innerHTML = `
+      <div class="message-bubble">
+
+        ${
+          !mine
+            ? `<div class="message-author">
+                ${escapeHTML(data.username)}
+              </div>`
+            : ""
+        }
+
+        ${replyHTML}
+
+        <div>
+          ${escapeHTML(data.text)}
+          ${
+            data.edited
+              ? `<span class="edited">(edited)</span>`
+              : ""
+          }
+        </div>
+
+        <div class="message-time">
           ${formatTime(data.timestamp)}
-        </span>
+        </div>
+
+        <div class="message-actions">
+
+          <button class="reply-button">
+            ↩ Reply
+          </button>
+
+          <button class="copy-button">
+            📋 Copy
+          </button>
+
+          <button class="reaction-button">
+            😊 React
+          </button>
+
+          ${
+            mine
+              ? `
+                <button class="edit-button">
+                  ✏️ Edit
+                </button>
+
+                <button class="delete-button">
+                  🗑 Delete
+                </button>
+              `
+              : ""
+          }
+
+        </div>
+
+        <div class="reaction-area"></div>
+
+        ${reactionsHTML}
+
       </div>
+    `;
 
-      <div class="message-text"></div>
+    /* REPLY */
 
-      <div class="reactions"></div>
+    element.querySelector(".reply-button")
+      .addEventListener("click", () => {
 
-      <div class="message-actions"></div>
+        currentReply = {
+          id: id,
+          username: data.username,
+          text: data.text
+        };
 
-    </div>
-  `;
+        document.getElementById("replyingName")
+          .textContent = data.username;
 
-  wrapper.querySelector(".message-text").textContent =
-    data.text || "";
+        document.getElementById("replyingPreview")
+          .textContent = data.text;
 
-  if (data.edited) {
-    const edited = document.createElement("span");
-    edited.className = "edited";
-    edited.textContent = "edited";
-    wrapper.querySelector(".message-text").appendChild(edited);
-  }
+        document.getElementById("replyingBar")
+          .classList.remove("hidden");
 
-  renderReactions(
-    wrapper.querySelector(".reactions"),
-    id,
-    data.reactions || {}
-  );
+        document.getElementById("dmInput")
+          .focus();
+      });
 
-  const actions = wrapper.querySelector(".message-actions");
 
-  const reactButton = document.createElement("button");
-  reactButton.className = "message-action";
-  reactButton.textContent = "😊 React";
+    /* COPY */
 
-  reactButton.addEventListener("click", () => {
-    showReactionPicker(wrapper, id);
-  });
+    element.querySelector(".copy-button")
+      .addEventListener("click", async () => {
 
-  actions.appendChild(reactButton);
+        try {
 
-  if (key(data.username) === key(currentUser)) {
+          await navigator.clipboard
+            .writeText(data.text);
 
-    const editButton = document.createElement("button");
-    editButton.className = "message-action";
-    editButton.textContent = "✏️ Edit";
+          const button =
+            element.querySelector(".copy-button");
 
-    editButton.addEventListener("click", () => {
-      startEditing(wrapper, id, data);
-    });
+          button.textContent = "✅ Copied!";
 
-    actions.appendChild(editButton);
+          setTimeout(() => {
+            button.textContent = "📋 Copy";
+          }, 1200);
 
-    const deleteButton = document.createElement("button");
-    deleteButton.className = "message-action";
-    deleteButton.textContent = "🗑️ Delete";
+        } catch {
+          alert("Couldn't copy the message.");
+        }
+      });
 
-    deleteButton.addEventListener("click", async () => {
 
-      if (!confirm("Delete this message?")) return;
+    /* REACTION PICKER */
 
-      const conv = conversationId(
-        currentUser,
-        currentDMUser
+    element.querySelector(".reaction-button")
+      .addEventListener("click", () => {
+
+        const area =
+          element.querySelector(".reaction-area");
+
+        if (area.innerHTML) {
+          area.innerHTML = "";
+          return;
+        }
+
+        const picker =
+          document.createElement("div");
+
+        picker.className =
+          "reaction-picker";
+
+        const emojis = [
+          "👍",
+          "❤️",
+          "😂",
+          "😮",
+          "😢",
+          "😡",
+          "🔥",
+          "🎉",
+          "👏",
+          "💯"
+        ];
+
+        emojis.forEach(emoji => {
+
+          const button =
+            document.createElement("button");
+
+          button.textContent = emoji;
+
+          button.addEventListener(
+            "click",
+            async () => {
+
+              await set(
+                ref(
+                  db,
+                  `directMessages/${convoId}/messages/${id}/reactions/${currentUser.key}`
+                ),
+                emoji
+              );
+
+              area.innerHTML = "";
+            }
+          );
+
+          picker.appendChild(button);
+        });
+
+        area.appendChild(picker);
+      });
+
+
+    /* DELETE */
+
+    const deleteButton =
+      element.querySelector(".delete-button");
+
+    if (deleteButton) {
+
+      deleteButton.addEventListener(
+        "click",
+        async () => {
+
+          await remove(
+            ref(
+              db,
+              `directMessages/${convoId}/messages/${id}`
+            )
+          );
+        }
       );
+    }
 
-      await remove(
-        ref(db, `directMessages/${conv}/messages/${id}`)
+
+    /* EDIT */
+
+    const editButton =
+      element.querySelector(".edit-button");
+
+    if (editButton) {
+
+      editButton.addEventListener(
+        "click",
+        async () => {
+
+          const newText =
+            prompt(
+              "Edit your message:",
+              data.text
+            );
+
+          if (
+            newText === null ||
+            !newText.trim()
+          ) return;
+
+          await set(
+            ref(
+              db,
+              `directMessages/${convoId}/messages/${id}/text`
+            ),
+            newText.trim()
+          );
+
+          await set(
+            ref(
+              db,
+              `directMessages/${convoId}/messages/${id}/edited`
+            ),
+            true
+          );
+        }
       );
-    });
-
-    actions.appendChild(deleteButton);
-  }
-
-  messages.appendChild(wrapper);
-
-  messages.scrollTop = messages.scrollHeight;
-}
-
-
-/* UPDATE MESSAGE */
-
-function updateDMMessage(id, data) {
-
-  const wrapper = document.querySelector(
-    `[data-message-id="${id}"]`
-  );
-
-  if (!wrapper) return;
-
-  const text = wrapper.querySelector(".message-text");
-
-  text.textContent = data.text || "";
-
-  if (data.edited) {
-    const edited = document.createElement("span");
-    edited.className = "edited";
-    edited.textContent = "edited";
-    text.appendChild(edited);
-  }
-
-  renderReactions(
-    wrapper.querySelector(".reactions"),
-    id,
-    data.reactions || {}
-  );
-}
-
-
-/* REACTIONS */
-
-const reactionOptions = ["👍", "❤️", "😂", "😮", "😢"];
-
-function renderReactions(container, messageId, reactions) {
-
-  container.innerHTML = "";
-
-  const counts = {};
-
-  for (const username in reactions) {
-
-    const emoji = reactions[username];
-
-    if (!counts[emoji]) {
-      counts[emoji] = [];
     }
 
-    counts[emoji].push(username);
-  }
 
-  for (const emoji of Object.keys(counts)) {
+    /* CLICK REPLY PREVIEW */
 
-    const button = document.createElement("button");
-    button.className = "reaction";
+    const replyPreview =
+      element.querySelector(".message-reply");
 
-    button.textContent =
-      emoji + " " + counts[emoji].length;
+    if (replyPreview) {
 
-    button.addEventListener("click", () => {
-      setReaction(messageId, emoji);
-    });
+      replyPreview.addEventListener(
+        "click",
+        () => {
 
-    container.appendChild(button);
-  }
-}
+          const targetId =
+            replyPreview.dataset.replyId;
 
+          const target =
+            messageElements.get(targetId);
 
-function showReactionPicker(wrapper, messageId) {
+          if (!target) return;
 
-  const existing =
-    wrapper.querySelector(".reaction-picker");
+          target.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
 
-  if (existing) {
-    existing.remove();
-    return;
-  }
+          target.classList.remove("highlight");
 
-  const picker = document.createElement("div");
-  picker.className = "reaction-picker";
+          void target.offsetWidth;
 
-  reactionOptions.forEach(emoji => {
-
-    const button = document.createElement("button");
-    button.textContent = emoji;
-
-    button.addEventListener("click", async () => {
-      await setReaction(messageId, emoji);
-      picker.remove();
-    });
-
-    picker.appendChild(button);
-  });
-
-  wrapper.querySelector(".message-actions")
-    .before(picker);
-}
-
-
-async function setReaction(messageId, emoji) {
-
-  if (!currentDMUser) return;
-
-  const conv = conversationId(
-    currentUser,
-    currentDMUser
-  );
-
-  const messageRef =
-    ref(db, `directMessages/${conv}/messages/${messageId}`);
-
-  const snapshot = await get(messageRef);
-
-  if (!snapshot.exists()) return;
-
-  const data = snapshot.val();
-
-  const reactions = data.reactions || {};
-
-  if (reactions[key(currentUser)] === emoji) {
-    delete reactions[key(currentUser)];
-  } else {
-    reactions[key(currentUser)] = emoji;
-  }
-
-  await set(
-    ref(db, `directMessages/${conv}/messages/${messageId}/reactions`),
-    reactions
-  );
-}
-
-
-/* EDIT MESSAGE */
-
-function startEditing(wrapper, id, data) {
-
-  if (wrapper.querySelector(".edit-box")) return;
-
-  const textElement =
-    wrapper.querySelector(".message-text");
-
-  textElement.classList.add("hidden");
-
-  const editBox = document.createElement("div");
-  editBox.className = "edit-box";
-
-  editBox.innerHTML = `
-    <input value="${escapeHTML(data.text || "")}">
-    <button class="small-btn save">Save</button>
-    <button class="small-btn cancel">Cancel</button>
-  `;
-
-  textElement.after(editBox);
-
-  const input = editBox.querySelector("input");
-
-  input.focus();
-  input.select();
-
-  editBox.querySelector(".save")
-    .addEventListener("click", () => {
-      saveEdit(id, input.value.trim());
-    });
-
-  editBox.querySelector(".cancel")
-    .addEventListener("click", () => {
-      editBox.remove();
-      textElement.classList.remove("hidden");
-    });
-
-  input.addEventListener("keydown", e => {
-
-    if (e.key === "Enter") {
-      saveEdit(id, input.value.trim());
+          target.classList.add("highlight");
+        }
+      );
     }
 
-    if (e.key === "Escape") {
-      editBox.remove();
-      textElement.classList.remove("hidden");
-    }
-  });
+
+    /* EXISTING REACTIONS */
+
+    element.querySelectorAll(".reaction")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          async () => {
+
+            await set(
+              ref(
+                db,
+                `directMessages/${convoId}/messages/${id}/reactions/${currentUser.key}`
+              ),
+              button.dataset.reaction
+            );
+          }
+        );
+      });
+  }
+
+
+  const unsubAdded =
+    onChildAdded(
+      messagesRef,
+      snapshot => {
+        renderMessage(
+          snapshot.key,
+          snapshot.val()
+        );
+      }
+    );
+
+
+  const unsubChanged =
+    onChildChanged(
+      messagesRef,
+      snapshot => {
+
+        renderMessage(
+          snapshot.key,
+          snapshot.val()
+        );
+      }
+    );
+
+
+  const unsubRemoved =
+    onChildRemoved(
+      messagesRef,
+      snapshot => {
+
+        const element =
+          messageElements.get(snapshot.key);
+
+        if (element) {
+          element.remove();
+          messageElements.delete(snapshot.key);
+        }
+      }
+    );
+
+
+  stopDMListener = () => {
+
+    unsubAdded();
+    unsubChanged();
+    unsubRemoved();
+
+    messageElements.clear();
+  };
 }
 
 
-async function saveEdit(id, newText) {
+/* CANCEL REPLY */
 
-  if (!newText) return;
+function cancelReply() {
 
-  const conv = conversationId(
-    currentUser,
-    currentDMUser
-  );
+  currentReply = null;
 
-  await set(
-    ref(db, `directMessages/${conv}/messages/${id}/text`),
-    newText
-  );
+  document.getElementById("replyingBar")
+    .classList.add("hidden");
 
-  await set(
-    ref(db, `directMessages/${conv}/messages/${id}/edited`),
-    true
-  );
+  document.getElementById("replyingName")
+    .textContent = "";
+
+  document.getElementById("replyingPreview")
+    .textContent = "";
 }
+
+document.getElementById("cancelReplyButton")
+  .addEventListener("click", cancelReply);
 
 
 /* SEND DM */
@@ -1719,67 +1940,136 @@ async function sendDM() {
   if (!currentDMUser) return;
 
   const input =
-    document.getElementById("messageInput");
+    document.getElementById("dmInput");
 
-  const text = input.value.trim();
+  const text =
+    input.value.trim();
 
   if (!text) return;
 
-  const conv = conversationId(
-    currentUser,
-    currentDMUser
-  );
+  const convoId =
+    conversationId(
+      currentUser.username,
+      currentDMUser
+    );
 
-  const messagesRef =
-    ref(db, `directMessages/${conv}/messages`);
-
-  await push(messagesRef, {
-    username: currentUser,
+  const messageData = {
+    username: currentUser.username,
     text: text,
-    timestamp: Date.now(),
-    edited: false
-  });
+    timestamp: Date.now()
+  };
 
-  await set(
-    ref(db, `users/${key(currentUser)}/conversations/${key(currentDMUser)}`),
-    true
+  if (currentReply) {
+
+    messageData.replyTo = {
+      id: currentReply.id,
+      username: currentReply.username,
+      text: currentReply.text
+    };
+  }
+
+  await push(
+    ref(
+      db,
+      `directMessages/${convoId}/messages`
+    ),
+    messageData
   );
 
+
+  /* SAVE CONVERSATION FOR SENDER */
+
   await set(
-    ref(db, `users/${key(currentDMUser)}/conversations/${key(currentUser)}`),
-    true
+    ref(
+      db,
+      `users/${currentUser.key}/conversations/${key(currentDMUser)}`
+    ),
+    {
+      username: currentDMUser,
+      displayName: currentDMUser
+    }
   );
+
+
+  /* SAVE CONVERSATION FOR RECIPIENT */
+
+  await set(
+    ref(
+      db,
+      `users/${key(currentDMUser)}/conversations/${currentUser.key}`
+    ),
+    {
+      username: currentUser.username,
+      displayName: currentUser.username
+    }
+  );
+
+
+  /* UNREAD */
 
   const unreadRef =
-    ref(db, `users/${key(currentDMUser)}/unread/${key(currentUser)}`);
+    ref(
+      db,
+      `users/${key(currentDMUser)}/unread/${currentUser.key}`
+    );
 
-  const unreadSnapshot = await get(unreadRef);
+  const unreadSnapshot =
+    await get(unreadRef);
 
-  const unread = unreadSnapshot.exists()
-    ? unreadSnapshot.val()
-    : 0;
+  const unread =
+    unreadSnapshot.exists()
+      ? unreadSnapshot.val()
+      : 0;
 
-  await set(unreadRef, unread + 1);
+  await set(
+    unreadRef,
+    unread + 1
+  );
+
 
   input.value = "";
+
+  cancelReply();
+
+  loadConversations();
 }
+
+document.getElementById("sendDMButton")
+  .addEventListener("click", sendDM);
+
+document.getElementById("dmInput")
+  .addEventListener("keydown", e => {
+
+    if (
+      e.key === "Enter" &&
+      !e.shiftKey
+    ) {
+      e.preventDefault();
+      sendDM();
+    }
+  });
 
 
 /* ROOMS */
 
+document.getElementById("joinRoomButton")
+  .addEventListener("click", joinRoom);
+
 async function joinRoom() {
 
   const code =
-    document.getElementById("roomCodeInput").value.trim();
+    document.getElementById("roomCode")
+      .value.trim();
+
+  const message =
+    document.getElementById("roomMessage");
+
+  message.textContent = "";
 
   if (!/^\d{4}$/.test(code)) {
-    alert("Room code must be exactly 4 digits.");
+    message.textContent =
+      "Room code must be exactly 4 digits.";
     return;
-  }
-
-  if (stopDMListener) {
-    stopDMListener();
-    stopDMListener = null;
   }
 
   if (stopRoomListener) {
@@ -1787,104 +2077,82 @@ async function joinRoom() {
     stopRoomListener = null;
   }
 
-  currentDMUser = null;
   currentRoom = code;
 
-  document.getElementById("emptyState").classList.add("hidden");
-  document.getElementById("profileView").classList.add("hidden");
-  document.getElementById("chatView").classList.remove("hidden");
+  document.getElementById("roomJoin")
+    .classList.add("hidden");
 
-  document.getElementById("chatTitle").textContent =
-    "Room #" + code;
+  document.getElementById("roomChat")
+    .classList.remove("hidden");
 
-  document.getElementById("chatSubtitle").textContent =
-    "4-digit room";
-
-  document.getElementById("chatAvatar").textContent =
-    "#";
-
-  document.getElementById("messages").innerHTML = "";
-
-  document.getElementById("currentRoomInfo").textContent =
-    "Joined room #" + code;
+  document.getElementById("currentRoomDisplay")
+    .textContent = code;
 
   const messagesRef =
-    ref(db, `rooms/${code}/messages`);
+    ref(
+      db,
+      `rooms/${code}/messages`
+    );
 
-  stopRoomListener = onChildAdded(
-    messagesRef,
-    snapshot => {
-      renderRoomMessage(snapshot.key, snapshot.val());
-    }
-  );
+  const messagesContainer =
+    document.getElementById("roomMessages");
 
-  await push(messagesRef, {
-    username: "MyChat",
-    text: currentUser + " joined the room.",
-    timestamp: Date.now(),
-    system: true
-  });
+  messagesContainer.innerHTML = "";
+
+  const unsub =
+    onChildAdded(
+      messagesRef,
+      snapshot => {
+
+        const data =
+          snapshot.val();
+
+        const div =
+          document.createElement("div");
+
+        div.style.marginBottom = "8px";
+
+        div.innerHTML = `
+          <strong>
+            ${escapeHTML(data.username)}
+          </strong>:
+          ${escapeHTML(data.text)}
+
+          <div style="font-size:10px;color:#9ca3af;">
+            ${formatTime(data.timestamp)}
+          </div>
+        `;
+
+        messagesContainer.appendChild(div);
+
+        messagesContainer.scrollTop =
+          messagesContainer.scrollHeight;
+      }
+    );
+
+  stopRoomListener = unsub;
 }
 
-
-/* ROOM MESSAGE */
-
-function renderRoomMessage(id, data) {
-
-  const messages = document.getElementById("messages");
-
-  const wrapper = document.createElement("div");
-  wrapper.className = "message";
-  wrapper.dataset.messageId = id;
-
-  wrapper.innerHTML = `
-    <div class="message-avatar">
-      ${escapeHTML((data.username || "?").charAt(0).toUpperCase())}
-    </div>
-
-    <div class="message-content">
-
-      <div class="message-top">
-        <span class="message-user">
-          ${escapeHTML(data.username || "")}
-        </span>
-
-        <span class="message-time">
-          ${formatTime(data.timestamp)}
-        </span>
-      </div>
-
-      <div class="message-text"></div>
-
-    </div>
-  `;
-
-  wrapper.querySelector(".message-text").textContent =
-    data.text || "";
-
-  messages.appendChild(wrapper);
-
-  messages.scrollTop = messages.scrollHeight;
-}
-
-
-/* SEND ROOM */
 
 async function sendRoomMessage() {
 
   if (!currentRoom) return;
 
   const input =
-    document.getElementById("messageInput");
+    document.getElementById("roomInput");
 
-  const text = input.value.trim();
+  const text =
+    input.value.trim();
 
   if (!text) return;
 
   await push(
-    ref(db, `rooms/${currentRoom}/messages`),
+    ref(
+      db,
+      `rooms/${currentRoom}/messages`
+    ),
     {
-      username: currentUser,
+      username: currentUser.username,
       text: text,
       timestamp: Date.now()
     }
@@ -1893,194 +2161,179 @@ async function sendRoomMessage() {
   input.value = "";
 }
 
+document.getElementById("sendRoomButton")
+  .addEventListener("click", sendRoomMessage);
 
-/* SEND */
+document.getElementById("roomInput")
+  .addEventListener("keydown", e => {
 
-function sendMessage() {
+    if (e.key === "Enter") {
+      sendRoomMessage();
+    }
+  });
 
-  if (currentDMUser) {
-    sendDM();
-  } else if (currentRoom) {
-    sendRoomMessage();
-  }
-}
+
+/* LEAVE ROOM */
+
+document.getElementById("leaveRoomButton")
+  .addEventListener("click", () => {
+
+    if (stopRoomListener) {
+      stopRoomListener();
+      stopRoomListener = null;
+    }
+
+    currentRoom = null;
+
+    document.getElementById("roomJoin")
+      .classList.remove("hidden");
+
+    document.getElementById("roomChat")
+      .classList.add("hidden");
+
+    document.getElementById("roomMessages")
+      .innerHTML = "";
+  });
 
 
 /* PROFILE */
 
-async function openProfile() {
+async function loadProfile() {
 
-  document.getElementById("emptyState").classList.add("hidden");
-  document.getElementById("chatView").classList.add("hidden");
-  document.getElementById("profileView").classList.remove("hidden");
-
-  const snapshot = await get(
-    ref(db, "users/" + key(currentUser))
-  );
+  const snapshot =
+    await get(
+      ref(
+        db,
+        `users/${currentUser.key}`
+      )
+    );
 
   if (!snapshot.exists()) return;
 
-  const user = snapshot.val();
+  const data =
+    snapshot.val();
 
-  const displayName =
-    user.displayName || currentUser;
+  document.getElementById("profileUsername")
+    .textContent = currentUser.username;
 
-  document.getElementById("profileUsername").value =
-    currentUser;
+  document.getElementById("displayNameInput")
+    .value =
+      data.displayName ||
+      data.username;
 
-  document.getElementById("displayNameInput").value =
-    displayName;
+  document.getElementById("bioInput")
+    .value =
+      data.bio || "";
 
-  document.getElementById("bioInput").value =
-    user.bio || "";
-
-  document.getElementById("bigProfileAvatar").textContent =
-    displayName.charAt(0).toUpperCase();
+  updateProfileAvatar(
+    data.displayName ||
+    data.username
+  );
 }
 
 
-async function saveProfile() {
+function updateProfileAvatar(name) {
 
-  const displayName =
-    document.getElementById("displayNameInput")
-      .value.trim();
-
-  const bio =
-    document.getElementById("bioInput")
-      .value.trim();
-
-  if (!displayName) {
-    alert("Display name can't be empty.");
-    return;
-  }
-
-  await set(
-    ref(db, `users/${key(currentUser)}/displayName`),
-    displayName
-  );
-
-  await set(
-    ref(db, `users/${key(currentUser)}/bio`),
-    bio
-  );
-
-  document.getElementById("profileMessage").textContent =
-    "Profile saved!";
-
-  updateTopBar();
-
-  setTimeout(() => {
-    document.getElementById("profileMessage").textContent = "";
-  }, 2000);
+  document.getElementById("profileAvatar")
+    .textContent =
+      name?.[0]?.toUpperCase() || "?";
 }
+
+
+document.getElementById("saveProfileButton")
+  .addEventListener("click", async () => {
+
+    const displayName =
+      document.getElementById("displayNameInput")
+        .value.trim();
+
+    const bio =
+      document.getElementById("bioInput")
+        .value.trim();
+
+    const finalName =
+      displayName ||
+      currentUser.username;
+
+    await set(
+      ref(
+        db,
+        `users/${currentUser.key}/displayName`
+      ),
+      finalName
+    );
+
+    await set(
+      ref(
+        db,
+        `users/${currentUser.key}/bio`
+      ),
+      bio
+    );
+
+    updateProfileAvatar(finalName);
+
+    const message =
+      document.getElementById("profileMessage");
+
+    message.style.color = "#4ade80";
+    message.textContent =
+      "Profile saved!";
+
+    setTimeout(() => {
+      message.textContent = "";
+    }, 1500);
+  });
 
 
 /* LOGOUT */
 
-async function logout() {
+document.getElementById("logoutButton")
+  .addEventListener("click", async () => {
 
-  if (!currentUser) return;
+    if (!currentUser) return;
 
-  await set(
-    ref(db, `users/${key(currentUser)}/online`),
-    false
-  );
+    await set(
+      ref(
+        db,
+        `users/${currentUser.key}/online`
+      ),
+      false
+    );
 
-  if (stopDMListener) {
-    stopDMListener();
-    stopDMListener = null;
-  }
-
-  if (stopRoomListener) {
-    stopRoomListener();
-    stopRoomListener = null;
-  }
-
-  currentUser = null;
-  currentDMUser = null;
-  currentRoom = null;
-
-  document.getElementById("messages").innerHTML = "";
-
-  showLogin();
-}
-
-
-/* BUTTONS */
-
-document.getElementById("loginBtn")
-  .addEventListener("click", login);
-
-document.getElementById("showCreateBtn")
-  .addEventListener("click", showCreate);
-
-document.getElementById("showLoginBtn")
-  .addEventListener("click", showLogin);
-
-document.getElementById("createBtn")
-  .addEventListener("click", createAccount);
-
-document.getElementById("logoutBtn")
-  .addEventListener("click", logout);
-
-document.getElementById("friendsTab")
-  .addEventListener("click", () => selectTab("friends"));
-
-document.getElementById("roomsTab")
-  .addEventListener("click", () => selectTab("rooms"));
-
-document.getElementById("profileTab")
-  .addEventListener("click", () => selectTab("profile"));
-
-document.getElementById("addFriendBtn")
-  .addEventListener("click", addFriend);
-
-document.getElementById("joinRoomBtn")
-  .addEventListener("click", joinRoom);
-
-document.getElementById("saveProfileBtn")
-  .addEventListener("click", saveProfile);
-
-document.getElementById("sendBtn")
-  .addEventListener("click", sendMessage);
-
-
-/* ENTER KEY */
-
-document.getElementById("messageInput")
-  .addEventListener("keydown", e => {
-
-    if (e.key === "Enter") {
-      e.preventDefault();
-      sendMessage();
+    if (stopDMListener) {
+      stopDMListener();
+      stopDMListener = null;
     }
 
+    if (stopRoomListener) {
+      stopRoomListener();
+      stopRoomListener = null;
+    }
+
+    currentUser = null;
+    currentDMUser = null;
+    currentRoom = null;
+
+    cancelReply();
+
+    document.getElementById("app")
+      .classList.add("hidden");
+
+    document.getElementById("authScreen")
+      .classList.remove("hidden");
+
+    document.getElementById("loginUsername")
+      .value = "";
+
+    document.getElementById("loginPassword")
+      .value = "";
+
+    document.getElementById("loginMessage")
+      .textContent = "";
+
+    showLogin();
   });
-
-document.getElementById("loginPassword")
-  .addEventListener("keydown", e => {
-    if (e.key === "Enter") login();
-  });
-
-document.getElementById("createPassword2")
-  .addEventListener("keydown", e => {
-    if (e.key === "Enter") createAccount();
-  });
-
-document.getElementById("friendSearch")
-  .addEventListener("keydown", e => {
-    if (e.key === "Enter") addFriend();
-  });
-
-document.getElementById("roomCodeInput")
-  .addEventListener("keydown", e => {
-    if (e.key === "Enter") joinRoom();
-  });
-
-
-/* START */
-
-showLogin();
 
 </script>
 
