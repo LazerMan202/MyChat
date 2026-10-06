@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MyChat</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #1e1e1e;
+            color: white;
+        }
+
+        .screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .box {
+            width: 360px;
+            max-width: 90%;
+            background: #303030;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 36px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            margin: 7px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .primary {
+            width: 100%;
+            background: #4c8bf5;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .primary:hover {
+            background: #3976df;
+        }
+
+        #chat {
+            display: none;
+            height: 100vh;
+        }
+
+        header {
+            height: 65px;
+            background: #292929;
+            border-bottom: 1px solid #444;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 18px;
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        #room-label {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        #messages {
+            height: calc(100vh - 125px);
+            overflow-y: auto;
+            padding: 18px;
+        }
+
+        .message {
+            background: #333;
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            width: fit-content;
+            max-width: 75%;
+        }
+
+        .name {
+            color: #6ea8ff;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .system {
+            color: #888;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .bottom {
+            height: 60px;
+            background: #292929;
+            padding: 10px;
+            display: flex;
+        }
+
+        #message-input {
+            margin: 0 10px 0 0;
+            flex: 1;
+        }
+
+        .send {
+            background: #4c8bf5;
+            color: white;
+        }
+
+        .logout {
+            background: #444;
+            color: white;
+        }
+
+        .error {
+            color: #ff7777;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- JOIN SCREEN -->
+
+    <div id="join-screen" class="screen">
+
+        <div class="box">
+
+            <h1>💬 MyChat</h1>
+
+            <p>Join a chat room</p>
+
+            <input
+                id="username"
+                maxlength="20"
+                placeholder="Username"
+            >
+
+            <input
+                id="room-code"
+                maxlength="4"
+                inputmode="numeric"
+                placeholder="4-digit room code"
+            >
+
+            <button
+                class="primary"
+                onclick="joinRoom()"
+            >
+                Join Room
+            </button>
+
+            <div id="error" class="error"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHAT SCREEN -->
+
+    <div id="chat">
+
+        <header>
+
+            <div>
+                <h2>💬 MyChat</h2>
+                <span id="room-label"></span>
+            </div>
+
+            <button
+                class="logout"
+                onclick="leaveRoom()"
+            >
+                Leave
+            </button>
+
+        </header>
+
+
+        <div id="messages"></div>
+
+
+        <div class="bottom">
+
+            <input
+                id="message-input"
+                maxlength="500"
+                placeholder="Type a message..."
+                onkeydown="handleEnter(event)"
+            >
+
+            <button
+                class="send"
+                onclick="sendMessage()"
+            >
+                Send
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- FIREBASE -->
+
+    <script type="module">
+
+        import { initializeApp }
+            from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+        import {
+            getDatabase,
+            ref,
+            push,
+            onChildAdded
+        } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
+
+
+        const firebaseConfig = {
+
+            apiKey: "AIzaSyDFun3M-6mzjBL8DFcAfmJzDv7blNODQd0",
+
+            authDomain:
+                "mychat-8dac2.firebaseapp.com",
+
+            databaseURL:
+                "https://mychat-8dac2-default-rtdb.firebaseio.com",
+
+            projectId:
+                "mychat-8dac2",
+
+            storageBucket:
+                "mychat-8dac2.firebasestorage.app",
+
+            messagingSenderId:
+                "906137277444",
+
+            appId:
+                "1:906137277444:web:b9d52ef4ec1f76afe09151"
+
+        };
+
+
+        const app =
+            initializeApp(firebaseConfig);
+
+        const database =
+            getDatabase(app);
+
+
+        let username = "";
+
+        let roomCode = "";
+
+        let messagesRef = null;
+
+
+        window.joinRoom = function() {
+
+            username =
+                document
+                    .getElementById("username")
+                    .value
+                    .trim();
+
+            roomCode =
+                document
+                    .getElementById("room-code")
+                    .value
+                    .trim();
+
+
+            const error =
+                document.getElementById("error");
+
+
+            if (!username) {
+
+                error.textContent =
+                    "Enter a username.";
+
+                return;
+
+            }
+
+
+            if (!/^\d{4}$/.test(roomCode)) {
+
+                error.textContent =
+                    "Room code must be exactly 4 numbers.";
+
+                return;
+
+            }
+
+
+            error.textContent = "";
+
+
+            messagesRef =
+                ref(
+                    database,
+                    "rooms/" + roomCode + "/messages"
+                );
+
+
+            document
+                .getElementById("join-screen")
+                .style.display = "none";
+
+
+            document
+                .getElementById("chat")
+                .style.display = "block";
+
+
+            document
+                .getElementById("room-label")
+                .textContent =
+                    "Room " + roomCode;
+
+
+            const messages =
+                document.getElementById("messages");
+
+            messages.innerHTML = "";
+
+
+            onChildAdded(messagesRef, (snapshot) => {
+
+                const data =
+                    snapshot.val();
+
+                displayMessage(data);
+
+            });
+
+
+            push(messagesRef, {
+
+                type: "system",
+
+                text:
+                    username + " joined the room.",
+
+                timestamp:
+                    Date.now()
+
+            });
+
+        };
+
+
+        function displayMessage(data) {
+
+            const container =
+                document.getElementById("messages");
+
+
+            if (data.type === "system") {
+
+                const system =
+                    document.createElement("div");
+
+                system.className = "system";
+
+                system.textContent = data.text;
+
+                container.appendChild(system);
+
+            } else {
+
+                const message =
+                    document.createElement("div");
+
+                message.className = "message";
+
+
+                const name =
+                    document.createElement("div");
+
+                name.className = "name";
+
+                name.textContent =
+                    data.username;
+
+
+                const text =
+                    document.createElement("div");
+
+                text.textContent =
+                    data.text;
+
+
+                message.appendChild(name);
+
+                message.appendChild(text);
+
+                container.appendChild(message);
+
+            }
+
+
+            container.scrollTop =
+                container.scrollHeight;
+
+        }
+
+
+        window.sendMessage = function() {
+
+            const input =
+                document.getElementById("message-input");
+
+            const text =
+                input.value.trim();
+
+
+            if (!text || !messagesRef) {
+
+                return;
+
+            }
+
+
+            push(messagesRef, {
+
+                type: "message",
+
+                username: username,
+
+                text: text,
+
+                timestamp: Date.now()
+
+            });
+
+
+            input.value = "";
+
+            input.focus();
+
+        };
+
+
+        window.handleEnter = function(event) {
+
+            if (event.key === "Enter") {
+
+                sendMessage();
+
+            }
+
+        };
+
+
+        window.leaveRoom = function() {
+
+            location.reload();
+
+        };
+
+    </script>
+
+</body>
+</html>
