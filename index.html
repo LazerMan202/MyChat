@@ -1,498 +1,991 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyChat</title>
 
-    <title>MyChat</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111827;
+      color: white;
+      min-height: 100vh;
+    }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #1e1e1e;
-            color: white;
-        }
+    .container {
+      width: 100%;
+      max-width: 500px;
+      margin: auto;
+      padding: 25px;
+    }
 
-        .screen {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .card {
+      background: #1f2937;
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
 
-        .box {
-            width: 360px;
-            max-width: 90%;
-            background: #303030;
-            padding: 30px;
-            border-radius: 16px;
-            text-align: center;
-        }
+    h1 {
+      text-align: center;
+      margin-top: 0;
+      font-size: 32px;
+    }
 
-        h1 {
-            margin-top: 0;
-            font-size: 36px;
-        }
+    h2 {
+      text-align: center;
+    }
 
-        input {
-            width: 100%;
-            padding: 13px;
-            margin: 7px 0;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-        }
+    input {
+      width: 100%;
+      padding: 13px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 8px;
+      background: #374151;
+      color: white;
+      font-size: 16px;
+      outline: none;
+    }
 
-        button {
-            border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
+    input:focus {
+      outline: 2px solid #60a5fa;
+    }
 
-        .primary {
-            width: 100%;
-            background: #4c8bf5;
-            color: white;
-            margin-top: 10px;
-        }
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
 
-        .primary:hover {
-            background: #3976df;
-        }
+    button:hover {
+      background: #1d4ed8;
+    }
 
-        #chat {
-            display: none;
-            height: 100vh;
-        }
+    .secondary {
+      background: #374151;
+    }
 
-        header {
-            height: 65px;
-            background: #292929;
-            border-bottom: 1px solid #444;
+    .secondary:hover {
+      background: #4b5563;
+    }
 
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+    .danger {
+      background: #dc2626;
+    }
 
-            padding: 0 18px;
-        }
+    .danger:hover {
+      background: #b91c1c;
+    }
 
-        header h2 {
-            margin: 0;
-        }
+    .hidden {
+      display: none;
+    }
 
-        #room-label {
-            color: #aaa;
-            font-size: 14px;
-        }
+    .error {
+      color: #f87171;
+      text-align: center;
+      margin-top: 12px;
+    }
 
-        #messages {
-            height: calc(100vh - 125px);
-            overflow-y: auto;
-            padding: 18px;
-        }
+    .success {
+      color: #4ade80;
+      text-align: center;
+      margin-top: 12px;
+    }
 
-        .message {
-            background: #333;
-            border-radius: 10px;
-            padding: 10px 14px;
-            margin-bottom: 10px;
-            width: fit-content;
-            max-width: 75%;
-        }
+    .room-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
 
-        .name {
-            color: #6ea8ff;
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
+    .room-header h2 {
+      margin: 0;
+      flex: 1;
+      text-align: left;
+    }
 
-        .system {
-            color: #888;
-            font-style: italic;
-            margin-bottom: 10px;
-        }
+    .logout-small {
+      width: auto;
+      padding: 8px 12px;
+      margin: 0;
+      font-size: 13px;
+    }
 
-        .bottom {
-            height: 60px;
-            background: #292929;
-            padding: 10px;
-            display: flex;
-        }
+    #messages {
+      height: 400px;
+      overflow-y: auto;
+      background: #111827;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
 
-        #message-input {
-            margin: 0 10px 0 0;
-            flex: 1;
-        }
+    .message {
+      margin-bottom: 10px;
+      padding: 9px 11px;
+      background: #374151;
+      border-radius: 10px;
+      word-wrap: break-word;
+    }
 
-        .send {
-            background: #4c8bf5;
-            color: white;
-        }
+    .message .username {
+      font-weight: bold;
+      color: #60a5fa;
+      margin-bottom: 3px;
+    }
 
-        .logout {
-            background: #444;
-            color: white;
-        }
+    .message .text {
+      color: white;
+    }
 
-        .error {
-            color: #ff7777;
-            margin-top: 10px;
-        }
-    </style>
+    .system {
+      text-align: center;
+      color: #9ca3af;
+      font-size: 13px;
+      margin: 8px 0;
+    }
+
+    .send-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .send-row input {
+      margin: 0;
+      flex: 1;
+    }
+
+    .send-row button {
+      width: auto;
+      margin: 0;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .account-info {
+      text-align: center;
+      color: #9ca3af;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .switch-text {
+      text-align: center;
+      color: #9ca3af;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .switch-button {
+      background: none;
+      color: #60a5fa;
+      padding: 0;
+      margin: 5px 0 0 0;
+      width: auto;
+      font-weight: normal;
+    }
+
+    .switch-button:hover {
+      background: none;
+      text-decoration: underline;
+    }
+
+    .warning {
+      background: #422006;
+      color: #fdba74;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-top: 12px;
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body>
 
-    <!-- JOIN SCREEN -->
+  <div class="container">
 
-    <div id="join-screen" class="screen">
+    <!-- LOGIN -->
+    <div id="loginScreen" class="card">
+      <h1>💬 MyChat</h1>
+      <h2>Log In</h2>
 
-        <div class="box">
+      <input
+        id="loginUsername"
+        type="text"
+        placeholder="Username"
+        maxlength="20"
+        autocomplete="username"
+      >
 
-            <h1>💬 MyChat</h1>
+      <input
+        id="loginPassword"
+        type="password"
+        placeholder="Password"
+        maxlength="100"
+        autocomplete="current-password"
+      >
 
-            <p>Join a chat room</p>
+      <button onclick="login()">Log In</button>
 
-            <input
-                id="username"
-                maxlength="20"
-                placeholder="Username"
-            >
+      <div id="loginError" class="error"></div>
 
-            <input
-                id="room-code"
-                maxlength="4"
-                inputmode="numeric"
-                placeholder="4-digit room code"
-            >
-
-            <button
-                class="primary"
-                onclick="joinRoom()"
-            >
-                Join Room
-            </button>
-
-            <div id="error" class="error"></div>
-
-        </div>
-
+      <div class="switch-text">
+        Don't have an account?
+        <br>
+        <button class="switch-button" onclick="showCreateAccount()">
+          Create one
+        </button>
+      </div>
     </div>
 
 
-    <!-- CHAT SCREEN -->
+    <!-- CREATE ACCOUNT -->
+    <div id="createScreen" class="card hidden">
+      <h1>💬 MyChat</h1>
+      <h2>Create Account</h2>
 
-    <div id="chat">
+      <input
+        id="createUsername"
+        type="text"
+        placeholder="Choose a username"
+        maxlength="20"
+        autocomplete="username"
+      >
 
-        <header>
+      <input
+        id="createPassword"
+        type="password"
+        placeholder="Choose a password"
+        maxlength="100"
+        autocomplete="new-password"
+      >
 
-            <div>
-                <h2>💬 MyChat</h2>
-                <span id="room-label"></span>
-            </div>
+      <input
+        id="confirmPassword"
+        type="password"
+        placeholder="Confirm password"
+        maxlength="100"
+        autocomplete="new-password"
+      >
 
-            <button
-                class="logout"
-                onclick="leaveRoom()"
-            >
-                Leave
-            </button>
+      <button onclick="createAccount()">Create Account</button>
 
-        </header>
+      <div id="createError" class="error"></div>
+      <div id="createSuccess" class="success"></div>
 
-
-        <div id="messages"></div>
-
-
-        <div class="bottom">
-
-            <input
-                id="message-input"
-                maxlength="500"
-                placeholder="Type a message..."
-                onkeydown="handleEnter(event)"
-            >
-
-            <button
-                class="send"
-                onclick="sendMessage()"
-            >
-                Send
-            </button>
-
-        </div>
-
+      <div class="switch-text">
+        Already have an account?
+        <br>
+        <button class="switch-button" onclick="showLogin()">
+          Log In
+        </button>
+      </div>
     </div>
 
 
-    <!-- FIREBASE -->
+    <!-- ROOM JOIN -->
+    <div id="roomScreen" class="card hidden">
+      <h1>💬 MyChat</h1>
 
-    <script type="module">
+      <div class="account-info">
+        Logged in as <strong id="currentUsername"></strong>
+      </div>
 
-        import { initializeApp }
-            from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+      <h2>Join a Chat Room</h2>
 
-        import {
-            getDatabase,
-            ref,
-            push,
-            onChildAdded
-        } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
+      <input
+        id="roomCode"
+        type="text"
+        inputmode="numeric"
+        placeholder="4-digit room code"
+        maxlength="4"
+      >
 
+      <button onclick="joinRoom()">Join Room</button>
 
-        const firebaseConfig = {
+      <button class="secondary" onclick="logout()">
+        Log Out
+      </button>
 
-            apiKey: "AIzaSyDFun3M-6mzjBL8DFcAfmJzDv7blNODQd0",
+      <div id="roomError" class="error"></div>
+    </div>
 
-            authDomain:
-                "mychat-8dac2.firebaseapp.com",
 
-            databaseURL:
-                "https://mychat-8dac2-default-rtdb.firebaseio.com",
+    <!-- CHAT -->
+    <div id="chatScreen" class="card hidden">
 
-            projectId:
-                "mychat-8dac2",
+      <div class="room-header">
+        <h2>💬 Room <span id="displayRoomCode"></span></h2>
+        <button class="secondary logout-small" onclick="leaveRoom()">
+          Leave
+        </button>
+      </div>
 
-            storageBucket:
-                "mychat-8dac2.firebasestorage.app",
+      <div class="account-info">
+        You are <strong id="chatUsername"></strong>
+      </div>
 
-            messagingSenderId:
-                "906137277444",
+      <div id="messages"></div>
 
-            appId:
-                "1:906137277444:web:b9d52ef4ec1f76afe09151"
+      <div class="send-row">
+        <input
+          id="messageInput"
+          type="text"
+          placeholder="Type a message..."
+          maxlength="500"
+          autocomplete="off"
+        >
 
-        };
+        <button onclick="sendMessage()">Send</button>
+      </div>
 
+      <div id="chatError" class="error"></div>
 
-        const app =
-            initializeApp(firebaseConfig);
+    </div>
 
-        const database =
-            getDatabase(app);
+  </div>
 
 
-        let username = "";
+  <!-- FIREBASE -->
+  <script type="module">
 
-        let roomCode = "";
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 
-        let messagesRef = null;
+    import {
+      getDatabase,
+      ref,
+      get,
+      set,
+      push,
+      onChildAdded
+    }
+      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
 
 
-        window.joinRoom = function() {
+    // YOUR FIREBASE CONFIG
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFun3M-6mzjBL8DFcfmJzDv7blNODQd0",
+      authDomain: "mychat-8dac2.firebaseapp.com",
+      databaseURL: "https://mychat-8dac2-default-rtdb.firebaseio.com",
+      projectId: "mychat-8dac2",
+      storageBucket: "mychat-8dac2.firebasestorage.app",
+      messagingSenderId: "906137277444",
+      appId: "1:906137277444:web:b9d52ef4ec1f76afe09151"
+    };
 
-            username =
-                document
-                    .getElementById("username")
-                    .value
-                    .trim();
 
-            roomCode =
-                document
-                    .getElementById("room-code")
-                    .value
-                    .trim();
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
 
-            const error =
-                document.getElementById("error");
+    let currentUser = null;
+    let currentRoom = null;
 
 
-            if (!username) {
+    // -------------------------
+    // SCREEN SWITCHING
+    // -------------------------
 
-                error.textContent =
-                    "Enter a username.";
+    window.showLogin = function() {
 
-                return;
+      document.getElementById("loginScreen").classList.remove("hidden");
+      document.getElementById("createScreen").classList.add("hidden");
+      document.getElementById("roomScreen").classList.add("hidden");
+      document.getElementById("chatScreen").classList.add("hidden");
 
-            }
+      document.getElementById("loginError").textContent = "";
+      document.getElementById("createError").textContent = "";
+      document.getElementById("createSuccess").textContent = "";
+    };
 
 
-            if (!/^\d{4}$/.test(roomCode)) {
+    window.showCreateAccount = function() {
 
-                error.textContent =
-                    "Room code must be exactly 4 numbers.";
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("createScreen").classList.remove("hidden");
+      document.getElementById("roomScreen").classList.add("hidden");
+      document.getElementById("chatScreen").classList.add("hidden");
 
-                return;
+      document.getElementById("createError").textContent = "";
+      document.getElementById("createSuccess").textContent = "";
+    };
 
-            }
 
+    function showRoomScreen() {
 
-            error.textContent = "";
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("createScreen").classList.add("hidden");
+      document.getElementById("roomScreen").classList.remove("hidden");
+      document.getElementById("chatScreen").classList.add("hidden");
 
+      document.getElementById("currentUsername").textContent =
+        currentUser;
+    }
 
-            messagesRef =
-                ref(
-                    database,
-                    "rooms/" + roomCode + "/messages"
-                );
 
+    // -------------------------
+    // PASSWORD HASHING
+    // -------------------------
 
-            document
-                .getElementById("join-screen")
-                .style.display = "none";
+    async function hashPassword(password) {
 
+      const encoder = new TextEncoder();
 
-            document
-                .getElementById("chat")
-                .style.display = "block";
+      const data = encoder.encode(password);
 
+      const hashBuffer =
+        await crypto.subtle.digest("SHA-256", data);
 
-            document
-                .getElementById("room-label")
-                .textContent =
-                    "Room " + roomCode;
+      const hashArray =
+        Array.from(new Uint8Array(hashBuffer));
 
+      return hashArray
+        .map(byte => byte.toString(16).padStart(2, "0"))
+        .join("");
+    }
 
-            const messages =
-                document.getElementById("messages");
 
-            messages.innerHTML = "";
+    // -------------------------
+    // CREATE ACCOUNT
+    // -------------------------
 
+    window.createAccount = async function() {
 
-            onChildAdded(messagesRef, (snapshot) => {
+      const username =
+        document.getElementById("createUsername")
+          .value.trim();
 
-                const data =
-                    snapshot.val();
+      const password =
+        document.getElementById("createPassword")
+          .value;
 
-                displayMessage(data);
+      const confirmPassword =
+        document.getElementById("confirmPassword")
+          .value;
 
-            });
+      const error =
+        document.getElementById("createError");
 
+      const success =
+        document.getElementById("createSuccess");
 
-            push(messagesRef, {
+      error.textContent = "";
+      success.textContent = "";
 
-                type: "system",
 
-                text:
-                    username + " joined the room.",
+      if (username.length < 3) {
 
-                timestamp:
-                    Date.now()
+        error.textContent =
+          "Username must be at least 3 characters.";
 
-            });
+        return;
+      }
 
-        };
 
+      if (username.length > 20) {
 
-        function displayMessage(data) {
+        error.textContent =
+          "Username must be 20 characters or less.";
 
-            const container =
-                document.getElementById("messages");
+        return;
+      }
 
 
-            if (data.type === "system") {
+      if (!/^[a-zA-Z0-9_]+$/.test(username)) {
 
-                const system =
-                    document.createElement("div");
+        error.textContent =
+          "Username can only use letters, numbers, and _.";
 
-                system.className = "system";
+        return;
+      }
 
-                system.textContent = data.text;
 
-                container.appendChild(system);
+      if (password.length < 4) {
 
-            } else {
+        error.textContent =
+          "Password must be at least 4 characters.";
 
-                const message =
-                    document.createElement("div");
+        return;
+      }
 
-                message.className = "message";
 
+      if (password !== confirmPassword) {
 
-                const name =
-                    document.createElement("div");
+        error.textContent =
+          "Passwords do not match.";
 
-                name.className = "name";
+        return;
+      }
 
-                name.textContent =
-                    data.username;
 
+      const usernameKey =
+        username.toLowerCase();
 
-                const text =
-                    document.createElement("div");
 
-                text.textContent =
-                    data.text;
+      try {
 
+        const userRef =
+          ref(db, "users/" + usernameKey);
 
-                message.appendChild(name);
+        const snapshot =
+          await get(userRef);
 
-                message.appendChild(text);
 
-                container.appendChild(message);
+        if (snapshot.exists()) {
 
-            }
+          error.textContent =
+            "That username is already taken.";
 
-
-            container.scrollTop =
-                container.scrollHeight;
-
+          return;
         }
 
 
-        window.sendMessage = function() {
-
-            const input =
-                document.getElementById("message-input");
-
-            const text =
-                input.value.trim();
+        const passwordHash =
+          await hashPassword(password);
 
 
-            if (!text || !messagesRef) {
+        await set(userRef, {
 
-                return;
+          username: username,
 
-            }
+          passwordHash: passwordHash
 
-
-            push(messagesRef, {
-
-                type: "message",
-
-                username: username,
-
-                text: text,
-
-                timestamp: Date.now()
-
-            });
+        });
 
 
-            input.value = "";
+        success.textContent =
+          "Account created! You can now log in.";
 
-            input.focus();
+        document.getElementById("createUsername").value = "";
+        document.getElementById("createPassword").value = "";
+        document.getElementById("confirmPassword").value = "";
 
-        };
+      }
+
+      catch (err) {
+
+        console.error(err);
+
+        error.textContent =
+          "Something went wrong. Please try again.";
+
+      }
+
+    };
 
 
-        window.handleEnter = function(event) {
+    // -------------------------
+    // LOGIN
+    // -------------------------
 
-            if (event.key === "Enter") {
+    window.login = async function() {
 
-                sendMessage();
+      const username =
+        document.getElementById("loginUsername")
+          .value.trim();
 
-            }
+      const password =
+        document.getElementById("loginPassword")
+          .value;
 
-        };
+      const error =
+        document.getElementById("loginError");
+
+      error.textContent = "";
 
 
-        window.leaveRoom = function() {
+      if (!username || !password) {
 
-            location.reload();
+        error.textContent =
+          "Enter your username and password.";
 
-        };
+        return;
+      }
 
-    </script>
+
+      try {
+
+        const usernameKey =
+          username.toLowerCase();
+
+        const userRef =
+          ref(db, "users/" + usernameKey);
+
+        const snapshot =
+          await get(userRef);
+
+
+        if (!snapshot.exists()) {
+
+          error.textContent =
+            "Username or password is incorrect.";
+
+          return;
+        }
+
+
+        const account =
+          snapshot.val();
+
+
+        const passwordHash =
+          await hashPassword(password);
+
+
+        if (passwordHash !== account.passwordHash) {
+
+          error.textContent =
+            "Username or password is incorrect.";
+
+          return;
+        }
+
+
+        currentUser =
+          account.username;
+
+
+        document.getElementById("loginPassword").value = "";
+
+        showRoomScreen();
+
+      }
+
+      catch (err) {
+
+        console.error(err);
+
+        error.textContent =
+          "Something went wrong. Please try again.";
+
+      }
+
+    };
+
+
+    // -------------------------
+    // LOG OUT
+    // -------------------------
+
+    window.logout = function() {
+
+      currentUser = null;
+      currentRoom = null;
+
+      document.getElementById("loginUsername").value = "";
+      document.getElementById("loginPassword").value = "";
+      document.getElementById("roomCode").value = "";
+
+      showLogin();
+
+    };
+
+
+    // -------------------------
+    // JOIN ROOM
+    // -------------------------
+
+    window.joinRoom = async function() {
+
+      const code =
+        document.getElementById("roomCode")
+          .value.trim();
+
+      const error =
+        document.getElementById("roomError");
+
+      error.textContent = "";
+
+
+      if (!/^\d{4}$/.test(code)) {
+
+        error.textContent =
+          "Room code must be exactly 4 digits.";
+
+        return;
+      }
+
+
+      currentRoom = code;
+
+
+      document.getElementById("displayRoomCode")
+        .textContent = code;
+
+      document.getElementById("chatUsername")
+        .textContent = currentUser;
+
+
+      document.getElementById("roomScreen")
+        .classList.add("hidden");
+
+      document.getElementById("chatScreen")
+        .classList.remove("hidden");
+
+
+      document.getElementById("messages").innerHTML = "";
+
+
+      const messagesRef =
+        ref(db, "rooms/" + code + "/messages");
+
+
+      onChildAdded(messagesRef, (snapshot) => {
+
+        const message =
+          snapshot.val();
+
+        displayMessage(message);
+
+      });
+
+
+      await addSystemMessage(
+        currentUser + " joined the room."
+      );
+
+    };
+
+
+    // -------------------------
+    // DISPLAY MESSAGE
+    // -------------------------
+
+    function displayMessage(message) {
+
+      const messages =
+        document.getElementById("messages");
+
+      const div =
+        document.createElement("div");
+
+      div.className = "message";
+
+
+      const username =
+        document.createElement("div");
+
+      username.className = "username";
+
+      username.textContent =
+        message.username;
+
+
+      const text =
+        document.createElement("div");
+
+      text.className = "text";
+
+      text.textContent =
+        message.text;
+
+
+      div.appendChild(username);
+      div.appendChild(text);
+
+      messages.appendChild(div);
+
+
+      messages.scrollTop =
+        messages.scrollHeight;
+
+    }
+
+
+    // -------------------------
+    // SYSTEM MESSAGE
+    // -------------------------
+
+    async function addSystemMessage(text) {
+
+      if (!currentRoom) return;
+
+      const messagesRef =
+        ref(db, "rooms/" + currentRoom + "/messages");
+
+      await push(messagesRef, {
+
+        username: "MyChat",
+        text: text,
+        system: true,
+        timestamp: Date.now()
+
+      });
+
+    }
+
+
+    // -------------------------
+    // SEND MESSAGE
+    // -------------------------
+
+    window.sendMessage = async function() {
+
+      const input =
+        document.getElementById("messageInput");
+
+      const error =
+        document.getElementById("chatError");
+
+      const text =
+        input.value.trim();
+
+      error.textContent = "";
+
+
+      if (!text) return;
+
+
+      if (!currentRoom || !currentUser) {
+
+        error.textContent =
+          "You are not in a chat room.";
+
+        return;
+      }
+
+
+      try {
+
+        const messagesRef =
+          ref(db, "rooms/" + currentRoom + "/messages");
+
+
+        await push(messagesRef, {
+
+          username: currentUser,
+
+          text: text,
+
+          timestamp: Date.now()
+
+        });
+
+
+        input.value = "";
+
+        input.focus();
+
+      }
+
+      catch (err) {
+
+        console.error(err);
+
+        error.textContent =
+          "Message could not be sent.";
+
+      }
+
+    };
+
+
+    // -------------------------
+    // LEAVE ROOM
+    // -------------------------
+
+    window.leaveRoom = async function() {
+
+      if (currentRoom && currentUser) {
+
+        try {
+
+          await addSystemMessage(
+            currentUser + " left the room."
+          );
+
+        }
+
+        catch (err) {
+
+          console.error(err);
+
+        }
+
+      }
+
+
+      currentRoom = null;
+
+      document.getElementById("messages")
+        .innerHTML = "";
+
+      document.getElementById("roomCode")
+        .value = "";
+
+      showRoomScreen();
+
+    };
+
+
+    // -------------------------
+    // ENTER KEY SUPPORT
+    // -------------------------
+
+    document.addEventListener("keydown", function(event) {
+
+      if (event.key !== "Enter") return;
+
+
+      if (
+        !document.getElementById("loginScreen")
+          .classList.contains("hidden")
+      ) {
+
+        login();
+
+      }
+
+      else if (
+        !document.getElementById("createScreen")
+          .classList.contains("hidden")
+      ) {
+
+        createAccount();
+
+      }
+
+      else if (
+        !document.getElementById("roomScreen")
+          .classList.contains("hidden")
+      ) {
+
+        joinRoom();
+
+      }
+
+      else if (
+        !document.getElementById("chatScreen")
+          .classList.contains("hidden")
+      ) {
+
+        sendMessage();
+
+      }
+
+    });
+
+  </script>
 
 </body>
 </html>
