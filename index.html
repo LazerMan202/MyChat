@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +18,7 @@ body {
 }
 
 .container {
-  max-width: 650px;
+  max-width: 700px;
   margin: auto;
   padding: 20px;
 }
@@ -40,7 +39,8 @@ h2 {
   margin-top: 0;
 }
 
-input {
+input,
+textarea {
   width: 100%;
   padding: 13px;
   margin: 7px 0;
@@ -49,6 +49,12 @@ input {
   background: #374151;
   color: white;
   font-size: 16px;
+  font-family: Arial, sans-serif;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 90px;
 }
 
 button {
@@ -78,6 +84,10 @@ button:hover {
 
 .danger {
   background: #dc2626;
+}
+
+.danger:hover {
+  background: #b91c1c;
 }
 
 .hidden {
@@ -150,8 +160,8 @@ button:hover {
 }
 
 .avatar {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: #2563eb;
   display: flex;
@@ -161,8 +171,13 @@ button:hover {
   flex-shrink: 0;
 }
 
+.avatar.online {
+  box-shadow: 0 0 0 3px #22c55e;
+}
+
 .item-info {
   flex: 1;
+  min-width: 0;
 }
 
 .item-name {
@@ -173,6 +188,10 @@ button:hover {
   color: #9ca3af;
   font-size: 13px;
   margin-top: 3px;
+}
+
+.online-text {
+  color: #4ade80;
 }
 
 .item-button {
@@ -186,6 +205,17 @@ button:hover {
   text-align: center;
   color: #9ca3af;
   padding: 20px;
+}
+
+.badge {
+  background: #ef4444;
+  border-radius: 20px;
+  min-width: 23px;
+  height: 23px;
+  padding: 3px 7px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 .dm-header,
@@ -221,7 +251,7 @@ button:hover {
 
 .dm-message {
   display: flex;
-  margin-bottom: 9px;
+  margin-bottom: 10px;
 }
 
 .dm-message.mine {
@@ -233,6 +263,7 @@ button:hover {
   padding: 10px 13px;
   border-radius: 15px;
   background: #374151;
+  position: relative;
 }
 
 .mine .bubble {
@@ -252,11 +283,20 @@ button:hover {
 .bubble-time {
   font-size: 10px;
   color: #9ca3af;
-  margin-top: 4px;
+  margin-top: 5px;
 }
 
 .mine .bubble-time {
   color: #bfdbfe;
+}
+
+.delete-message {
+  background: none;
+  color: #fca5a5;
+  font-size: 11px;
+  padding: 2px;
+  margin: 3px 0 0;
+  width: auto;
 }
 
 .message {
@@ -286,6 +326,56 @@ button:hover {
   width: auto;
   margin: 0;
 }
+
+.profile-box {
+  background: #374151;
+  border-radius: 12px;
+  padding: 18px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.big-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.profile-username {
+  font-size: 21px;
+  font-weight: bold;
+}
+
+.profile-status {
+  color: #4ade80;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.profile-bio {
+  color: #d1d5db;
+  margin-top: 12px;
+  white-space: pre-wrap;
+}
+
+.settings-box {
+  background: #374151;
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.divider {
+  height: 1px;
+  background: #4b5563;
+  margin: 18px 0;
+}
 </style>
 </head>
 
@@ -293,200 +383,323 @@ button:hover {
 
 <div class="container">
 
-  <!-- LOGIN -->
-  <div id="loginScreen" class="card">
-    <h1>💬 MyChat</h1>
-    <h2>Log In</h2>
+<!-- LOGIN -->
 
-    <input id="loginUsername"
-           type="text"
-           placeholder="Username"
-           maxlength="20">
+<div id="loginScreen" class="card">
 
-    <input id="loginPassword"
-           type="password"
-           placeholder="Password"
-           maxlength="100">
+<h1>💬 MyChat</h1>
 
-    <button id="loginButton">Log In</button>
+<h2>Log In</h2>
 
-    <div id="loginError" class="error"></div>
+<input id="loginUsername"
+       type="text"
+       placeholder="Username"
+       maxlength="20">
 
-    <div class="small-text">
-      Don't have an account?<br>
-      <button id="showCreateButton" class="link-button">
-        Create one
-      </button>
-    </div>
-  </div>
+<input id="loginPassword"
+       type="password"
+       placeholder="Password"
+       maxlength="100">
 
+<button id="loginButton">
+Log In
+</button>
 
-  <!-- CREATE ACCOUNT -->
-  <div id="createScreen" class="card hidden">
-    <h1>💬 MyChat</h1>
-    <h2>Create Account</h2>
+<div id="loginError" class="error"></div>
 
-    <input id="createUsername"
-           type="text"
-           placeholder="Choose a username"
-           maxlength="20">
+<div class="small-text">
+Don't have an account?<br>
 
-    <input id="createPassword"
-           type="password"
-           placeholder="Choose a password"
-           maxlength="100">
+<button id="showCreateButton" class="link-button">
+Create one
+</button>
 
-    <input id="confirmPassword"
-           type="password"
-           placeholder="Confirm password"
-           maxlength="100">
+</div>
 
-    <button id="createButton">Create Account</button>
-
-    <div id="createError" class="error"></div>
-    <div id="createSuccess" class="success"></div>
-
-    <div class="small-text">
-      Already have an account?<br>
-      <button id="showLoginButton" class="link-button">
-        Log In
-      </button>
-    </div>
-  </div>
+</div>
 
 
-  <!-- HOME -->
-  <div id="homeScreen" class="card hidden">
+<!-- CREATE ACCOUNT -->
 
-    <h1>💬 MyChat</h1>
+<div id="createScreen" class="card hidden">
 
-    <div class="account-info">
-      Logged in as <strong id="homeUsername"></strong>
-    </div>
+<h1>💬 MyChat</h1>
 
-    <div class="tabs">
-      <button id="friendsTab">👥 Friends</button>
-      <button id="roomsTab">💬 Rooms</button>
-    </div>
+<h2>Create Account</h2>
 
-    <!-- FRIENDS -->
-    <div id="friendsContent">
+<input id="createUsername"
+       type="text"
+       placeholder="Choose a username"
+       maxlength="20">
 
-      <h2>Friends</h2>
+<input id="createPassword"
+       type="password"
+       placeholder="Choose a password"
+       maxlength="100">
 
-      <input id="friendSearch"
-             type="text"
-             placeholder="Enter username"
-             maxlength="20">
+<input id="confirmPassword"
+       type="password"
+       placeholder="Confirm password"
+       maxlength="100">
 
-      <button id="addFriendButton">
-        Add Friend
-      </button>
+<button id="createButton">
+Create Account
+</button>
 
-      <div id="friendError" class="error"></div>
-      <div id="friendSuccess" class="success"></div>
+<div id="createError" class="error"></div>
+<div id="createSuccess" class="success"></div>
 
-      <div class="section-title">Friend Requests</div>
-      <div id="requestsList"></div>
+<div class="small-text">
 
-      <div class="section-title">Your Friends</div>
-      <div id="friendsList"></div>
+Already have an account?<br>
 
-      <div class="section-title">Direct Messages</div>
-      <div id="dmList"></div>
+<button id="showLoginButton" class="link-button">
+Log In
+</button>
 
-      <button id="logoutButton" class="secondary">
-        Log Out
-      </button>
+</div>
 
-    </div>
+</div>
 
 
-    <!-- ROOMS -->
-    <div id="roomsContent" class="hidden">
+<!-- HOME -->
 
-      <h2>Join a Chat Room</h2>
+<div id="homeScreen" class="card hidden">
 
-      <input id="roomCode"
-             type="text"
-             inputmode="numeric"
-             placeholder="4-digit room code"
-             maxlength="4">
+<h1>💬 MyChat</h1>
 
-      <button id="joinRoomButton">
-        Join Room
-      </button>
+<div class="account-info">
+Logged in as <strong id="homeUsername"></strong>
+</div>
 
-      <div id="roomError" class="error"></div>
+<div class="tabs">
 
-      <button id="logoutButton2" class="secondary">
-        Log Out
-      </button>
+<button id="friendsTab">
+👥 Friends
+</button>
 
-    </div>
+<button id="roomsTab">
+💬 Rooms
+</button>
 
-  </div>
+<button id="profileTab">
+👤 Profile
+</button>
 
-
-  <!-- DM -->
-  <div id="dmScreen" class="card hidden">
-
-    <div class="dm-header">
-      <button id="backDMButton" class="secondary">←</button>
-      <h2 id="dmTitle"></h2>
-    </div>
-
-    <div id="dmMessages"></div>
-
-    <div class="send-row">
-      <input id="dmInput"
-             type="text"
-             placeholder="Type a message..."
-             maxlength="500">
-
-      <button id="sendDMButton">Send</button>
-    </div>
-
-    <div id="dmError" class="error"></div>
-
-  </div>
+</div>
 
 
-  <!-- ROOM CHAT -->
-  <div id="chatScreen" class="card hidden">
+<!-- FRIENDS -->
 
-    <div class="room-header">
-      <h2>💬 Room <span id="displayRoomCode"></span></h2>
-      <button id="leaveRoomButton" class="secondary">
-        Leave
-      </button>
-    </div>
+<div id="friendsContent">
 
-    <div class="account-info">
-      You are <strong id="chatUsername"></strong>
-    </div>
+<h2>Friends</h2>
 
-    <div id="messages"></div>
+<input id="friendSearch"
+       type="text"
+       placeholder="Enter username"
+       maxlength="20">
 
-    <div class="send-row">
-      <input id="messageInput"
-             type="text"
-             placeholder="Type a message..."
-             maxlength="500">
+<button id="addFriendButton">
+Add Friend
+</button>
 
-      <button id="sendMessageButton">Send</button>
-    </div>
+<div id="friendError" class="error"></div>
+<div id="friendSuccess" class="success"></div>
 
-    <div id="chatError" class="error"></div>
+<div class="section-title">
+Friend Requests
+</div>
 
-  </div>
+<div id="requestsList"></div>
+
+<div class="section-title">
+Your Friends
+</div>
+
+<div id="friendsList"></div>
+
+<div class="section-title">
+Direct Messages
+</div>
+
+<div id="dmList"></div>
+
+<button id="logoutButton" class="secondary">
+Log Out
+</button>
+
+</div>
+
+
+<!-- ROOMS -->
+
+<div id="roomsContent" class="hidden">
+
+<h2>Join a Chat Room</h2>
+
+<input id="roomCode"
+       type="text"
+       inputmode="numeric"
+       placeholder="4-digit room code"
+       maxlength="4">
+
+<button id="joinRoomButton">
+Join Room
+</button>
+
+<div id="roomError" class="error"></div>
+
+<button id="logoutButton2" class="secondary">
+Log Out
+</button>
+
+</div>
+
+
+<!-- PROFILE -->
+
+<div id="profileContent" class="hidden">
+
+<h2>Your Profile</h2>
+
+<div class="profile-box">
+
+<div id="profileAvatar"
+     class="big-avatar">
+?
+</div>
+
+<div id="profileDisplayName"
+     class="profile-username">
+</div>
+
+<div id="profileOnline"
+     class="profile-status">
+● Online
+</div>
+
+<div id="profileBio"
+     class="profile-bio">
+</div>
+
+</div>
+
+<div class="settings-box">
+
+<h3>Edit Profile</h3>
+
+<input id="displayNameInput"
+       type="text"
+       placeholder="Display name"
+       maxlength="30">
+
+<textarea id="bioInput"
+          placeholder="Write a short bio..."
+          maxlength="200"></textarea>
+
+<button id="saveProfileButton">
+Save Profile
+</button>
+
+<div id="profileError" class="error"></div>
+<div id="profileSuccess" class="success"></div>
+
+</div>
+
+<button id="logoutButton3"
+        class="secondary">
+Log Out
+</button>
+
+</div>
+
+</div>
+
+
+<!-- DM -->
+
+<div id="dmScreen" class="card hidden">
+
+<div class="dm-header">
+
+<button id="backDMButton"
+        class="secondary">
+←
+</button>
+
+<h2 id="dmTitle"></h2>
+
+</div>
+
+<div id="dmMessages"></div>
+
+<div class="send-row">
+
+<input id="dmInput"
+       type="text"
+       placeholder="Type a message..."
+       maxlength="500">
+
+<button id="sendDMButton">
+Send
+</button>
+
+</div>
+
+<div id="dmError" class="error"></div>
+
+</div>
+
+
+<!-- ROOM CHAT -->
+
+<div id="chatScreen" class="card hidden">
+
+<div class="room-header">
+
+<h2>
+💬 Room <span id="displayRoomCode"></span>
+</h2>
+
+<button id="leaveRoomButton"
+        class="secondary">
+Leave
+</button>
+
+</div>
+
+<div class="account-info">
+You are <strong id="chatUsername"></strong>
+</div>
+
+<div id="messages"></div>
+
+<div class="send-row">
+
+<input id="messageInput"
+       type="text"
+       placeholder="Type a message..."
+       maxlength="500">
+
+<button id="sendMessageButton">
+Send
+</button>
+
+</div>
+
+<div id="chatError" class="error"></div>
+
+</div>
 
 </div>
 
 
 <script type="module">
 
-import { initializeApp }
+import {
+  initializeApp
+}
 from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 
 import {
@@ -495,7 +708,11 @@ import {
   get,
   set,
   push,
-  onChildAdded
+  remove,
+  onChildAdded,
+  onValue,
+  onDisconnect,
+  serverTimestamp
 }
 from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
 
@@ -503,83 +720,127 @@ from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
 /* FIREBASE */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDFun3M-6mzjBL8DFcfmJzDv7blNODQd0",
-  authDomain: "mychat-8dac2.firebaseapp.com",
-  databaseURL: "https://mychat-8dac2-default-rtdb.firebaseio.com",
-  projectId: "mychat-8dac2",
-  storageBucket: "mychat-8dac2.firebasestorage.app",
-  messagingSenderId: "906137277444",
-  appId: "1:906137277444:web:b9d52ef4ec1f76afe09151"
+
+  apiKey:
+  "AIzaSyDFun3M-6mzjBL8DFcfmJzDv7blNODQd0",
+
+  authDomain:
+  "mychat-8dac2.firebaseapp.com",
+
+  databaseURL:
+  "https://mychat-8dac2-default-rtdb.firebaseio.com",
+
+  projectId:
+  "mychat-8dac2",
+
+  storageBucket:
+  "mychat-8dac2.firebasestorage.app",
+
+  messagingSenderId:
+  "906137277444",
+
+  appId:
+  "1:906137277444:web:b9d52ef4ec1f76afe09151"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
 
 
-/* VARIABLES */
+/* STATE */
 
 let currentUser = null;
 let currentRoom = null;
 let currentDMUser = null;
 
-let roomListener = null;
-let dmListener = null;
+let stopDMListener = null;
+let stopRoomListener = null;
+let stopOnlineListener = null;
 
 
 /* HELPERS */
 
 function key(username) {
+
   return username.toLowerCase();
+
 }
+
 
 function hideScreens() {
-  document.getElementById("loginScreen").classList.add("hidden");
-  document.getElementById("createScreen").classList.add("hidden");
-  document.getElementById("homeScreen").classList.add("hidden");
-  document.getElementById("dmScreen").classList.add("hidden");
-  document.getElementById("chatScreen").classList.add("hidden");
+
+  document
+  .getElementById("loginScreen")
+  .classList.add("hidden");
+
+  document
+  .getElementById("createScreen")
+  .classList.add("hidden");
+
+  document
+  .getElementById("homeScreen")
+  .classList.add("hidden");
+
+  document
+  .getElementById("dmScreen")
+  .classList.add("hidden");
+
+  document
+  .getElementById("chatScreen")
+  .classList.add("hidden");
+
 }
 
 
-/* LOGIN SCREEN */
-
-function showLogin() {
-  hideScreens();
-
-  document.getElementById("loginScreen")
-    .classList.remove("hidden");
-
-  document.getElementById("loginError")
-    .textContent = "";
-}
-
-function showCreate() {
-  hideScreens();
-
-  document.getElementById("createScreen")
-    .classList.remove("hidden");
-
-  document.getElementById("createError")
-    .textContent = "";
-
-  document.getElementById("createSuccess")
-    .textContent = "";
-}
-
-
-/* HASH PASSWORD */
+/* PASSWORD HASH */
 
 async function hashPassword(password) {
 
   const data =
-    new TextEncoder().encode(password);
+  new TextEncoder().encode(password);
 
   const hash =
-    await crypto.subtle.digest("SHA-256", data);
+  await crypto.subtle.digest(
+    "SHA-256",
+    data
+  );
 
-  return Array.from(new Uint8Array(hash))
-    .map(x => x.toString(16).padStart(2, "0"))
+  return Array
+    .from(new Uint8Array(hash))
+    .map(
+      x =>
+      x.toString(16).padStart(2, "0")
+    )
     .join("");
+
+}
+
+
+/* LOGIN / CREATE SCREENS */
+
+function showLogin() {
+
+  hideScreens();
+
+  document
+  .getElementById("loginScreen")
+  .classList.remove("hidden");
+
+}
+
+
+function showCreate() {
+
+  hideScreens();
+
+  document
+  .getElementById("createScreen")
+  .classList.remove("hidden");
+
 }
 
 
@@ -588,94 +849,129 @@ async function hashPassword(password) {
 async function createAccount() {
 
   const username =
-    document.getElementById("createUsername")
-      .value.trim();
+  document
+  .getElementById("createUsername")
+  .value
+  .trim();
 
   const password =
-    document.getElementById("createPassword")
-      .value;
+  document
+  .getElementById("createPassword")
+  .value;
 
   const confirm =
-    document.getElementById("confirmPassword")
-      .value;
+  document
+  .getElementById("confirmPassword")
+  .value;
 
   const error =
-    document.getElementById("createError");
+  document
+  .getElementById("createError");
 
   const success =
-    document.getElementById("createSuccess");
-
+  document
+  .getElementById("createSuccess");
 
   error.textContent = "";
   success.textContent = "";
 
-
   if (username.length < 3) {
+
     error.textContent =
-      "Username must be at least 3 characters.";
+    "Username must be at least 3 characters.";
+
     return;
   }
 
   if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+
     error.textContent =
-      "Username can only contain letters, numbers, and _.";
+    "Username can only contain letters, numbers, and _.";
+
     return;
   }
 
   if (password.length < 4) {
+
     error.textContent =
-      "Password must be at least 4 characters.";
+    "Password must be at least 4 characters.";
+
     return;
   }
 
   if (password !== confirm) {
+
     error.textContent =
-      "Passwords do not match.";
+    "Passwords do not match.";
+
     return;
   }
 
 
   try {
 
-    const usernameKey = key(username);
+    const usernameKey =
+    key(username);
 
     const userRef =
-      ref(db, "users/" + usernameKey);
+    ref(
+      db,
+      "users/" + usernameKey
+    );
 
     const existing =
-      await get(userRef);
+    await get(userRef);
 
     if (existing.exists()) {
+
       error.textContent =
-        "That username is already taken.";
+      "That username is already taken.";
+
       return;
     }
 
 
     const passwordHash =
-      await hashPassword(password);
+    await hashPassword(password);
 
 
-    await set(userRef, {
-      username: username,
-      passwordHash: passwordHash
-    });
+    await set(
+      userRef,
+      {
+        username: username,
+        passwordHash: passwordHash,
+        displayName: username,
+        bio: "",
+        online: false
+      }
+    );
 
 
     success.textContent =
-      "Account created! You can now log in.";
+    "Account created! You can now log in.";
 
-    document.getElementById("createUsername").value = "";
-    document.getElementById("createPassword").value = "";
-    document.getElementById("confirmPassword").value = "";
+    document
+    .getElementById("createUsername")
+    .value = "";
 
-  } catch (errorObject) {
+    document
+    .getElementById("createPassword")
+    .value = "";
 
-    console.error(errorObject);
+    document
+    .getElementById("confirmPassword")
+    .value = "";
+
+
+  } catch (e) {
+
+    console.error(e);
 
     error.textContent =
-      "Could not create account.";
+    "Could not create account.";
+
   }
+
 }
 
 
@@ -684,23 +980,28 @@ async function createAccount() {
 async function login() {
 
   const username =
-    document.getElementById("loginUsername")
-      .value.trim();
+  document
+  .getElementById("loginUsername")
+  .value
+  .trim();
 
   const password =
-    document.getElementById("loginPassword")
-      .value;
+  document
+  .getElementById("loginPassword")
+  .value;
 
   const error =
-    document.getElementById("loginError");
-
+  document
+  .getElementById("loginError");
 
   error.textContent = "";
 
 
   if (!username || !password) {
+
     error.textContent =
-      "Enter your username and password.";
+    "Enter your username and password.";
+
     return;
   }
 
@@ -708,47 +1009,88 @@ async function login() {
   try {
 
     const userRef =
-      ref(db, "users/" + key(username));
+    ref(
+      db,
+      "users/" + key(username)
+    );
 
     const snapshot =
-      await get(userRef);
+    await get(userRef);
 
 
     if (!snapshot.exists()) {
+
       error.textContent =
-        "Username or password is incorrect.";
+      "Username or password is incorrect.";
+
       return;
     }
 
 
     const account =
-      snapshot.val();
+    snapshot.val();
 
     const passwordHash =
-      await hashPassword(password);
+    await hashPassword(password);
 
 
-    if (passwordHash !== account.passwordHash) {
+    if (
+      passwordHash !==
+      account.passwordHash
+    ) {
+
       error.textContent =
-        "Username or password is incorrect.";
+      "Username or password is incorrect.";
+
       return;
     }
 
 
-    currentUser = account.username;
+    currentUser =
+    account.username;
 
-    document.getElementById("loginPassword")
-      .value = "";
+
+    document
+    .getElementById("loginPassword")
+    .value = "";
+
+
+    await set(
+      ref(
+        db,
+        "users/" +
+        key(currentUser) +
+        "/online"
+      ),
+      true
+    );
+
+
+    const onlineRef =
+    ref(
+      db,
+      "users/" +
+      key(currentUser) +
+      "/online"
+    );
+
+
+    onDisconnect(onlineRef)
+    .set(false);
+
 
     showHome();
 
-  } catch (errorObject) {
 
-    console.error(errorObject);
+  } catch (e) {
+
+    console.error(e);
 
     error.textContent =
-      "Could not log in. Please try again.";
+    "Could not log in. Please try again.";
+
   }
+
 }
 
 
@@ -758,17 +1100,21 @@ function showHome() {
 
   hideScreens();
 
-  document.getElementById("homeScreen")
-    .classList.remove("hidden");
+  document
+  .getElementById("homeScreen")
+  .classList.remove("hidden");
 
-  document.getElementById("homeUsername")
-    .textContent = currentUser;
+  document
+  .getElementById("homeUsername")
+  .textContent = currentUser;
 
   showFriendsTab();
 
+  loadProfile();
   loadFriends();
   loadRequests();
   loadConversations();
+
 }
 
 
@@ -776,32 +1122,232 @@ function showHome() {
 
 function showFriendsTab() {
 
-  document.getElementById("friendsContent")
-    .classList.remove("hidden");
+  document
+  .getElementById("friendsContent")
+  .classList.remove("hidden");
 
-  document.getElementById("roomsContent")
-    .classList.add("hidden");
+  document
+  .getElementById("roomsContent")
+  .classList.add("hidden");
 
-  document.getElementById("friendsTab")
-    .classList.add("active");
+  document
+  .getElementById("profileContent")
+  .classList.add("hidden");
 
-  document.getElementById("roomsTab")
-    .classList.remove("active");
+  document
+  .getElementById("friendsTab")
+  .classList.add("active");
+
+  document
+  .getElementById("roomsTab")
+  .classList.remove("active");
+
+  document
+  .getElementById("profileTab")
+  .classList.remove("active");
+
 }
+
 
 function showRoomsTab() {
 
-  document.getElementById("friendsContent")
-    .classList.add("hidden");
+  document
+  .getElementById("friendsContent")
+  .classList.add("hidden");
 
-  document.getElementById("roomsContent")
-    .classList.remove("hidden");
+  document
+  .getElementById("roomsContent")
+  .classList.remove("hidden");
 
-  document.getElementById("friendsTab")
-    .classList.remove("active");
+  document
+  .getElementById("profileContent")
+  .classList.add("hidden");
 
-  document.getElementById("roomsTab")
-    .classList.add("active");
+  document
+  .getElementById("friendsTab")
+  .classList.remove("active");
+
+  document
+  .getElementById("roomsTab")
+  .classList.add("active");
+
+  document
+  .getElementById("profileTab")
+  .classList.remove("active");
+
+}
+
+
+function showProfileTab() {
+
+  document
+  .getElementById("friendsContent")
+  .classList.add("hidden");
+
+  document
+  .getElementById("roomsContent")
+  .classList.add("hidden");
+
+  document
+  .getElementById("profileContent")
+  .classList.remove("hidden");
+
+  document
+  .getElementById("friendsTab")
+  .classList.remove("active");
+
+  document
+  .getElementById("roomsTab")
+  .classList.remove("active");
+
+  document
+  .getElementById("profileTab")
+  .classList.add("active");
+
+  loadProfile();
+
+}
+
+
+/* PROFILE */
+
+async function loadProfile() {
+
+  if (!currentUser) return;
+
+
+  const snapshot =
+  await get(
+    ref(
+      db,
+      "users/" +
+      key(currentUser)
+    )
+  );
+
+
+  if (!snapshot.exists()) return;
+
+
+  const user =
+  snapshot.val();
+
+
+  const displayName =
+  user.displayName ||
+  user.username;
+
+
+  document
+  .getElementById("profileDisplayName")
+  .textContent =
+  displayName;
+
+
+  document
+  .getElementById("profileAvatar")
+  .textContent =
+  displayName
+  .charAt(0)
+  .toUpperCase();
+
+
+  document
+  .getElementById("profileBio")
+  .textContent =
+  user.bio || "No bio yet.";
+
+
+  document
+  .getElementById("displayNameInput")
+  .value =
+  user.displayName ||
+  user.username;
+
+
+  document
+  .getElementById("bioInput")
+  .value =
+  user.bio || "";
+
+}
+
+
+async function saveProfile() {
+
+  const displayName =
+  document
+  .getElementById("displayNameInput")
+  .value
+  .trim();
+
+  const bio =
+  document
+  .getElementById("bioInput")
+  .value
+  .trim();
+
+  const error =
+  document
+  .getElementById("profileError");
+
+  const success =
+  document
+  .getElementById("profileSuccess");
+
+
+  error.textContent = "";
+  success.textContent = "";
+
+
+  if (!displayName) {
+
+    error.textContent =
+    "Display name can't be empty.";
+
+    return;
+  }
+
+
+  try {
+
+    await set(
+      ref(
+        db,
+        "users/" +
+        key(currentUser) +
+        "/displayName"
+      ),
+      displayName
+    );
+
+
+    await set(
+      ref(
+        db,
+        "users/" +
+        key(currentUser) +
+        "/bio"
+      ),
+      bio
+    );
+
+
+    success.textContent =
+    "Profile saved!";
+
+    loadProfile();
+
+
+  } catch (e) {
+
+    console.error(e);
+
+    error.textContent =
+    "Couldn't save profile.";
+
+  }
+
 }
 
 
@@ -810,14 +1356,18 @@ function showRoomsTab() {
 async function addFriend() {
 
   const username =
-    document.getElementById("friendSearch")
-      .value.trim();
+  document
+  .getElementById("friendSearch")
+  .value
+  .trim();
 
   const error =
-    document.getElementById("friendError");
+  document
+  .getElementById("friendError");
 
   const success =
-    document.getElementById("friendSuccess");
+  document
+  .getElementById("friendSuccess");
 
 
   error.textContent = "";
@@ -825,54 +1375,68 @@ async function addFriend() {
 
 
   if (!username) {
+
     error.textContent =
-      "Enter a username.";
+    "Enter a username.";
+
     return;
   }
 
 
-  if (key(username) === key(currentUser)) {
+  if (
+    key(username) ===
+    key(currentUser)
+  ) {
+
     error.textContent =
-      "You can't add yourself.";
+    "You can't add yourself.";
+
     return;
   }
 
 
   try {
 
-    const targetRef =
-      ref(db, "users/" + key(username));
-
     const target =
-      await get(targetRef);
+    await get(
+      ref(
+        db,
+        "users/" +
+        key(username)
+      )
+    );
 
 
     if (!target.exists()) {
+
       error.textContent =
-        "That user doesn't exist.";
+      "That user doesn't exist.";
+
       return;
     }
 
 
     const targetUser =
-      target.val().username;
+    target.val().username;
 
 
     const alreadyFriend =
-      await get(
-        ref(
-          db,
-          "users/" +
-          key(currentUser) +
-          "/friends/" +
-          key(targetUser)
-        )
-      );
+    await get(
+      ref(
+        db,
+        "users/" +
+        key(currentUser) +
+        "/friends/" +
+        key(targetUser)
+      )
+    );
 
 
     if (alreadyFriend.exists()) {
+
       error.textContent =
-        "You're already friends.";
+      "You're already friends.";
+
       return;
     }
 
@@ -892,118 +1456,133 @@ async function addFriend() {
     );
 
 
-    document.getElementById("friendSearch")
-      .value = "";
+    document
+    .getElementById("friendSearch")
+    .value = "";
+
 
     success.textContent =
-      "Friend request sent!";
+    "Friend request sent!";
 
-  } catch (errorObject) {
 
-    console.error(errorObject);
+  } catch (e) {
+
+    console.error(e);
 
     error.textContent =
-      "Couldn't send friend request.";
+    "Couldn't send friend request.";
+
   }
+
 }
 
 
-/* LOAD REQUESTS */
+/* REQUESTS */
 
 async function loadRequests() {
 
   const list =
-    document.getElementById("requestsList");
+  document
+  .getElementById("requestsList");
 
   list.innerHTML = "";
 
 
-  try {
-
-    const snapshot =
-      await get(
-        ref(
-          db,
-          "users/" +
-          key(currentUser) +
-          "/friendRequests"
-        )
-      );
+  const snapshot =
+  await get(
+    ref(
+      db,
+      "users/" +
+      key(currentUser) +
+      "/friendRequests"
+    )
+  );
 
 
-    if (!snapshot.exists()) {
+  if (!snapshot.exists()) {
 
-      list.innerHTML =
-        '<div class="empty">No friend requests.</div>';
+    list.innerHTML =
+    '<div class="empty">No friend requests.</div>';
 
-      return;
-    }
-
-
-    snapshot.forEach(child => {
-
-      const request = child.val();
-
-      const item =
-        document.createElement("div");
-
-      item.className = "list-item";
-
-
-      const avatar =
-        document.createElement("div");
-
-      avatar.className = "avatar";
-
-      avatar.textContent =
-        request.username[0].toUpperCase();
-
-
-      const info =
-        document.createElement("div");
-
-      info.className = "item-info";
-
-      info.innerHTML =
-        `<div class="item-name">${escapeHTML(request.username)}</div>
-         <div class="item-subtitle">Friend request</div>`;
-
-
-      const accept =
-        document.createElement("button");
-
-      accept.className = "item-button";
-
-      accept.textContent = "Accept";
-
-      accept.onclick =
-        () => acceptFriend(request.username);
-
-
-      const decline =
-        document.createElement("button");
-
-      decline.className =
-        "item-button danger";
-
-      decline.textContent = "Decline";
-
-      decline.onclick =
-        () => declineFriend(request.username);
-
-
-      item.appendChild(avatar);
-      item.appendChild(info);
-      item.appendChild(accept);
-      item.appendChild(decline);
-
-      list.appendChild(item);
-    });
-
-  } catch (errorObject) {
-
-    console.error(errorObject);
+    return;
   }
+
+
+  snapshot.forEach(child => {
+
+    const request =
+    child.val();
+
+
+    const item =
+    document.createElement("div");
+
+    item.className =
+    "list-item";
+
+
+    const avatar =
+    document.createElement("div");
+
+    avatar.className =
+    "avatar";
+
+    avatar.textContent =
+    request.username
+    .charAt(0)
+    .toUpperCase();
+
+
+    const info =
+    document.createElement("div");
+
+    info.className =
+    "item-info";
+
+    info.innerHTML =
+    `<div class="item-name">
+      ${escapeHTML(request.username)}
+    </div>
+    <div class="item-subtitle">
+      Friend request
+    </div>`;
+
+
+    const accept =
+    document.createElement("button");
+
+    accept.className =
+    "item-button";
+
+    accept.textContent =
+    "Accept";
+
+    accept.onclick =
+    () => acceptFriend(request.username);
+
+
+    const decline =
+    document.createElement("button");
+
+    decline.className =
+    "item-button danger";
+
+    decline.textContent =
+    "Decline";
+
+    decline.onclick =
+    () => declineFriend(request.username);
+
+
+    item.appendChild(avatar);
+    item.appendChild(info);
+    item.appendChild(accept);
+    item.appendChild(decline);
+
+    list.appendChild(item);
+
+  });
+
 }
 
 
@@ -1011,57 +1590,50 @@ async function loadRequests() {
 
 async function acceptFriend(username) {
 
-  try {
-
-    await set(
-      ref(
-        db,
-        "users/" +
-        key(currentUser) +
-        "/friends/" +
-        key(username)
-      ),
-      {
-        username: username,
-        timestamp: Date.now()
-      }
-    );
+  await set(
+    ref(
+      db,
+      "users/" +
+      key(currentUser) +
+      "/friends/" +
+      key(username)
+    ),
+    {
+      username: username,
+      timestamp: Date.now()
+    }
+  );
 
 
-    await set(
-      ref(
-        db,
-        "users/" +
-        key(username) +
-        "/friends/" +
-        key(currentUser)
-      ),
-      {
-        username: currentUser,
-        timestamp: Date.now()
-      }
-    );
+  await set(
+    ref(
+      db,
+      "users/" +
+      key(username) +
+      "/friends/" +
+      key(currentUser)
+    ),
+    {
+      username: currentUser,
+      timestamp: Date.now()
+    }
+  );
 
 
-    await set(
-      ref(
-        db,
-        "users/" +
-        key(currentUser) +
-        "/friendRequests/" +
-        key(username)
-      ),
-      null
-    );
+  await remove(
+    ref(
+      db,
+      "users/" +
+      key(currentUser) +
+      "/friendRequests/" +
+      key(username)
+    )
+  );
 
 
-    loadRequests();
-    loadFriends();
+  loadRequests();
+  loadFriends();
 
-  } catch (errorObject) {
-
-    console.error(errorObject);
-  }
 }
 
 
@@ -1069,18 +1641,59 @@ async function acceptFriend(username) {
 
 async function declineFriend(username) {
 
-  await set(
+  await remove(
     ref(
       db,
       "users/" +
       key(currentUser) +
       "/friendRequests/" +
       key(username)
-    ),
-    null
+    )
   );
 
   loadRequests();
+
+}
+
+
+/* REMOVE FRIEND */
+
+async function removeFriend(username) {
+
+  const confirmed =
+  confirm(
+    "Remove " +
+    username +
+    " from your friends?"
+  );
+
+  if (!confirmed) return;
+
+
+  await remove(
+    ref(
+      db,
+      "users/" +
+      key(currentUser) +
+      "/friends/" +
+      key(username)
+    )
+  );
+
+
+  await remove(
+    ref(
+      db,
+      "users/" +
+      key(username) +
+      "/friends/" +
+      key(currentUser)
+    )
+  );
+
+
+  loadFriends();
+
 }
 
 
@@ -1089,81 +1702,142 @@ async function declineFriend(username) {
 async function loadFriends() {
 
   const list =
-    document.getElementById("friendsList");
+  document
+  .getElementById("friendsList");
 
   list.innerHTML = "";
 
 
   const snapshot =
-    await get(
-      ref(
-        db,
-        "users/" +
-        key(currentUser) +
-        "/friends"
-      )
-    );
+  await get(
+    ref(
+      db,
+      "users/" +
+      key(currentUser) +
+      "/friends"
+    )
+  );
 
 
   if (!snapshot.exists()) {
 
     list.innerHTML =
-      '<div class="empty">You don\'t have any friends yet.</div>';
+    '<div class="empty">You don\'t have any friends yet.</div>';
 
     return;
   }
 
 
+  const friends = [];
+
+
   snapshot.forEach(child => {
 
-    const friend =
-      child.val().username;
+    friends.push(
+      child.val().username
+    );
+
+  });
+
+
+  for (const friend of friends) {
+
+    const userSnapshot =
+    await get(
+      ref(
+        db,
+        "users/" +
+        key(friend)
+      )
+    );
+
+
+    const user =
+    userSnapshot.exists()
+      ? userSnapshot.val()
+      : {};
+
+
+    const displayName =
+    user.displayName ||
+    friend;
+
+    const online =
+    user.online === true;
 
 
     const item =
-      document.createElement("div");
+    document.createElement("div");
 
-    item.className = "list-item";
+    item.className =
+    "list-item";
 
 
     const avatar =
-      document.createElement("div");
+    document.createElement("div");
 
-    avatar.className = "avatar";
+    avatar.className =
+    "avatar" +
+    (online ? " online" : "");
 
     avatar.textContent =
-      friend[0].toUpperCase();
+    displayName
+    .charAt(0)
+    .toUpperCase();
 
 
     const info =
-      document.createElement("div");
+    document.createElement("div");
 
-    info.className = "item-info";
+    info.className =
+    "item-info";
 
     info.innerHTML =
-      `<div class="item-name">${escapeHTML(friend)}</div>
-       <div class="item-subtitle">Friend</div>`;
+    `<div class="item-name">
+      ${escapeHTML(displayName)}
+    </div>
+    <div class="item-subtitle ${
+      online ? "online-text" : ""
+    }">
+      ${online ? "● Online" : "Offline"}
+    </div>`;
 
 
-    const button =
-      document.createElement("button");
+    const messageButton =
+    document.createElement("button");
 
-    button.className =
-      "item-button";
+    messageButton.className =
+    "item-button";
 
-    button.textContent =
-      "Message";
+    messageButton.textContent =
+    "Message";
 
-    button.onclick =
-      () => openDM(friend);
+    messageButton.onclick =
+    () => openDM(friend);
+
+
+    const removeButton =
+    document.createElement("button");
+
+    removeButton.className =
+    "item-button danger";
+
+    removeButton.textContent =
+    "Remove";
+
+    removeButton.onclick =
+    () => removeFriend(friend);
 
 
     item.appendChild(avatar);
     item.appendChild(info);
-    item.appendChild(button);
+    item.appendChild(messageButton);
+    item.appendChild(removeButton);
 
     list.appendChild(item);
-  });
+
+  }
+
 }
 
 
@@ -1171,12 +1845,16 @@ async function loadFriends() {
 
 function dmID(a, b) {
 
-  const first = key(a);
-  const second = key(b);
+  const first =
+  key(a);
+
+  const second =
+  key(b);
 
   return first < second
     ? first + "_" + second
     : second + "_" + first;
+
 }
 
 
@@ -1184,95 +1862,153 @@ function dmID(a, b) {
 
 async function openDM(username) {
 
-  currentDMUser = username;
+  currentDMUser =
+  username;
+
 
   hideScreens();
 
-  document.getElementById("dmScreen")
-    .classList.remove("hidden");
+  document
+  .getElementById("dmScreen")
+  .classList.remove("hidden");
 
-  document.getElementById("dmTitle")
-    .textContent = username;
 
-  document.getElementById("dmMessages")
-    .innerHTML = "";
+  document
+  .getElementById("dmTitle")
+  .textContent =
+  username;
+
+
+  document
+  .getElementById("dmMessages")
+  .innerHTML = "";
+
+
+  document
+  .getElementById("dmError")
+  .textContent = "";
+
+
+  /*
+    IMPORTANT:
+    Stop the previous listener first.
+    This fixes the duplicate DM bug.
+  */
+
+  if (stopDMListener) {
+
+    stopDMListener();
+
+    stopDMListener = null;
+
+  }
 
 
   const messagesRef =
+  ref(
+    db,
+    "directMessages/" +
+    dmID(
+      currentUser,
+      username
+    ) +
+    "/messages"
+  );
+
+
+  stopDMListener =
+  onChildAdded(
+    messagesRef,
+    snapshot => {
+
+      displayDM(
+        snapshot.key,
+        snapshot.val()
+      );
+
+    }
+  );
+
+
+  await set(
     ref(
       db,
-      "directMessages/" +
-      dmID(currentUser, username) +
-      "/messages"
-    );
+      "users/" +
+      key(currentUser) +
+      "/unread/" +
+      key(username)
+    ),
+    0
+  );
 
-
-  dmListener =
-    onChildAdded(messagesRef, snapshot => {
-
-      displayDM(snapshot.val());
-
-    });
-
-
-  document.getElementById("dmInput")
-    .focus();
 }
 
 
 /* DISPLAY DM */
 
-function displayDM(message) {
+function displayDM(id, message) {
 
   const box =
-    document.getElementById("dmMessages");
+  document
+  .getElementById("dmMessages");
 
 
   const wrapper =
-    document.createElement("div");
+  document.createElement("div");
 
   wrapper.className =
-    "dm-message " +
-    (message.username === currentUser
+  "dm-message " +
+  (
+    message.username === currentUser
       ? "mine"
-      : "");
+      : ""
+  );
 
 
   const bubble =
-    document.createElement("div");
+  document.createElement("div");
 
-  bubble.className = "bubble";
+  bubble.className =
+  "bubble";
 
 
   const name =
-    document.createElement("div");
+  document.createElement("div");
 
-  name.className = "bubble-name";
+  name.className =
+  "bubble-name";
 
   name.textContent =
-    message.username;
+  message.username;
 
 
   const text =
-    document.createElement("div");
+  document.createElement("div");
 
   text.textContent =
-    message.text;
+  message.text;
 
 
   const time =
-    document.createElement("div");
+  document.createElement("div");
 
-  time.className = "bubble-time";
+  time.className =
+  "bubble-time";
+
 
   if (message.timestamp) {
 
     time.textContent =
-      new Date(message.timestamp)
-        .toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit"
-        });
+    new Date(
+      message.timestamp
+    ).toLocaleTimeString(
+      [],
+      {
+        hour: "numeric",
+        minute: "2-digit"
+      }
+    );
+
   }
 
 
@@ -1280,12 +2016,56 @@ function displayDM(message) {
   bubble.appendChild(text);
   bubble.appendChild(time);
 
+
+  if (
+    message.username ===
+    currentUser
+  ) {
+
+    const deleteButton =
+    document.createElement("button");
+
+    deleteButton.className =
+    "delete-message";
+
+    deleteButton.textContent =
+    "Delete";
+
+    deleteButton.onclick =
+    async () => {
+
+      await remove(
+        ref(
+          db,
+          "directMessages/" +
+          dmID(
+            currentUser,
+            currentDMUser
+          ) +
+          "/messages/" +
+          id
+        )
+      );
+
+      wrapper.remove();
+
+    };
+
+
+    bubble.appendChild(
+      deleteButton
+    );
+
+  }
+
+
   wrapper.appendChild(bubble);
 
   box.appendChild(wrapper);
 
   box.scrollTop =
-    box.scrollHeight;
+  box.scrollHeight;
+
 }
 
 
@@ -1294,28 +2074,39 @@ function displayDM(message) {
 async function sendDM() {
 
   const input =
-    document.getElementById("dmInput");
+  document
+  .getElementById("dmInput");
 
   const text =
-    input.value.trim();
+  input.value.trim();
 
 
-  if (!text || !currentDMUser) return;
+  if (
+    !text ||
+    !currentDMUser
+  ) return;
 
 
   try {
 
-    const id =
-      dmID(currentUser, currentDMUser);
+    const conversationID =
+    dmID(
+      currentUser,
+      currentDMUser
+    );
+
+
+    const messagesRef =
+    ref(
+      db,
+      "directMessages/" +
+      conversationID +
+      "/messages"
+    );
 
 
     await push(
-      ref(
-        db,
-        "directMessages/" +
-        id +
-        "/messages"
-      ),
+      messagesRef,
       {
         username: currentUser,
         text: text,
@@ -1354,19 +2145,54 @@ async function sendDM() {
     );
 
 
+    /*
+      Increase unread count
+      for the person receiving it.
+    */
+
+    const unreadRef =
+    ref(
+      db,
+      "users/" +
+      key(currentDMUser) +
+      "/unread/" +
+      key(currentUser)
+    );
+
+
+    const unreadSnapshot =
+    await get(unreadRef);
+
+
+    const unread =
+    unreadSnapshot.exists()
+      ? unreadSnapshot.val()
+      : 0;
+
+
+    await set(
+      unreadRef,
+      Number(unread) + 1
+    );
+
+
     input.value = "";
     input.focus();
 
     loadConversations();
 
-  } catch (errorObject) {
 
-    console.error(errorObject);
+  } catch (e) {
 
-    document.getElementById("dmError")
-      .textContent =
-      "Message could not be sent.";
+    console.error(e);
+
+    document
+    .getElementById("dmError")
+    .textContent =
+    "Message could not be sent.";
+
   }
+
 }
 
 
@@ -1374,12 +2200,23 @@ async function sendDM() {
 
 function closeDM() {
 
+  if (stopDMListener) {
+
+    stopDMListener();
+
+    stopDMListener = null;
+
+  }
+
+
   currentDMUser = null;
 
-  document.getElementById("dmInput")
-    .value = "";
+  document
+  .getElementById("dmInput")
+  .value = "";
 
   showHome();
+
 }
 
 
@@ -1388,105 +2225,172 @@ function closeDM() {
 async function loadConversations() {
 
   const list =
-    document.getElementById("dmList");
+  document
+  .getElementById("dmList");
 
   list.innerHTML = "";
 
 
   const snapshot =
-    await get(
-      ref(
-        db,
-        "users/" +
-        key(currentUser) +
-        "/conversations"
-      )
-    );
+  await get(
+    ref(
+      db,
+      "users/" +
+      key(currentUser) +
+      "/conversations"
+    )
+  );
 
 
   if (!snapshot.exists()) {
 
     list.innerHTML =
-      '<div class="empty">No direct messages yet.</div>';
+    '<div class="empty">No direct messages yet.</div>';
 
     return;
   }
 
 
+  const unreadSnapshot =
+  await get(
+    ref(
+      db,
+      "users/" +
+      key(currentUser) +
+      "/unread"
+    )
+  );
+
+
+  const unreadData =
+  unreadSnapshot.exists()
+    ? unreadSnapshot.val()
+    : {};
+
+
   const conversations = [];
 
+
   snapshot.forEach(child => {
-    conversations.push(child.val());
+
+    conversations.push(
+      child.val()
+    );
+
   });
 
 
   conversations.sort(
-    (a,b) =>
-      (b.timestamp || 0) -
-      (a.timestamp || 0)
+    (a, b) =>
+    (b.timestamp || 0) -
+    (a.timestamp || 0)
   );
 
 
-  conversations.forEach(conversation => {
+  conversations.forEach(
+    conversation => {
 
-    const item =
+      const username =
+      conversation.username;
+
+      const unread =
+      Number(
+        unreadData[key(username)] || 0
+      );
+
+
+      const item =
       document.createElement("div");
 
-    item.className =
+      item.className =
       "list-item";
 
 
-    const avatar =
+      const avatar =
       document.createElement("div");
 
-    avatar.className = "avatar";
+      avatar.className =
+      "avatar";
 
-    avatar.textContent =
-      conversation.username[0].toUpperCase();
+      avatar.textContent =
+      username
+      .charAt(0)
+      .toUpperCase();
 
 
-    const info =
+      const info =
       document.createElement("div");
 
-    info.className = "item-info";
+      info.className =
+      "item-info";
 
-    info.innerHTML =
-      `<div class="item-name">${escapeHTML(conversation.username)}</div>
-       <div class="item-subtitle">Direct message</div>`;
+      info.innerHTML =
+      `<div class="item-name">
+        ${escapeHTML(username)}
+      </div>
+      <div class="item-subtitle">
+        Direct message
+      </div>`;
 
 
-    const button =
+      const openButton =
       document.createElement("button");
 
-    button.className =
+      openButton.className =
       "item-button";
 
-    button.textContent = "Open";
+      openButton.textContent =
+      "Open";
 
-    button.onclick =
-      () => openDM(conversation.username);
+      openButton.onclick =
+      () => openDM(username);
 
 
-    item.appendChild(avatar);
-    item.appendChild(info);
-    item.appendChild(button);
+      item.appendChild(avatar);
+      item.appendChild(info);
 
-    list.appendChild(item);
-  });
+
+      if (unread > 0) {
+
+        const badge =
+        document.createElement("div");
+
+        badge.className =
+        "badge";
+
+        badge.textContent =
+        unread > 99
+          ? "99+"
+          : unread;
+
+        item.appendChild(badge);
+
+      }
+
+
+      item.appendChild(openButton);
+
+      list.appendChild(item);
+
+    }
+  );
+
 }
 
 
-/* ROOMS */
+/* JOIN ROOM */
 
 async function joinRoom() {
 
   const code =
-    document.getElementById("roomCode")
-      .value.trim();
+  document
+  .getElementById("roomCode")
+  .value
+  .trim();
 
   const error =
-    document.getElementById("roomError");
-
+  document
+  .getElementById("roomError");
 
   error.textContent = "";
 
@@ -1494,54 +2398,83 @@ async function joinRoom() {
   if (!/^\d{4}$/.test(code)) {
 
     error.textContent =
-      "Room code must be exactly 4 digits.";
+    "Room code must be exactly 4 digits.";
 
     return;
   }
 
 
-  currentRoom = code;
+  currentRoom =
+  code;
+
 
   hideScreens();
 
-  document.getElementById("chatScreen")
-    .classList.remove("hidden");
+  document
+  .getElementById("chatScreen")
+  .classList.remove("hidden");
 
-  document.getElementById("displayRoomCode")
-    .textContent = code;
 
-  document.getElementById("chatUsername")
-    .textContent = currentUser;
+  document
+  .getElementById("displayRoomCode")
+  .textContent =
+  code;
 
-  document.getElementById("messages")
-    .innerHTML = "";
+
+  document
+  .getElementById("chatUsername")
+  .textContent =
+  currentUser;
+
+
+  document
+  .getElementById("messages")
+  .innerHTML = "";
+
+
+  if (stopRoomListener) {
+
+    stopRoomListener();
+
+    stopRoomListener = null;
+
+  }
 
 
   const messagesRef =
-    ref(
-      db,
-      "rooms/" +
-      code +
-      "/messages"
-    );
+  ref(
+    db,
+    "rooms/" +
+    code +
+    "/messages"
+  );
 
 
-  roomListener =
-    onChildAdded(messagesRef, snapshot => {
+  stopRoomListener =
+  onChildAdded(
+    messagesRef,
+    snapshot => {
 
-      displayRoomMessage(snapshot.val());
+      displayRoomMessage(
+        snapshot.val()
+      );
 
-    });
+    }
+  );
 
 
-  await push(messagesRef, {
+  await push(
+    messagesRef,
+    {
+      username: "MyChat",
+      text:
+      currentUser +
+      " joined the room.",
+      system: true,
+      timestamp: Date.now()
+    }
+  );
 
-    username: "MyChat",
-    text: currentUser + " joined the room.",
-    system: true,
-    timestamp: Date.now()
-
-  });
 }
 
 
@@ -1550,29 +2483,32 @@ async function joinRoom() {
 function displayRoomMessage(message) {
 
   const box =
-    document.getElementById("messages");
+  document
+  .getElementById("messages");
 
 
   const div =
-    document.createElement("div");
+  document.createElement("div");
 
-  div.className = "message";
+  div.className =
+  "message";
 
 
   const username =
-    document.createElement("div");
+  document.createElement("div");
 
-  username.className = "username";
+  username.className =
+  "username";
 
   username.textContent =
-    message.username;
+  message.username;
 
 
   const text =
-    document.createElement("div");
+  document.createElement("div");
 
   text.textContent =
-    message.text;
+  message.text;
 
 
   div.appendChild(username);
@@ -1581,7 +2517,8 @@ function displayRoomMessage(message) {
   box.appendChild(div);
 
   box.scrollTop =
-    box.scrollHeight;
+  box.scrollHeight;
+
 }
 
 
@@ -1590,13 +2527,17 @@ function displayRoomMessage(message) {
 async function sendMessage() {
 
   const input =
-    document.getElementById("messageInput");
+  document
+  .getElementById("messageInput");
 
   const text =
-    input.value.trim();
+  input.value.trim();
 
 
-  if (!text || !currentRoom) return;
+  if (
+    !text ||
+    !currentRoom
+  ) return;
 
 
   try {
@@ -1619,14 +2560,18 @@ async function sendMessage() {
     input.value = "";
     input.focus();
 
-  } catch (errorObject) {
 
-    console.error(errorObject);
+  } catch (e) {
 
-    document.getElementById("chatError")
-      .textContent =
-      "Message could not be sent.";
+    console.error(e);
+
+    document
+    .getElementById("chatError")
+    .textContent =
+    "Message could not be sent.";
+
   }
+
 }
 
 
@@ -1636,148 +2581,305 @@ async function leaveRoom() {
 
   if (currentRoom) {
 
-    try {
+    await push(
+      ref(
+        db,
+        "rooms/" +
+        currentRoom +
+        "/messages"
+      ),
+      {
+        username: "MyChat",
+        text:
+        currentUser +
+        " left the room.",
+        system: true,
+        timestamp: Date.now()
+      }
+    );
 
-      await push(
-        ref(
-          db,
-          "rooms/" +
-          currentRoom +
-          "/messages"
-        ),
-        {
-          username: "MyChat",
-          text: currentUser + " left the room.",
-          system: true,
-          timestamp: Date.now()
-        }
-      );
+  }
 
-    } catch (errorObject) {
 
-      console.error(errorObject);
-    }
+  if (stopRoomListener) {
+
+    stopRoomListener();
+
+    stopRoomListener = null;
+
   }
 
 
   currentRoom = null;
 
-  document.getElementById("messageInput")
-    .value = "";
+  document
+  .getElementById("messageInput")
+  .value = "";
 
   showHome();
+
 }
 
 
 /* LOG OUT */
 
-function logout() {
+async function logout() {
+
+  if (currentUser) {
+
+    await set(
+      ref(
+        db,
+        "users/" +
+        key(currentUser) +
+        "/online"
+      ),
+      false
+    );
+
+  }
+
+
+  if (stopDMListener) {
+
+    stopDMListener();
+
+    stopDMListener = null;
+
+  }
+
+
+  if (stopRoomListener) {
+
+    stopRoomListener();
+
+    stopRoomListener = null;
+
+  }
+
 
   currentUser = null;
   currentRoom = null;
   currentDMUser = null;
 
-  document.getElementById("loginUsername")
-    .value = "";
-
-  document.getElementById("loginPassword")
-    .value = "";
-
   showLogin();
+
 }
 
 
-/* ESCAPE HTML */
+/* HTML ESCAPE */
 
 function escapeHTML(text) {
 
   const div =
-    document.createElement("div");
+  document.createElement("div");
 
-  div.textContent = text;
+  div.textContent =
+  text;
 
   return div.innerHTML;
+
 }
 
 
-/* BUTTONS */
+/* BUTTON CONNECTIONS */
 
-document.getElementById("loginButton")
-  .addEventListener("click", login);
+document
+.getElementById("loginButton")
+.addEventListener(
+  "click",
+  login
+);
 
-document.getElementById("showCreateButton")
-  .addEventListener("click", showCreate);
 
-document.getElementById("createButton")
-  .addEventListener("click", createAccount);
+document
+.getElementById("showCreateButton")
+.addEventListener(
+  "click",
+  showCreate
+);
 
-document.getElementById("showLoginButton")
-  .addEventListener("click", showLogin);
 
-document.getElementById("friendsTab")
-  .addEventListener("click", showFriendsTab);
+document
+.getElementById("createButton")
+.addEventListener(
+  "click",
+  createAccount
+);
 
-document.getElementById("roomsTab")
-  .addEventListener("click", showRoomsTab);
 
-document.getElementById("addFriendButton")
-  .addEventListener("click", addFriend);
+document
+.getElementById("showLoginButton")
+.addEventListener(
+  "click",
+  showLogin
+);
 
-document.getElementById("logoutButton")
-  .addEventListener("click", logout);
 
-document.getElementById("logoutButton2")
-  .addEventListener("click", logout);
+document
+.getElementById("friendsTab")
+.addEventListener(
+  "click",
+  showFriendsTab
+);
 
-document.getElementById("joinRoomButton")
-  .addEventListener("click", joinRoom);
 
-document.getElementById("backDMButton")
-  .addEventListener("click", closeDM);
+document
+.getElementById("roomsTab")
+.addEventListener(
+  "click",
+  showRoomsTab
+);
 
-document.getElementById("sendDMButton")
-  .addEventListener("click", sendDM);
 
-document.getElementById("leaveRoomButton")
-  .addEventListener("click", leaveRoom);
+document
+.getElementById("profileTab")
+.addEventListener(
+  "click",
+  showProfileTab
+);
 
-document.getElementById("sendMessageButton")
-  .addEventListener("click", sendMessage);
+
+document
+.getElementById("addFriendButton")
+.addEventListener(
+  "click",
+  addFriend
+);
+
+
+document
+.getElementById("saveProfileButton")
+.addEventListener(
+  "click",
+  saveProfile
+);
+
+
+document
+.getElementById("logoutButton")
+.addEventListener(
+  "click",
+  logout
+);
+
+
+document
+.getElementById("logoutButton2")
+.addEventListener(
+  "click",
+  logout
+);
+
+
+document
+.getElementById("logoutButton3")
+.addEventListener(
+  "click",
+  logout
+);
+
+
+document
+.getElementById("joinRoomButton")
+.addEventListener(
+  "click",
+  joinRoom
+);
+
+
+document
+.getElementById("backDMButton")
+.addEventListener(
+  "click",
+  closeDM
+);
+
+
+document
+.getElementById("sendDMButton")
+.addEventListener(
+  "click",
+  sendDM
+);
+
+
+document
+.getElementById("leaveRoomButton")
+.addEventListener(
+  "click",
+  leaveRoom
+);
+
+
+document
+.getElementById("sendMessageButton")
+.addEventListener(
+  "click",
+  sendMessage
+);
 
 
 /* ENTER KEY */
 
-document.addEventListener("keydown", event => {
+document.addEventListener(
+  "keydown",
+  event => {
 
-  if (event.key !== "Enter") return;
+    if (
+      event.key !== "Enter" ||
+      event.shiftKey
+    ) return;
 
 
-  if (!document.getElementById("loginScreen")
-      .classList.contains("hidden")) {
+    if (
+      !document
+      .getElementById("loginScreen")
+      .classList
+      .contains("hidden")
+    ) {
 
-    login();
+      login();
 
-  } else if (!document.getElementById("createScreen")
-      .classList.contains("hidden")) {
+    }
 
-    createAccount();
+    else if (
+      !document
+      .getElementById("createScreen")
+      .classList
+      .contains("hidden")
+    ) {
 
-  } else if (!document.getElementById("dmScreen")
-      .classList.contains("hidden")) {
+      createAccount();
 
-    sendDM();
+    }
 
-  } else if (!document.getElementById("chatScreen")
-      .classList.contains("hidden")) {
+    else if (
+      !document
+      .getElementById("dmScreen")
+      .classList
+      .contains("hidden")
+    ) {
 
-    sendMessage();
+      sendDM();
+
+    }
+
+    else if (
+      !document
+      .getElementById("chatScreen")
+      .classList
+      .contains("hidden")
+    ) {
+
+      sendMessage();
+
+    }
 
   }
-
-});
+);
 
 </script>
 
 </body>
 </html>
-```
