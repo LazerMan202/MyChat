@@ -1,233 +1,310 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MyChat 1.7</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MyChat 1.8</title>
 
 <style>
-*{box-sizing:border-box}
+:root{
+  --bg:#0f1117;
+  --panel:#181b24;
+  --panel2:#202431;
+  --border:#303544;
+  --text:#f1f3f7;
+  --muted:#9ba3b4;
+  --accent:#5865f2;
+  --danger:#ed4245;
+  --success:#43b581;
+  --bubble:#252a38;
+}
+
+body.light{
+  --bg:#f2f4f8;
+  --panel:#ffffff;
+  --panel2:#e8ebf1;
+  --border:#d3d7df;
+  --text:#171a21;
+  --muted:#687080;
+  --bubble:#e4e7ed;
+}
+
+*{
+  box-sizing:border-box;
+}
+
 body{
   margin:0;
-  font-family:Arial,sans-serif;
-  background:#111827;
-  color:#f9fafb;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
 }
+
 button,input,textarea{
   font:inherit;
 }
+
+button{
+  cursor:pointer;
+}
+
+.hidden{
+  display:none!important;
+}
+
 button{
   border:0;
   border-radius:8px;
-  padding:9px 13px;
-  cursor:pointer;
-  background:#2563eb;
+  padding:10px 14px;
+  background:var(--accent);
   color:white;
 }
-button:hover{opacity:.9}
-button.secondary{background:#374151}
-button.danger{background:#dc2626}
-button.small{padding:5px 8px;font-size:12px}
 
-.hidden{display:none!important}
-
-.screen{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
+button.secondary{
+  background:var(--panel2);
+  color:var(--text);
 }
 
-.card{
-  background:#1f2937;
-  width:100%;
-  max-width:430px;
-  padding:25px;
-  border-radius:15px;
-  box-shadow:0 10px 35px #0006;
+button.danger{
+  background:var(--danger);
 }
 
-h1,h2,h3{margin-top:0}
+button.success{
+  background:var(--success);
+}
 
 input,textarea{
   width:100%;
   padding:11px;
-  margin:6px 0;
-  border:1px solid #374151;
   border-radius:8px;
-  background:#111827;
-  color:white;
+  border:1px solid var(--border);
+  background:var(--panel2);
+  color:var(--text);
   outline:none;
 }
-textarea{resize:vertical;min-height:70px}
 
-.authButtons{
-  display:flex;
-  gap:10px;
-  margin-top:12px;
+textarea{
+  resize:vertical;
 }
-.authButtons button{flex:1}
+
+a{
+  color:#7289ff;
+}
+
+/* LOGIN */
+
+#authScreen{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.authBox{
+  width:min(440px,100%);
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:28px;
+  box-shadow:0 15px 50px #0005;
+}
+
+.logo{
+  font-size:32px;
+  font-weight:bold;
+  text-align:center;
+  margin-bottom:6px;
+}
+
+.subtitle{
+  color:var(--muted);
+  text-align:center;
+  margin-bottom:24px;
+}
+
+.authBox h2{
+  margin-top:0;
+}
+
+.authBox button{
+  width:100%;
+  margin-top:10px;
+}
+
+.authSwitch{
+  text-align:center;
+  margin-top:15px;
+  color:var(--muted);
+}
+
+.authSwitch span{
+  color:#7289ff;
+  cursor:pointer;
+}
 
 .error{
-  color:#f87171;
-  min-height:20px;
-  margin-top:8px;
+  color:#ff7777;
+  margin-top:10px;
 }
 
+/* PUBLIC UPDATE LOG */
+
+.publicLog{
+  margin-top:25px;
+  border-top:1px solid var(--border);
+  padding-top:20px;
+}
+
+.publicLog h3{
+  margin-top:0;
+}
+
+.updateItem{
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px;
+  margin:9px 0;
+}
+
+.updateVersion{
+  font-weight:bold;
+}
+
+.updateDate{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.updateItem ul{
+  margin-bottom:0;
+  padding-left:20px;
+}
+
+/* APP */
+
 #app{
-  min-height:100vh;
+  display:none;
+  height:100vh;
+  overflow:hidden;
+}
+
+#app.visible{
+  display:flex;
+}
+
+.sidebar{
+  width:270px;
+  background:var(--panel);
+  border-right:1px solid var(--border);
   display:flex;
   flex-direction:column;
 }
 
-.topbar{
-  height:60px;
-  background:#1f2937;
+.userBar{
+  padding:14px;
+  border-bottom:1px solid var(--border);
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  padding:0 18px;
-  border-bottom:1px solid #374151;
+  gap:10px;
 }
 
-.logo{
-  font-size:21px;
-  font-weight:bold;
-}
-
-.userTop{
-  display:flex;
-  align-items:center;
-  gap:9px;
-}
-
-.main{
+.userInfo{
   flex:1;
-  display:flex;
-  min-height:calc(100vh - 60px);
+  min-width:0;
 }
 
-.sidebar{
-  width:290px;
-  background:#18212f;
-  border-right:1px solid #374151;
-  padding:12px;
-  overflow-y:auto;
+.username{
+  font-weight:bold;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.status{
+  color:var(--muted);
+  font-size:12px;
 }
 
 .tabs{
   display:flex;
+  padding:8px;
   gap:5px;
-  margin-bottom:12px;
-}
-.tabs button{
-  flex:1;
-  background:#263244;
-}
-.tabs button.active{
-  background:#2563eb;
 }
 
-.tabUnread{
-  background:#ef4444;
-  border-radius:999px;
-  padding:1px 6px;
-  font-size:11px;
-  margin-left:3px;
+.tabs button{
+  flex:1;
+  background:transparent;
+  color:var(--muted);
+}
+
+.tabs button.active{
+  background:var(--panel2);
+  color:var(--text);
+}
+
+.sidebarContent{
+  flex:1;
+  overflow:auto;
+  padding:10px;
 }
 
 .listItem{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  padding:10px;
+  padding:11px;
   border-radius:9px;
+  margin-bottom:5px;
   cursor:pointer;
-  margin-bottom:3px;
-}
-.listItem:hover,.listItem.selected{
-  background:#263244;
 }
 
-.listText{
-  min-width:0;
-  flex:1;
+.listItem:hover,
+.listItem.active{
+  background:var(--panel2);
 }
-.listName{
+
+.listTitle{
   font-weight:bold;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
 }
-.preview{
-  color:#9ca3af;
+
+.listPreview{
+  color:var(--muted);
   font-size:12px;
+  margin-top:3px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 
 .unread{
-  background:#2563eb;
-  border-radius:999px;
-  padding:3px 7px;
+  float:right;
+  background:var(--accent);
+  color:white;
+  border-radius:20px;
+  padding:2px 7px;
   font-size:11px;
 }
 
-.onlineDot{
-  width:9px;
-  height:9px;
-  background:#22c55e;
-  border-radius:50%;
-  display:inline-block;
-}
-.offlineDot{
-  width:9px;
-  height:9px;
-  background:#6b7280;
-  border-radius:50%;
-  display:inline-block;
-}
+/* MAIN CHAT */
 
-.avatar{
-  width:38px;
-  height:38px;
-  min-width:38px;
-  border-radius:50%;
-  background:#2563eb;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:bold;
-  overflow:hidden;
-}
-.avatar img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-.chat{
+.main{
   flex:1;
+  min-width:0;
   display:flex;
   flex-direction:column;
-  min-width:0;
 }
 
 .chatHeader{
-  min-height:65px;
-  background:#1f2937;
-  border-bottom:1px solid #374151;
-  padding:9px 14px;
+  height:64px;
+  border-bottom:1px solid var(--border);
   display:flex;
   align-items:center;
+  padding:10px 16px;
   gap:10px;
 }
 
 .chatHeaderInfo{
   flex:1;
-  min-width:0;
 }
 
 .chatTitle{
@@ -236,287 +313,303 @@ textarea{resize:vertical;min-height:70px}
 }
 
 .chatSub{
-  color:#9ca3af;
+  color:var(--muted);
   font-size:12px;
-}
-
-.headerButtons{
-  display:flex;
-  gap:5px;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-}
-
-.searchBox{
-  display:none;
-  background:#111827;
-  padding:8px;
-  border-bottom:1px solid #374151;
-}
-.searchBox.show{display:block}
-.searchControls{
-  display:flex;
-  gap:5px;
-}
-.searchControls input{margin:0}
-.searchCount{
-  font-size:12px;
-  color:#9ca3af;
-  padding-top:4px;
 }
 
 .messages{
   flex:1;
-  overflow-y:auto;
-  padding:15px;
+  overflow:auto;
+  padding:18px;
 }
 
 .message{
-  margin-bottom:13px;
   display:flex;
-  gap:8px;
-  align-items:flex-start;
-}
-.message.mine{
-  flex-direction:row-reverse;
+  gap:9px;
+  margin-bottom:13px;
+  max-width:900px;
 }
 
 .messageContent{
-  max-width:min(75%,650px);
+  max-width:min(700px,80%);
 }
 
-.sender{
-  font-size:12px;
-  color:#9ca3af;
-  margin-bottom:3px;
+.avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:var(--accent);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  flex-shrink:0;
+  overflow:hidden;
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.msgTop{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.msgName{
+  font-weight:bold;
+}
+
+.msgTime{
+  color:var(--muted);
+  font-size:11px;
 }
 
 .bubble{
-  background:#263244;
-  border-radius:12px;
-  padding:9px 11px;
-  word-wrap:break-word;
-  white-space:pre-wrap;
-}
-
-.mine .bubble{
-  background:#2563eb;
-}
-
-.messageTime{
-  font-size:10px;
-  color:#9ca3af;
   margin-top:3px;
+  background:var(--bubble);
+  padding:9px 11px;
+  border-radius:10px;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
 }
-
-.mine .messageTime{text-align:right}
 
 .edited{
+  color:var(--muted);
   font-size:10px;
-  color:#9ca3af;
+}
+
+.messageActions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin-top:4px;
+}
+
+.messageActions button{
+  padding:3px 6px;
+  font-size:11px;
+  background:var(--panel2);
 }
 
 .replyPreview{
-  border-left:3px solid #60a5fa;
-  padding:5px 8px;
-  margin-bottom:5px;
-  background:#11182799;
-  border-radius:5px;
-  font-size:11px;
+  border-left:3px solid var(--accent);
+  padding-left:8px;
+  margin-bottom:6px;
+  color:var(--muted);
+  font-size:12px;
   cursor:pointer;
 }
 
-.actions{
-  display:flex;
-  gap:3px;
-  flex-wrap:wrap;
+.reactionBar{
   margin-top:4px;
-}
-.actions button{
-  padding:3px 6px;
-  font-size:11px;
-  background:#374151;
-}
-
-.reactions{
-  display:flex;
-  gap:3px;
-  margin-top:4px;
-  flex-wrap:wrap;
-}
-.reaction{
-  background:#111827;
-  border-radius:12px;
-  padding:2px 6px;
   font-size:12px;
+  color:var(--muted);
 }
 
-.highlight{
-  outline:2px solid #facc15;
-  border-radius:12px;
+.messageImage{
+  max-width:350px;
+  max-height:350px;
+  border-radius:10px;
+  margin-top:5px;
+  cursor:pointer;
 }
 
-.searchHighlight{
-  outline:2px solid #facc15;
+.pinned{
+  border:1px solid #e5b93f;
+}
+
+.pinLabel{
+  color:#e5b93f;
+  font-size:11px;
+}
+
+.typing{
+  min-height:25px;
+  padding:3px 18px;
+  color:var(--muted);
+  font-size:12px;
 }
 
 .composer{
-  border-top:1px solid #374151;
-  background:#1f2937;
-  padding:9px;
+  border-top:1px solid var(--border);
+  padding:10px;
 }
 
 .replyBar{
-  background:#111827;
-  padding:7px 10px;
-  border-radius:7px;
-  margin-bottom:6px;
+  background:var(--panel2);
+  padding:8px;
+  border-radius:8px;
+  margin-bottom:7px;
   display:flex;
-  justify-content:space-between;
+  gap:8px;
   align-items:center;
-  font-size:12px;
+}
+
+.replyBar span{
+  flex:1;
+  color:var(--muted);
 }
 
 .composeRow{
   display:flex;
   gap:7px;
 }
+
 .composeRow input{
-  margin:0;
+  flex:1;
 }
+
 .composeRow button{
-  min-width:70px;
+  white-space:nowrap;
 }
 
-.empty{
-  color:#9ca3af;
-  text-align:center;
-  padding:30px 10px;
+/* PROFILE */
+
+.profileCard{
+  max-width:600px;
+  margin:auto;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px;
 }
 
-.panel{
-  padding:15px;
-}
-
-.profilePreview{
-  display:flex;
-  justify-content:center;
-  margin-bottom:15px;
-}
 .bigAvatar{
   width:100px;
   height:100px;
   border-radius:50%;
-  background:#2563eb;
+  background:var(--accent);
+  color:white;
   display:flex;
-  align-items:center;
   justify-content:center;
-  font-size:40px;
+  align-items:center;
+  font-size:38px;
   font-weight:bold;
+  margin:auto auto 15px;
   overflow:hidden;
 }
+
 .bigAvatar img{
   width:100%;
   height:100%;
   object-fit:cover;
 }
 
-.profileButtons{
-  display:flex;
-  gap:6px;
-  justify-content:center;
-  margin-bottom:15px;
+.field{
+  margin:12px 0;
 }
+
+.field label{
+  display:block;
+  margin-bottom:5px;
+  color:var(--muted);
+}
+
+/* SETTINGS */
+
+.settingsPanel{
+  max-width:600px;
+  margin:auto;
+  padding:20px;
+}
+
+/* MODALS */
 
 .modal{
   position:fixed;
   inset:0;
-  background:#000b;
+  background:#0008;
   display:flex;
   align-items:center;
   justify-content:center;
   padding:20px;
-  z-index:10;
+  z-index:20;
 }
-.modalCard{
-  background:#1f2937;
-  border-radius:14px;
-  width:100%;
-  max-width:500px;
+
+.modalBox{
+  width:min(500px,100%);
   max-height:90vh;
-  overflow-y:auto;
+  overflow:auto;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
   padding:20px;
 }
-.modalActions{
-  display:flex;
-  gap:7px;
-  margin-top:12px;
-  justify-content:flex-end;
+
+.modalBox h2{
+  margin-top:0;
 }
 
 .friendCheck{
   display:flex;
-  align-items:center;
   gap:8px;
   padding:7px;
+  background:var(--panel2);
+  border-radius:7px;
+  margin:5px 0;
 }
+
 .friendCheck input{
   width:auto;
-  margin:0;
 }
 
-.memberRow{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:8px;
-  background:#263244;
-  border-radius:8px;
-  margin-bottom:5px;
+.searchBox{
+  margin-bottom:10px;
 }
 
-.memberRow .memberName{
-  flex:1;
+.empty{
+  text-align:center;
+  color:var(--muted);
+  padding:35px 10px;
 }
 
-.creator{
-  color:#facc15;
-  font-size:12px;
-}
+/* MOBILE */
 
-.pinItem{
-  padding:8px;
-  border-radius:8px;
-  background:#263244;
-  margin-bottom:6px;
-  cursor:pointer;
-}
-.pinItem:hover{background:#334155}
-
-@media(max-width:750px){
+@media(max-width:700px){
   .sidebar{
-    width:220px;
+    width:210px;
   }
+
   .messageContent{
     max-width:82%;
   }
+
+  .chatHeader{
+    padding:8px;
+  }
+
+  .messages{
+    padding:10px;
+  }
 }
 
-@media(max-width:600px){
+@media(max-width:520px){
   .sidebar{
-    width:100%;
-    max-width:100%;
+    width:70px;
   }
-  .main{
+
+  .sidebar .userInfo,
+  .sidebar .tabs button span,
+  .sidebarContent .listTitle,
+  .sidebarContent .listPreview{
+    display:none;
+  }
+
+  .tabs{
     flex-direction:column;
   }
-  .sidebar{
-    max-height:260px;
-    border-right:0;
-    border-bottom:1px solid #374151;
+
+  .tabs button{
+    font-size:18px;
   }
-  .chat{
-    min-height:500px;
+
+  .listItem{
+    text-align:center;
   }
 }
 </style>
@@ -524,242 +617,413 @@ textarea{resize:vertical;min-height:70px}
 
 <body>
 
-<div id="authScreen" class="screen">
-  <div class="card">
-    <h1>💬 MyChat</h1>
-    <p id="authTitle">Log in to MyChat</p>
+<!-- AUTH -->
+
+<div id="authScreen">
+
+  <div class="authBox">
+
+    <div class="logo">💬 MyChat</div>
+    <div class="subtitle">MyChat 1.8</div>
 
     <div id="loginForm">
-      <input id="loginUsername" placeholder="Username" autocomplete="username">
-      <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
+      <h2>Log In</h2>
 
-      <div class="authButtons">
-        <button id="loginBtn">Log In</button>
-        <button id="showCreateBtn" class="secondary">Create Account</button>
+      <input id="loginUsername" placeholder="Username" maxlength="20">
+      <br><br>
+      <input id="loginPassword" type="password" placeholder="Password">
+
+      <button id="loginButton">Log In</button>
+
+      <div id="loginError" class="error"></div>
+
+      <div class="authSwitch">
+        Don't have an account?
+        <span id="showCreateButton">Create one</span>
       </div>
     </div>
 
     <div id="createForm" class="hidden">
-      <input id="createUsername" placeholder="Username">
+      <h2>Create Account</h2>
+
+      <input id="createUsername" placeholder="Username" maxlength="20">
+      <br><br>
       <input id="createPassword" type="password" placeholder="Password">
 
-      <div class="authButtons">
-        <button id="createBtn">Create</button>
-        <button id="showLoginBtn" class="secondary">Back</button>
+      <button id="createButton">Create Account</button>
+
+      <div id="createError" class="error"></div>
+
+      <div class="authSwitch">
+        Already have an account?
+        <span id="showLoginButton">Log in</span>
       </div>
     </div>
 
-    <div id="authError" class="error"></div>
-  </div>
-</div>
+    <!-- PUBLIC UPDATE LOG -->
+    <div class="publicLog">
 
+      <h3>📋 Update Log</h3>
 
-<div id="app" class="hidden">
+      <div class="updateItem">
+        <div class="updateVersion">🚀 MyChat 1.8 — THE BIG UPDATE</div>
+        <div class="updateDate">October 2026</div>
+        <ul>
+          <li>Image attachments</li>
+          <li>Browser notifications</li>
+          <li>Online/offline + last seen</li>
+          <li>Typing indicators</li>
+          <li>Profiles 2.0</li>
+          <li>Settings and password changing</li>
+          <li>Light and dark themes</li>
+          <li>Improved mobile layout</li>
+          <li>Public update log</li>
+          <li>Better message search and pins</li>
+          <li>Improved groups</li>
+        </ul>
+      </div>
 
-  <div class="topbar">
-    <div class="logo">💬 MyChat <span style="color:#9ca3af;font-size:12px">1.7</span></div>
+      <div class="updateItem">
+        <div class="updateVersion">✨ MyChat 1.7</div>
+        <div class="updateDate">October 2026</div>
+        <ul>
+          <li>Message search</li>
+          <li>Pinned messages</li>
+          <li>Better group management</li>
+          <li>Conversation previews</li>
+          <li>Improved notifications</li>
+          <li>UI improvements</li>
+        </ul>
+      </div>
 
-    <div class="userTop">
-      <span id="topAvatar" class="avatar"></span>
-      <span id="topUsername"></span>
-      <button id="logoutBtn" class="secondary small">Log Out</button>
+      <div class="updateItem">
+        <div class="updateVersion">👥 MyChat 1.6</div>
+        <div class="updateDate">October 2026</div>
+        <ul>
+          <li>Group chats</li>
+          <li>Profile pictures</li>
+          <li>Group messaging</li>
+          <li>Group unread counts</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">↩️ MyChat 1.5</div>
+        <div class="updateDate">October 2026</div>
+        <ul>
+          <li>Message replies</li>
+          <li>Copy messages</li>
+          <li>More reactions</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">✨ MyChat 1.4</div>
+        <ul>
+          <li>Message reactions</li>
+          <li>Edit messages</li>
+          <li>Improved mobile layout</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">👤 MyChat 1.3</div>
+        <ul>
+          <li>Profiles</li>
+          <li>Online status</li>
+          <li>Unread messages</li>
+          <li>Improved DMs</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">💬 MyChat 1.2</div>
+        <ul>
+          <li>Friends</li>
+          <li>Friend requests</li>
+          <li>Direct messages</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">🔐 MyChat 1.1</div>
+        <ul>
+          <li>Accounts</li>
+          <li>Passwords</li>
+          <li>Login system</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">🎉 MyChat 1.0</div>
+        <ul>
+          <li>Rooms</li>
+          <li>Realtime chat</li>
+          <li>4-digit room codes</li>
+        </ul>
+      </div>
+
     </div>
-  </div>
-
-  <div class="main">
-
-    <aside class="sidebar">
-
-      <div class="tabs">
-        <button id="friendsTab" class="active">
-          👥 Friends
-        </button>
-        <button id="roomsTab">
-          🏠 Rooms
-        </button>
-        <button id="profileTab">
-          👤 Profile
-        </button>
-      </div>
-
-      <div id="friendsPanel">
-
-        <button id="newGroupBtn" style="width:100%;margin-bottom:8px">
-          ➕ Create Group
-        </button>
-
-        <input id="friendSearch" placeholder="Search username">
-
-        <button id="sendRequestBtn" style="width:100%;margin-bottom:10px">
-          Add Friend
-        </button>
-
-        <div id="friendRequests"></div>
-
-        <h3 style="font-size:14px;color:#9ca3af">Friends</h3>
-        <div id="friendsList"></div>
-
-        <h3 style="font-size:14px;color:#9ca3af;margin-top:15px">Chats</h3>
-        <div id="chatList"></div>
-
-      </div>
-
-
-      <div id="roomsPanel" class="hidden">
-
-        <input id="roomCode" maxlength="4" placeholder="4-digit room code">
-
-        <button id="joinRoomBtn" style="width:100%">
-          Join Room
-        </button>
-
-        <div id="roomStatus" style="margin-top:10px;color:#9ca3af"></div>
-
-      </div>
-
-
-      <div id="profilePanel" class="hidden panel">
-
-        <div class="profilePreview">
-          <div id="profileAvatar" class="bigAvatar"></div>
-        </div>
-
-        <div class="profileButtons">
-          <button id="choosePictureBtn">Choose Picture</button>
-          <button id="removePictureBtn" class="secondary">Remove</button>
-          <input id="pictureInput" type="file" accept="image/*" class="hidden">
-        </div>
-
-        <label>Display Name</label>
-        <input id="displayNameInput">
-
-        <label>Bio</label>
-        <textarea id="bioInput" maxlength="200"></textarea>
-
-        <button id="saveProfileBtn" style="width:100%">
-          Save Profile
-        </button>
-
-        <div id="profileStatus" style="color:#9ca3af;font-size:12px;margin-top:8px"></div>
-
-      </div>
-
-    </aside>
-
-
-    <section class="chat">
-
-      <div id="chatHeader" class="chatHeader">
-        <div class="chatHeaderInfo">
-          <div class="chatTitle">Welcome to MyChat</div>
-          <div class="chatSub">Choose a friend, group, or room.</div>
-        </div>
-      </div>
-
-      <div id="searchBox" class="searchBox">
-        <div class="searchControls">
-          <input id="messageSearch" placeholder="Search messages...">
-          <button id="prevSearchBtn" class="secondary small">↑</button>
-          <button id="nextSearchBtn" class="secondary small">↓</button>
-          <button id="closeSearchBtn" class="secondary small">✕</button>
-        </div>
-        <div id="searchCount" class="searchCount"></div>
-      </div>
-
-      <div id="messages" class="messages">
-        <div class="empty">
-          👋 Welcome to MyChat
-        </div>
-      </div>
-
-      <div id="composer" class="composer hidden">
-
-        <div id="replyBar" class="replyBar hidden">
-          <span id="replyText"></span>
-          <button id="cancelReplyBtn" class="secondary small">✕</button>
-        </div>
-
-        <div class="composeRow">
-          <input id="messageInput" placeholder="Type a message...">
-          <button id="sendMessageBtn">Send</button>
-        </div>
-
-      </div>
-
-    </section>
 
   </div>
 </div>
 
 
-<!-- GROUP CREATE MODAL -->
+<!-- APP -->
+
+<div id="app">
+
+  <aside class="sidebar">
+
+    <div class="userBar">
+
+      <div id="sidebarAvatar" class="avatar"></div>
+
+      <div class="userInfo">
+        <div id="sidebarUsername" class="username"></div>
+        <div id="sidebarStatus" class="status">Online</div>
+      </div>
+
+      <button id="settingsButton" class="secondary">⚙️</button>
+
+    </div>
+
+    <div class="tabs">
+
+      <button id="friendsTab" class="active">
+        👥 <span>Friends</span>
+      </button>
+
+      <button id="roomsTab">
+        🏠 <span>Rooms</span>
+      </button>
+
+      <button id="chatsTab">
+        💬 <span>Chats</span>
+      </button>
+
+      <button id="profileTab">
+        👤 <span>Profile</span>
+      </button>
+
+    </div>
+
+    <div id="sidebarContent" class="sidebarContent"></div>
+
+  </aside>
+
+
+  <main class="main">
+
+    <header class="chatHeader">
+
+      <div class="chatHeaderInfo">
+
+        <div id="chatTitle" class="chatTitle">
+          Welcome to MyChat
+        </div>
+
+        <div id="chatSub" class="chatSub">
+          Select a conversation
+        </div>
+
+      </div>
+
+      <button id="searchButton" class="secondary">🔎</button>
+      <button id="pinButton" class="secondary">📌</button>
+
+    </header>
+
+    <div id="messages" class="messages">
+      <div class="empty">
+        Welcome to MyChat 1.8!<br>
+        Choose a friend, room, or conversation.
+      </div>
+    </div>
+
+    <div id="typingIndicator" class="typing"></div>
+
+    <div class="composer">
+
+      <div id="replyBar" class="replyBar hidden">
+        <span id="replyText"></span>
+        <button id="cancelReply" class="secondary">✕</button>
+      </div>
+
+      <div class="composeRow">
+
+        <input
+          id="messageInput"
+          placeholder="Type a message..."
+          autocomplete="off"
+        >
+
+        <input
+          id="imageInput"
+          type="file"
+          accept="image/*"
+          class="hidden"
+        >
+
+        <button id="attachButton" class="secondary">📎</button>
+        <button id="sendButton">Send</button>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- GROUP MODAL -->
+
 <div id="groupModal" class="modal hidden">
-  <div class="modalCard">
+
+  <div class="modalBox">
+
     <h2>👥 Create Group</h2>
 
-    <input id="groupNameInput" placeholder="Group name">
+    <input id="groupNameInput" placeholder="Group name" maxlength="40">
 
-    <h3 style="font-size:14px">Add friends</h3>
-    <div id="groupFriendList"></div>
+    <h3>Add friends</h3>
 
-    <div class="modalActions">
-      <button id="cancelGroupBtn" class="secondary">Cancel</button>
-      <button id="createGroupBtn">Create Group</button>
-    </div>
+    <div id="groupFriendsList"></div>
 
-    <div id="groupError" class="error"></div>
+    <br>
+
+    <button id="createGroupButton">Create Group</button>
+    <button id="closeGroupButton" class="secondary">Cancel</button>
+
   </div>
+
 </div>
 
 
-<!-- GROUP MANAGEMENT MODAL -->
-<div id="manageGroupModal" class="modal hidden">
-  <div class="modalCard">
+<!-- PROFILE MODAL -->
 
-    <h2>👥 Group Management</h2>
+<div id="userProfileModal" class="modal hidden">
 
-    <input id="renameGroupInput" placeholder="Group name">
+  <div class="modalBox">
 
-    <button id="renameGroupBtn" style="width:100%;margin-top:5px">
-      Rename Group
+    <div id="userProfileContent"></div>
+
+    <br>
+
+    <button id="closeUserProfile" class="secondary">
+      Close
     </button>
 
-    <h3 style="margin-top:18px;font-size:15px">Members</h3>
-    <div id="groupMembersList"></div>
-
-    <h3 style="margin-top:18px;font-size:15px">Add Friends</h3>
-    <div id="groupAddFriendsList"></div>
-
-    <div class="modalActions">
-      <button id="closeManageGroupBtn" class="secondary">Close</button>
-    </div>
-
-    <div id="manageGroupError" class="error"></div>
-
   </div>
+
 </div>
 
 
-<!-- PINNED MODAL -->
-<div id="pinsModal" class="modal hidden">
-  <div class="modalCard">
+<!-- SETTINGS MODAL -->
 
-    <h2>📌 Pinned Messages</h2>
+<div id="settingsModal" class="modal hidden">
 
-    <div id="pinsList"></div>
+  <div class="modalBox">
 
-    <div class="modalActions">
-      <button id="closePinsBtn" class="secondary">Close</button>
-    </div>
+    <h2>⚙️ Settings</h2>
+
+    <h3>Appearance</h3>
+
+    <button id="darkThemeButton">🌙 Dark</button>
+    <button id="lightThemeButton">☀️ Light</button>
+
+    <h3>Notifications</h3>
+
+    <button id="notificationButton">
+      🔔 Enable Browser Notifications
+    </button>
+
+    <p id="notificationStatus" class="status"></p>
+
+    <h3>Change Password</h3>
+
+    <input id="oldPassword" type="password" placeholder="Current password">
+    <br><br>
+    <input id="newPassword" type="password" placeholder="New password">
+    <br><br>
+
+    <button id="changePasswordButton">
+      Change Password
+    </button>
+
+    <p id="passwordStatus"></p>
+
+    <h3>Account</h3>
+
+    <button id="logoutButton" class="danger">
+      Log Out
+    </button>
+
+    <br><br>
+
+    <button id="closeSettingsButton" class="secondary">
+      Close
+    </button>
 
   </div>
+
+</div>
+
+
+<!-- SEARCH MODAL -->
+
+<div id="searchModal" class="modal hidden">
+
+  <div class="modalBox">
+
+    <h2>🔎 Search Messages</h2>
+
+    <input
+      id="searchInput"
+      placeholder="Search this conversation..."
+    >
+
+    <div id="searchResults"></div>
+
+    <br>
+
+    <button id="closeSearchButton" class="secondary">
+      Close
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- IMAGE VIEWER -->
+
+<div id="imageViewer" class="modal hidden">
+
+  <div class="modalBox" style="text-align:center">
+
+    <img
+      id="largeImage"
+      style="max-width:100%;max-height:75vh;border-radius:10px"
+    >
+
+    <br><br>
+
+    <button id="closeImageButton" class="secondary">
+      Close
+    </button>
+
+  </div>
+
 </div>
 
 
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 
 import {
   getDatabase,
@@ -774,8 +1038,7 @@ import {
   onChildRemoved,
   onValue,
   onDisconnect
-}
-from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
 
 
 const firebaseConfig = {
@@ -792,102 +1055,60 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 
-/* ---------------- STATE ---------------- */
+/* STATE */
 
 let currentUser = null;
 let currentRoom = null;
-let currentChatType = null;
-let currentChatId = null;
 let currentDMUser = null;
 let currentGroup = null;
 
 let stopChatListener = null;
-let stopRoomListener = null;
-
-let replyTo = null;
+let stopTypingListener = null;
+let typingTimer = null;
 
 let currentMessages = {};
-let searchMatches = [];
-let searchIndex = 0;
 
-let userDataCache = {};
+let replyTarget = null;
 
 
-/* ---------------- HELPERS ---------------- */
+/* HELPERS */
 
 function key(username){
   return username.toLowerCase();
 }
 
-function escapeHTML(text){
-  const div = document.createElement("div");
-  div.textContent = text ?? "";
-  return div.innerHTML;
+function escapeHTML(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
 
-function formatTime(timestamp){
+function timeString(timestamp){
   if(!timestamp) return "";
-  return new Date(timestamp).toLocaleString([],{
-    month:"short",
-    day:"numeric",
+
+  return new Date(timestamp).toLocaleTimeString([],{
     hour:"numeric",
     minute:"2-digit"
   });
 }
 
-function conversationId(a,b){
-  return [key(a),key(b)].sort().join("_");
+function dateString(timestamp){
+  if(!timestamp) return "";
+
+  return new Date(timestamp).toLocaleString();
 }
-
-function avatarHTML(user,size="avatar"){
-  const d = userDataCache[key(user)] || {};
-
-  if(d.profilePicture){
-    return `
-      <div class="${size}">
-        <img src="${d.profilePicture}">
-      </div>
-    `;
-  }
-
-  return `
-    <div class="${size}">
-      ${escapeHTML((d.displayName || user).charAt(0).toUpperCase())}
-    </div>
-  `;
-}
-
-async function getUserData(username){
-  const k = key(username);
-
-  if(userDataCache[k]){
-    return userDataCache[k];
-  }
-
-  const snap = await get(ref(db,`users/${k}`));
-
-  const data = snap.exists() ? snap.val() : {};
-
-  userDataCache[k] = data;
-
-  return data;
-}
-
-async function refreshUserCache(username){
-  const snap = await get(ref(db,`users/${key(username)}`));
-
-  userDataCache[key(username)] =
-    snap.exists() ? snap.val() : {};
-}
-
-
-/* ---------------- AUTH ---------------- */
 
 async function hashPassword(password){
 
   const data = new TextEncoder().encode(password);
 
-  const hash = await crypto.subtle.digest("SHA-256",data);
+  const hash = await crypto.subtle.digest(
+    "SHA-256",
+    data
+  );
 
   return [...new Uint8Array(hash)]
     .map(b=>b.toString(16).padStart(2,"0"))
@@ -895,2305 +1116,2598 @@ async function hashPassword(password){
 }
 
 
-function showLogin(){
+/* AVATARS */
 
-  document.getElementById("loginForm").classList.remove("hidden");
-  document.getElementById("createForm").classList.add("hidden");
+async function getUserData(username){
 
-  document.getElementById("authTitle").textContent =
-    "Log in to MyChat";
+  const snap = await get(
+    ref(db,"users/"+key(username))
+  );
 
-  document.getElementById("authError").textContent="";
+  return snap.exists() ? snap.val() : null;
 }
 
+async function avatarHTML(username,sizeClass="avatar"){
+
+  const user = await getUserData(username);
+
+  if(user?.profilePicture){
+
+    return `
+      <div class="${sizeClass}">
+        <img src="${user.profilePicture}">
+      </div>
+    `;
+
+  }
+
+  return `
+    <div class="${sizeClass}">
+      ${escapeHTML(
+        (user?.displayName || username)
+        .charAt(0)
+        .toUpperCase()
+      )}
+    </div>
+  `;
+}
+
+async function refreshSidebarUser(){
+
+  if(!currentUser) return;
+
+  document.getElementById("sidebarUsername").textContent =
+    currentUser;
+
+  document.getElementById("sidebarAvatar").outerHTML =
+    await avatarHTML(currentUser,"avatar");
+
+  const avatar = document.querySelector(".userBar .avatar");
+
+  if(avatar){
+    avatar.id = "sidebarAvatar";
+  }
+
+}
+
+
+/* AUTH */
+
+function showLogin(){
+
+  document.getElementById("loginForm")
+    .classList.remove("hidden");
+
+  document.getElementById("createForm")
+    .classList.add("hidden");
+
+}
 
 function showCreate(){
 
-  document.getElementById("loginForm").classList.add("hidden");
-  document.getElementById("createForm").classList.remove("hidden");
+  document.getElementById("loginForm")
+    .classList.add("hidden");
 
-  document.getElementById("authTitle").textContent =
-    "Create your MyChat account";
+  document.getElementById("createForm")
+    .classList.remove("hidden");
 
-  document.getElementById("authError").textContent="";
 }
-
 
 async function createAccount(){
 
   const username =
-    document.getElementById("createUsername").value.trim();
+    document.getElementById("createUsername")
+      .value.trim();
 
   const password =
-    document.getElementById("createPassword").value;
+    document.getElementById("createPassword")
+      .value;
 
   const error =
-    document.getElementById("authError");
+    document.getElementById("createError");
+
+  error.textContent = "";
 
   if(!/^[A-Za-z0-9_]{3,20}$/.test(username)){
+
     error.textContent =
       "Username must be 3–20 letters, numbers, or underscores.";
+
     return;
   }
 
   if(password.length < 4){
+
     error.textContent =
       "Password must be at least 4 characters.";
+
     return;
   }
 
-  const k = key(username);
+  const userRef =
+    ref(db,"users/"+key(username));
 
-  const existing =
-    await get(ref(db,`users/${k}`));
+  const existing = await get(userRef);
 
   if(existing.exists()){
-    error.textContent="That username already exists.";
+
+    error.textContent =
+      "That username already exists.";
+
     return;
   }
 
   const passwordHash =
     await hashPassword(password);
 
-  await set(ref(db,`users/${k}`),{
+  await set(userRef,{
     username,
     displayName:username,
     bio:"",
     passwordHash,
     online:false,
-    createdAt:Date.now()
+    lastSeen:Date.now(),
+    friends:{},
+    friendRequests:{},
+    conversations:{},
+    unread:{},
+    groups:{}
   });
 
-  error.textContent="Account created! You can now log in.";
+  alert("Account created!");
 
+  document.getElementById("createUsername").value="";
   document.getElementById("createPassword").value="";
 
   showLogin();
-
-  document.getElementById("loginUsername").value=username;
 }
-
 
 async function login(){
 
   const username =
-    document.getElementById("loginUsername").value.trim();
+    document.getElementById("loginUsername")
+      .value.trim();
 
   const password =
-    document.getElementById("loginPassword").value;
+    document.getElementById("loginPassword")
+      .value;
 
   const error =
-    document.getElementById("authError");
+    document.getElementById("loginError");
+
+  error.textContent="";
 
   if(!username || !password){
-    error.textContent="Enter your username and password.";
+
+    error.textContent =
+      "Enter your username and password.";
+
     return;
   }
 
   const snap =
-    await get(ref(db,`users/${key(username)}`));
+    await get(ref(db,"users/"+key(username)));
 
   if(!snap.exists()){
-    error.textContent="Account not found.";
+
+    error.textContent =
+      "Account not found.";
+
     return;
   }
 
-  const data=snap.val();
+  const user =
+    snap.val();
 
-  const hash=await hashPassword(password);
+  const hash =
+    await hashPassword(password);
 
-  if(hash !== data.passwordHash){
-    error.textContent="Incorrect password.";
+  if(hash !== user.passwordHash){
+
+    error.textContent =
+      "Incorrect password.";
+
     return;
   }
 
-  currentUser=data.username;
+  currentUser = user.username;
 
-  await refreshUserCache(currentUser);
+  localStorage.setItem(
+    "mychatUsername",
+    currentUser
+  );
 
   await set(
-    ref(db,`users/${key(currentUser)}/online`),
+    ref(db,"users/"+key(currentUser)+"/online"),
     true
   );
 
+  await set(
+    ref(db,"users/"+key(currentUser)+"/lastSeen"),
+    Date.now()
+  );
+
   onDisconnect(
-    ref(db,`users/${key(currentUser)}/online`)
+    ref(db,"users/"+key(currentUser)+"/online")
   ).set(false);
 
-  showHome();
-}
+  onDisconnect(
+    ref(db,"users/"+key(currentUser)+"/lastSeen")
+  ).set(Date.now());
 
+  document.getElementById("authScreen").style.display="none";
 
-/* ---------------- APP ---------------- */
+  document.getElementById("app").classList.add("visible");
 
-function showHome(){
-
-  document.getElementById("authScreen")
-    .classList.add("hidden");
-
-  document.getElementById("app")
-    .classList.remove("hidden");
-
-  document.getElementById("topUsername")
-    .textContent=currentUser;
-
-  renderTopAvatar();
-
-  loadFriends();
-  loadChats();
+  await refreshSidebarUser();
 
   showFriends();
 
-  updateUnreadBadge();
+  setupPresenceListener();
+
 }
 
 
-function renderTopAvatar(){
-
-  const d =
-    userDataCache[key(currentUser)] || {};
-
-  const el=document.getElementById("topAvatar");
-
-  if(d.profilePicture){
-    el.innerHTML=`<img src="${d.profilePicture}">`;
-  }else{
-    el.textContent=
-      (d.displayName || currentUser)
-      .charAt(0)
-      .toUpperCase();
-  }
-}
-
+/* LOGOUT */
 
 async function logout(){
 
-  if(!currentUser)return;
+  if(!currentUser) return;
 
   await set(
-    ref(db,`users/${key(currentUser)}/online`),
+    ref(db,"users/"+key(currentUser)+"/online"),
     false
   );
 
-  stopCurrentChatListener();
+  await set(
+    ref(db,"users/"+key(currentUser)+"/lastSeen"),
+    Date.now()
+  );
 
-  if(stopRoomListener){
-    stopRoomListener();
-    stopRoomListener=null;
-  }
+  stopCurrentChat();
 
   currentUser=null;
 
+  localStorage.removeItem("mychatUsername");
+
   document.getElementById("app")
-    .classList.add("hidden");
+    .classList.remove("visible");
 
   document.getElementById("authScreen")
-    .classList.remove("hidden");
+    .style.display="flex";
 
-  document.getElementById("loginPassword").value="";
 }
 
 
-/* ---------------- TABS ---------------- */
+/* PRESENCE */
 
-function showFriends(){
+function setupPresenceListener(){
 
-  document.getElementById("friendsPanel")
-    .classList.remove("hidden");
+  if(!currentUser) return;
 
-  document.getElementById("roomsPanel")
-    .classList.add("hidden");
+  onValue(
+    ref(db,"users/"+key(currentUser)+"/online"),
+    snap=>{
 
-  document.getElementById("profilePanel")
-    .classList.add("hidden");
+      const status =
+        document.getElementById("sidebarStatus");
 
-  setActiveTab("friendsTab");
+      if(status){
 
-  loadFriends();
-  loadChats();
-}
+        status.textContent =
+          snap.val() ? "Online" : "Offline";
 
+      }
 
-function showRooms(){
-
-  document.getElementById("friendsPanel")
-    .classList.add("hidden");
-
-  document.getElementById("roomsPanel")
-    .classList.remove("hidden");
-
-  document.getElementById("profilePanel")
-    .classList.add("hidden");
-
-  setActiveTab("roomsTab");
-}
-
-
-function showProfile(){
-
-  document.getElementById("friendsPanel")
-    .classList.add("hidden");
-
-  document.getElementById("roomsPanel")
-    .classList.add("hidden");
-
-  document.getElementById("profilePanel")
-    .classList.remove("hidden");
-
-  setActiveTab("profileTab");
-
-  loadProfile();
-}
-
-
-function setActiveTab(id){
-
-  document.querySelectorAll(".tabs button")
-    .forEach(b=>b.classList.remove("active"));
-
-  document.getElementById(id)
-    .classList.add("active");
-}
-
-
-/* ---------------- PROFILE ---------------- */
-
-async function loadProfile(){
-
-  await refreshUserCache(currentUser);
-
-  const d=userDataCache[key(currentUser)] || {};
-
-  document.getElementById("displayNameInput").value =
-    d.displayName || currentUser;
-
-  document.getElementById("bioInput").value =
-    d.bio || "";
-
-  renderProfileAvatar();
-}
-
-
-function renderProfileAvatar(){
-
-  const d=userDataCache[key(currentUser)] || {};
-
-  const el=document.getElementById("profileAvatar");
-
-  if(d.profilePicture){
-    el.innerHTML=`<img src="${d.profilePicture}">`;
-  }else{
-    el.textContent=
-      (d.displayName || currentUser)
-      .charAt(0)
-      .toUpperCase();
-  }
-}
-
-
-async function compressImage(file){
-
-  return new Promise((resolve,reject)=>{
-
-    const reader=new FileReader();
-
-    reader.onload=()=>{
-
-      const img=new Image();
-
-      img.onload=()=>{
-
-        const max=256;
-
-        let width=img.width;
-        let height=img.height;
-
-        if(width>max || height>max){
-
-          if(width>height){
-            height=Math.round(height*max/width);
-            width=max;
-          }else{
-            width=Math.round(width*max/height);
-            height=max;
-          }
-        }
-
-        const canvas=document.createElement("canvas");
-
-        canvas.width=width;
-        canvas.height=height;
-
-        canvas.getContext("2d")
-          .drawImage(img,0,0,width,height);
-
-        resolve(
-          canvas.toDataURL("image/jpeg",0.75)
-        );
-      };
-
-      img.onerror=reject;
-      img.src=reader.result;
-    };
-
-    reader.onerror=reject;
-
-    reader.readAsDataURL(file);
-  });
-}
-
-
-async function saveProfile(){
-
-  const displayName=
-    document.getElementById("displayNameInput")
-      .value.trim();
-
-  const bio=
-    document.getElementById("bioInput")
-      .value.trim();
-
-  if(!displayName){
-    document.getElementById("profileStatus")
-      .textContent="Display name cannot be empty.";
-    return;
-  }
-
-  await update(
-    ref(db,`users/${key(currentUser)}`),
-    {
-      displayName,
-      bio
     }
   );
 
-  await refreshUserCache(currentUser);
-
-  renderProfileAvatar();
-  renderTopAvatar();
-
-  document.getElementById("profileStatus")
-    .textContent="Profile saved!";
 }
 
 
-async function choosePicture(file){
+/* FRIENDS */
 
-  if(!file)return;
+async function showFriends(){
 
-  try{
+  setActiveTab("friendsTab");
 
-    const picture=await compressImage(file);
+  currentRoom=null;
+  currentDMUser=null;
+  currentGroup=null;
 
-    await set(
-      ref(db,`users/${key(currentUser)}/profilePicture`),
-      picture
-    );
+  document.getElementById("sidebarContent").innerHTML=`
+    <input
+      id="friendSearch"
+      class="searchBox"
+      placeholder="Search username..."
+    >
 
-    await refreshUserCache(currentUser);
+    <button id="addFriendButton">
+      ➕ Add Friend
+    </button>
 
-    renderProfileAvatar();
-    renderTopAvatar();
+    <button id="createGroupOpenButton" class="secondary">
+      👥 Group
+    </button>
 
-    document.getElementById("profileStatus")
-      .textContent="Profile picture updated.";
+    <h3>Friend Requests</h3>
 
-  }catch(e){
+    <div id="requestsList"></div>
 
-    document.getElementById("profileStatus")
-      .textContent="Could not load that image.";
-  }
+    <h3>Friends</h3>
+
+    <div id="friendsList"></div>
+  `;
+
+  document.getElementById("friendSearch")
+    .addEventListener("input",searchFriend);
+
+  document.getElementById("addFriendButton")
+    .addEventListener("click",sendFriendRequest);
+
+  document.getElementById("createGroupOpenButton")
+    .addEventListener("click",openGroupModal);
+
+  await renderFriendRequests();
+  await renderFriends();
+
+  document.getElementById("chatTitle")
+    .textContent="Friends";
+
+  document.getElementById("chatSub")
+    .textContent="Manage your friends";
+
+  clearMessages();
+
 }
 
+async function searchFriend(){
 
-async function removePicture(){
-
-  await remove(
-    ref(db,`users/${key(currentUser)}/profilePicture`)
-  );
-
-  await refreshUserCache(currentUser);
-
-  renderProfileAvatar();
-  renderTopAvatar();
-}
-
-
-/* ---------------- FRIENDS ---------------- */
-
-async function sendFriendRequest(){
-
-  const username=
+  const value =
     document.getElementById("friendSearch")
       .value.trim();
 
-  if(!username){
-    alert("Enter a username.");
-    return;
-  }
+  if(value.length < 2) return;
 
-  if(key(username)===key(currentUser)){
+  const snap =
+    await get(ref(db,"users/"+key(value)));
+
+  if(!snap.exists()) return;
+
+  const friend =
+    snap.val();
+
+  if(key(friend.username) === key(currentUser))
+    return;
+
+  const list =
+    document.getElementById("friendsList");
+
+  const existing =
+    [...list.children]
+      .some(x=>x.dataset.user === key(friend.username));
+
+  if(existing) return;
+
+  const item =
+    document.createElement("div");
+
+  item.className="listItem";
+
+  item.dataset.user =
+    key(friend.username);
+
+  item.innerHTML=`
+    <div class="listTitle">
+      ${escapeHTML(friend.displayName || friend.username)}
+    </div>
+    <div class="listPreview">
+      @${escapeHTML(friend.username)}
+    </div>
+  `;
+
+  item.onclick=()=>openDM(friend.username);
+
+  list.prepend(item);
+
+}
+
+async function sendFriendRequest(){
+
+  const username =
+    prompt("Enter username:");
+
+  if(!username) return;
+
+  if(key(username) === key(currentUser)){
+
     alert("You can't add yourself.");
+
     return;
   }
 
-  const snap=
-    await get(ref(db,`users/${key(username)}`));
+  const snap =
+    await get(ref(db,"users/"+key(username)));
 
   if(!snap.exists()){
+
     alert("User not found.");
-    return;
-  }
 
-  const already=
-    await get(
-      ref(db,
-      `users/${key(currentUser)}/friends/${key(username)}`)
-    );
-
-  if(already.exists()){
-    alert("You're already friends.");
     return;
   }
 
   await set(
-    ref(db,
-    `users/${key(username)}/friendRequests/${key(currentUser)}`),
-    {
-      username:currentUser,
-      timestamp:Date.now()
-    }
+    ref(
+      db,
+      "users/"+key(username)+
+      "/friendRequests/"+key(currentUser)
+    ),
+    true
   );
 
   alert("Friend request sent!");
+
 }
 
+async function renderFriendRequests(){
 
-async function loadFriends(){
+  const list =
+    document.getElementById("requestsList");
 
-  const list=
-    document.getElementById("friendsList");
-
-  const requests=
-    document.getElementById("friendRequests");
-
-  list.innerHTML="";
-  requests.innerHTML="";
-
-  const snap=
+  const snap =
     await get(
-      ref(db,`users/${key(currentUser)}/friends`)
+      ref(db,
+      "users/"+key(currentUser)+"/friendRequests")
     );
 
-  const friends=snap.exists()?snap.val():{};
+  list.innerHTML="";
 
-  const friendKeys=Object.keys(friends);
+  if(!snap.exists()){
 
-  if(!friendKeys.length){
     list.innerHTML=
-      `<div class="empty">No friends yet.</div>`;
+      `<div class="status">No requests</div>`;
+
+    return;
   }
 
-  for(const friendKey of friendKeys){
+  for(const usernameKey of Object.keys(snap.val())){
 
-    const username=
-      friends[friendKey].username || friendKey;
+    const userSnap =
+      await get(
+        ref(db,"users/"+usernameKey)
+      );
 
-    await refreshUserCache(username);
+    if(!userSnap.exists()) continue;
 
-    const d=userDataCache[key(username)] || {};
+    const user =
+      userSnap.val();
 
-    const item=document.createElement("div");
+    const item =
+      document.createElement("div");
 
     item.className="listItem";
 
     item.innerHTML=`
-      ${avatarHTML(username)}
-      <div class="listText">
-        <div class="listName">
-          ${escapeHTML(d.displayName || username)}
-        </div>
-        <div class="preview">
-          ${d.online
-            ? '<span class="onlineDot"></span> Online'
-            : '<span class="offlineDot"></span> Offline'}
-        </div>
+      <div class="listTitle">
+        ${escapeHTML(user.displayName || user.username)}
       </div>
+      <button class="success">Accept</button>
+      <button class="danger">Decline</button>
     `;
 
-    item.onclick=()=>openDM(username);
+    item.querySelector(".success")
+      .onclick=async()=>{
+
+        await set(
+          ref(
+            db,
+            "users/"+key(currentUser)+
+            "/friends/"+usernameKey
+          ),
+          true
+        );
+
+        await set(
+          ref(
+            db,
+            "users/"+usernameKey+
+            "/friends/"+key(currentUser)
+          ),
+          true
+        );
+
+        await remove(
+          ref(
+            db,
+            "users/"+key(currentUser)+
+            "/friendRequests/"+usernameKey
+          )
+        );
+
+        await renderFriendRequests();
+        await renderFriends();
+
+      };
+
+    item.querySelector(".danger")
+      .onclick=async()=>{
+
+        await remove(
+          ref(
+            db,
+            "users/"+key(currentUser)+
+            "/friendRequests/"+usernameKey
+          )
+        );
+
+        renderFriendRequests();
+
+      };
 
     list.appendChild(item);
   }
 
-  const reqSnap=
+}
+
+async function renderFriends(){
+
+  const list =
+    document.getElementById("friendsList");
+
+  const snap =
     await get(
       ref(db,
-      `users/${key(currentUser)}/friendRequests`)
+      "users/"+key(currentUser)+"/friends")
     );
-
-  const reqs=reqSnap.exists()?reqSnap.val():{};
-
-  for(const requesterKey of Object.keys(reqs)){
-
-    const req=reqs[requesterKey];
-
-    const row=document.createElement("div");
-
-    row.className="listItem";
-
-    row.innerHTML=`
-      ${avatarHTML(req.username)}
-      <div class="listText">
-        <div class="listName">
-          ${escapeHTML(req.username)}
-        </div>
-        <div class="preview">Friend request</div>
-      </div>
-      <button class="small" data-accept>✓</button>
-      <button class="danger small" data-decline>✕</button>
-    `;
-
-    row.querySelector("[data-accept]")
-      .onclick=()=>acceptFriend(req.username);
-
-    row.querySelector("[data-decline]")
-      .onclick=()=>declineFriend(req.username);
-
-    requests.appendChild(row);
-  }
-}
-
-
-async function acceptFriend(username){
-
-  const me=key(currentUser);
-  const them=key(username);
-
-  await set(
-    ref(db,`users/${me}/friends/${them}`),
-    {
-      username,
-      timestamp:Date.now()
-    }
-  );
-
-  await set(
-    ref(db,`users/${them}/friends/${me}`),
-    {
-      username:currentUser,
-      timestamp:Date.now()
-    }
-  );
-
-  await remove(
-    ref(db,`users/${me}/friendRequests/${them}`)
-  );
-
-  loadFriends();
-}
-
-
-async function declineFriend(username){
-
-  await remove(
-    ref(db,
-    `users/${key(currentUser)}/friendRequests/${key(username)}`)
-  );
-
-  loadFriends();
-}
-
-
-async function removeFriend(username){
-
-  if(!confirm(`Remove ${username} from your friends?`))
-    return;
-
-  await remove(
-    ref(db,
-    `users/${key(currentUser)}/friends/${key(username)}`)
-  );
-
-  await remove(
-    ref(db,
-    `users/${key(username)}/friends/${key(currentUser)}`)
-  );
-
-  loadFriends();
-}
-
-
-/* ---------------- CHAT LIST ---------------- */
-
-async function loadChats(){
-
-  const list=document.getElementById("chatList");
 
   list.innerHTML="";
 
-  const userSnap=
-    await get(
-      ref(db,`users/${key(currentUser)}`)
-    );
+  if(!snap.exists()){
 
-  const user=userSnap.exists()?userSnap.val():{};
-
-  const conversations=user.conversations || {};
-  const groups=user.groups || {};
-
-  const entries=[];
-
-  for(const k of Object.keys(conversations)){
-
-    const c=conversations[k];
-
-    entries.push({
-      type:"dm",
-      id:k,
-      username:c.username || findOtherUser(k),
-      timestamp:c.lastMessageTimestamp || 0,
-      data:c
-    });
-  }
-
-  for(const id of Object.keys(groups)){
-
-    const gSnap=
-      await get(ref(db,`groupChats/${id}`));
-
-    if(gSnap.exists()){
-
-      entries.push({
-        type:"group",
-        id,
-        timestamp:gSnap.val().lastMessageTimestamp || 0,
-        data:{
-          ...groups[id],
-          ...gSnap.val()
-        }
-      });
-    }
-  }
-
-  entries.sort((a,b)=>b.timestamp-a.timestamp);
-
-  if(!entries.length){
     list.innerHTML=
-      `<div class="empty">Your chats will appear here.</div>`;
+      `<div class="status">No friends yet.</div>`;
+
     return;
   }
 
-  for(const entry of entries){
+  for(const usernameKey of Object.keys(snap.val())){
 
-    const item=document.createElement("div");
+    const userSnap =
+      await get(ref(db,"users/"+usernameKey));
+
+    if(!userSnap.exists()) continue;
+
+    const user =
+      userSnap.val();
+
+    const item =
+      document.createElement("div");
 
     item.className="listItem";
 
-    let title="";
-    let preview="";
+    item.innerHTML=`
+      <div class="listTitle">
+        ${escapeHTML(user.displayName || user.username)}
+      </div>
 
-    if(entry.type==="dm"){
+      <div class="listPreview">
+        ${user.online ? "🟢 Online" :
+          user.lastSeen ?
+          "Last seen "+dateString(user.lastSeen) :
+          "Offline"}
+      </div>
+    `;
 
-      const username=entry.username;
-
-      await refreshUserCache(username);
-
-      const d=userDataCache[key(username)] || {};
-
-      title=d.displayName || username;
-
-      preview=entry.data.lastMessage || "Direct message";
-
-      item.innerHTML=`
-        ${avatarHTML(username)}
-        <div class="listText">
-          <div class="listName">${escapeHTML(title)}</div>
-          <div class="preview">${escapeHTML(preview)}</div>
-        </div>
-      `;
-
-      const unread=
-        user.unread?.[key(username)] || 0;
-
-      if(unread){
-        item.innerHTML+=
-          `<span class="unread">${unread}</span>`;
-      }
-
-      item.onclick=()=>openDM(username);
-
-    }else{
-
-      title=entry.data.name || "Group";
-
-      preview=entry.data.lastMessage
-        ? `${entry.data.lastMessageUsername || ""}: ${entry.data.lastMessage}`
-        : "Group chat";
-
-      item.innerHTML=`
-        <div class="avatar">👥</div>
-        <div class="listText">
-          <div class="listName">${escapeHTML(title)}</div>
-          <div class="preview">${escapeHTML(preview)}</div>
-        </div>
-      `;
-
-      const unread=
-        user.unread?.[`group_${entry.id}`] || 0;
-
-      if(unread){
-        item.innerHTML+=
-          `<span class="unread">${unread}</span>`;
-      }
-
-      item.onclick=()=>openGroup(entry.id);
-    }
+    item.onclick=()=>openDM(user.username);
 
     list.appendChild(item);
   }
 
-  updateUnreadBadge();
 }
 
 
-function findOtherUser(id){
+/* DMs */
 
-  const parts=id.split("_");
+function conversationID(a,b){
 
-  return parts.find(x=>x!==key(currentUser)) || parts[0];
+  return [key(a),key(b)]
+    .sort()
+    .join("_");
+
 }
 
-
-async function updateConversationPreviewDM(
-  username,
-  text,
-  timestamp
-){
-
-  const otherKey=key(username);
-
-  await update(
-    ref(db,
-    `users/${key(currentUser)}/conversations/${conversationId(currentUser,username)}`),
-    {
-      username,
-      lastMessage:text,
-      lastMessageUsername:currentUser,
-      lastMessageTimestamp:timestamp
-    }
-  );
-
-  await update(
-    ref(db,
-    `users/${otherKey}/conversations/${conversationId(currentUser,username)}`),
-    {
-      username:currentUser,
-      lastMessage:text,
-      lastMessageUsername:currentUser,
-      lastMessageTimestamp:timestamp
-    }
-  );
-}
-
-
-async function updateConversationPreviewGroup(
-  groupId,
-  text,
-  username,
-  timestamp
-){
-
-  const snap=
-    await get(ref(db,`groupChats/${groupId}/members`));
-
-  if(!snap.exists())return;
-
-  const members=snap.val();
-
-  await update(
-    ref(db,`groupChats/${groupId}`),
-    {
-      lastMessage:text,
-      lastMessageUsername:username,
-      lastMessageTimestamp:timestamp
-    }
-  );
-
-  for(const member of Object.keys(members)){
-
-    await update(
-      ref(db,`users/${member}/groups/${groupId}`),
-      {
-        lastMessage:text,
-        lastMessageUsername:username,
-        lastMessageTimestamp:timestamp
-      }
-    );
-  }
-}
-
-
-/* ---------------- LISTENER CLEANUP ---------------- */
-
-function stopCurrentChatListener(){
+function stopCurrentChat(){
 
   if(stopChatListener){
+
     stopChatListener();
     stopChatListener=null;
+
   }
 
+  if(stopTypingListener){
+
+    stopTypingListener();
+    stopTypingListener=null;
+
+  }
+
+  currentDMUser=null;
+  currentGroup=null;
+  currentRoom=null;
   currentMessages={};
-  replyTo=null;
 
-  document.getElementById("replyBar")
-    .classList.add("hidden");
+  document.getElementById("typingIndicator")
+    .textContent="";
+
 }
-
-
-/* ---------------- DM ---------------- */
 
 async function openDM(username){
 
-  stopCurrentChatListener();
+  stopCurrentChat();
 
-  currentChatType="dm";
   currentDMUser=username;
-  currentGroup=null;
 
-  const id=
-    conversationId(currentUser,username);
+  document.getElementById("chatTitle")
+    .textContent=username;
 
-  currentChatId=id;
+  const user =
+    await getUserData(username);
 
-  await set(
-    ref(db,
-    `users/${key(currentUser)}/unread/${key(username)}`),
-    0
-  );
-
-  await refreshUserCache(username);
-
-  const d=userDataCache[key(username)] || {};
-
-  document.getElementById("chatHeader")
-    .innerHTML=`
-      ${avatarHTML(username)}
-      <div class="chatHeaderInfo">
-        <div class="chatTitle">
-          ${escapeHTML(d.displayName || username)}
-        </div>
-        <div class="chatSub">
-          ${d.online
-            ? "🟢 Online"
-            : "⚫ Offline"}
-        </div>
-      </div>
-
-      <div class="headerButtons">
-        <button id="searchBtn" class="secondary small">🔎</button>
-        <button id="pinsBtn" class="secondary small">📌</button>
-      </div>
-    `;
-
-  document.getElementById("searchBtn").onclick=
-    openSearch;
-
-  document.getElementById("pinsBtn").onclick=
-    showPins;
-
-  document.getElementById("composer")
-    .classList.remove("hidden");
+  document.getElementById("chatSub")
+    .textContent =
+      user?.online
+      ? "🟢 Online"
+      : user?.lastSeen
+      ? "Last seen "+dateString(user.lastSeen)
+      : "Offline";
 
   document.getElementById("messages").innerHTML="";
 
-  const messagesRef=
-    ref(db,`directMessages/${id}/messages`);
+  setActiveTab("chatsTab");
 
-  const added=
-    onChildAdded(messagesRef,snap=>{
-      currentMessages[snap.key]=snap.val();
-      renderMessage(snap.key,snap.val());
-      updateSearchResults();
-    });
+  const path =
+    "directMessages/"+
+    conversationID(currentUser,username)+
+    "/messages";
 
-  const changed=
-    onChildChanged(messagesRef,snap=>{
-      currentMessages[snap.key]=snap.val();
-      rerenderMessage(snap.key);
-      updateSearchResults();
-    });
+  const messageRef =
+    ref(db,path);
 
-  const removed=
-    onChildRemoved(messagesRef,snap=>{
-      delete currentMessages[snap.key];
+  const unsubs=[];
 
-      const el=
-        document.querySelector(
-          `[data-message-id="${snap.key}"]`
-        );
+  unsubs.push(
+    onChildAdded(
+      messageRef,
+      snap=>renderMessage(snap.key,snap.val())
+    )
+  );
 
-      if(el)el.remove();
+  unsubs.push(
+    onChildChanged(
+      messageRef,
+      snap=>updateMessageUI(snap.key,snap.val())
+    )
+  );
 
-      updateSearchResults();
-    });
+  unsubs.push(
+    onChildRemoved(
+      messageRef,
+      snap=>{
+
+        const el =
+          document.getElementById("message-"+snap.key);
+
+        if(el) el.remove();
+
+        delete currentMessages[snap.key];
+
+      }
+    )
+  );
 
   stopChatListener=()=>{
-    added();
-    changed();
-    removed();
+
+    unsubs.forEach(fn=>fn());
+
   };
 
-  updateUnreadBadge();
-  loadChats();
+  await set(
+    ref(
+      db,
+      "users/"+key(currentUser)+
+      "/unread/"+key(username)
+    ),
+    0
+  );
+
+  listenTypingDM(username);
+
 }
 
+function listenTypingDM(username){
 
-async function sendDM(){
+  const typingRef =
+    ref(
+      db,
+      "typing/"+conversationID(currentUser,username)
+    );
 
-  if(!currentDMUser)return;
+  stopTypingListener =
+    onValue(typingRef,snap=>{
 
-  const input=
+      const data =
+        snap.val() || {};
+
+      const names =
+        Object.entries(data)
+          .filter(([u,v])=>u!==key(currentUser)&&v)
+          .map(([u])=>u);
+
+      document.getElementById("typingIndicator")
+        .textContent =
+          names.length
+          ? names.join(", ")+" typing..."
+          : "";
+
+    });
+
+}
+
+async function sendMessage(){
+
+  if(!currentUser) return;
+
+  let destination;
+
+  let isDM=false;
+  let isGroup=false;
+  let isRoom=false;
+
+  if(currentDMUser){
+
+    destination =
+      "directMessages/"+
+      conversationID(currentUser,currentDMUser)+
+      "/messages";
+
+    isDM=true;
+
+  }else if(currentGroup){
+
+    destination =
+      "groupChats/"+currentGroup+"/messages";
+
+    isGroup=true;
+
+  }else if(currentRoom){
+
+    destination =
+      "rooms/"+currentRoom+"/messages";
+
+    isRoom=true;
+
+  }else{
+
+    return;
+
+  }
+
+  const input =
     document.getElementById("messageInput");
 
-  const text=input.value.trim();
+  const text =
+    input.value.trim();
 
-  if(!text)return;
-
-  const id=
-    conversationId(currentUser,currentDMUser);
+  if(!text && !pendingImage) return;
 
   const message={
+
     username:currentUser,
     text,
     timestamp:Date.now(),
-    edited:false
+
+    replyTo:replyTarget || null,
+
+    reactions:{},
+
+    edited:false,
+    pinned:false
+
   };
 
-  if(replyTo){
-    message.replyTo=replyTo;
+  if(pendingImage){
+
+    message.image =
+      pendingImage;
+
   }
 
-  const messageRef=
-    push(
-      ref(db,`directMessages/${id}/messages`)
-    );
-
-  await set(messageRef,message);
-
-  await updateConversationPreviewDM(
-    currentDMUser,
-    text,
-    message.timestamp
+  await push(
+    ref(db,destination),
+    message
   );
 
-  await set(
-    ref(db,
-    `users/${key(currentDMUser)}/unread/${key(currentUser)}`),
-    ((await get(
-      ref(db,
-      `users/${key(currentDMUser)}/unread/${key(currentUser)}`)
-    )).val() || 0)+1
-  );
-
-  input.value="";
-  cancelReply();
-
-  loadChats();
-}
-
-
-async function deleteMessage(id){
-
-  if(currentChatType==="dm"){
-
-    await remove(
-      ref(db,
-      `directMessages/${currentChatId}/messages/${id}`)
-    );
-
-  }else if(currentChatType==="group"){
-
-    await remove(
-      ref(db,
-      `groupChats/${currentGroup}/messages/${id}`)
-    );
-  }
-}
-
-
-async function editMessage(id){
-
-  const old=currentMessages[id];
-
-  if(!old || old.username!==currentUser)return;
-
-  const text=prompt(
-    "Edit message:",
-    old.text
-  );
-
-  if(text===null)return;
-
-  const newText=text.trim();
-
-  if(!newText)return;
-
-  let path="";
-
-  if(currentChatType==="dm"){
-    path=
-      `directMessages/${currentChatId}/messages/${id}`;
-  }else{
-    path=
-      `groupChats/${currentGroup}/messages/${id}`;
-  }
-
-  await update(ref(db,path),{
-    text:newText,
-    edited:true
-  });
-}
-
-
-/* ---------------- GROUP CREATION ---------------- */
-
-async function openGroupModal(){
-
-  const list=
-    document.getElementById("groupFriendList");
-
-  list.innerHTML="";
-
-  const snap=
-    await get(
-      ref(db,
-      `users/${key(currentUser)}/friends`)
-    );
-
-  const friends=snap.exists()?snap.val():{};
-
-  if(!Object.keys(friends).length){
-    list.innerHTML=
-      `<div class="empty">Add some friends first.</div>`;
-  }
-
-  for(const k of Object.keys(friends)){
-
-    const username=friends[k].username || k;
-
-    await refreshUserCache(username);
-
-    const row=document.createElement("label");
-
-    row.className="friendCheck";
-
-    row.innerHTML=`
-      <input type="checkbox" value="${escapeHTML(username)}">
-      ${avatarHTML(username,"avatar")}
-      <span>
-        ${escapeHTML(
-          userDataCache[key(username)]?.displayName || username
-        )}
-      </span>
-    `;
-
-    list.appendChild(row);
-  }
-
-  document.getElementById("groupNameInput").value="";
-  document.getElementById("groupError").textContent="";
-
-  document.getElementById("groupModal")
-    .classList.remove("hidden");
-}
-
-
-async function createGroup(){
-
-  const name=
-    document.getElementById("groupNameInput")
-      .value.trim();
-
-  const error=
-    document.getElementById("groupError");
-
-  if(!name){
-    error.textContent="Enter a group name.";
-    return;
-  }
-
-  const selected=
-    [...document.querySelectorAll(
-      "#groupFriendList input:checked"
-    )].map(x=>x.value);
-
-  if(!selected.length){
-    error.textContent=
-      "Select at least one friend.";
-    return;
-  }
-
-  const groupRef=
-    push(ref(db,"groupChats"));
-
-  const groupId=groupRef.key;
-
-  const members={
-    [key(currentUser)]:true
-  };
-
-  selected.forEach(u=>{
-    members[key(u)]=true;
-  });
-
-  await set(groupRef,{
-    name,
-    creator:key(currentUser),
-    members,
-    createdAt:Date.now(),
-    lastMessage:"",
-    lastMessageTimestamp:0
-  });
-
-  for(const username of Object.keys(members)){
+  if(isDM){
 
     await set(
-      ref(db,
-      `users/${username}/groups/${groupId}`),
-      {
-        name,
-        creator:key(currentUser)
-      }
+      ref(
+        db,
+        "users/"+key(currentDMUser)+
+        "/unread/"+key(currentUser)
+      ),
+      Date.now()
     );
+
   }
 
-  document.getElementById("groupModal")
-    .classList.add("hidden");
+  if(isGroup){
 
-  loadChats();
-}
+    const groupSnap =
+      await get(
+        ref(db,"groupChats/"+currentGroup+"/members")
+      );
 
+    if(groupSnap.exists()){
 
-/* ---------------- GROUP ---------------- */
+      for(const member of Object.keys(groupSnap.val())){
 
-async function openGroup(groupId){
+        if(member === key(currentUser)) continue;
 
-  stopCurrentChatListener();
-
-  const snap=
-    await get(ref(db,`groupChats/${groupId}`));
-
-  if(!snap.exists())return;
-
-  currentGroup=groupId;
-  currentChatType="group";
-  currentChatId=groupId;
-
-  const group=snap.val();
-
-  document.getElementById("chatHeader")
-    .innerHTML=`
-      <div class="avatar">👥</div>
-
-      <div class="chatHeaderInfo">
-        <div class="chatTitle">
-          ${escapeHTML(group.name || "Group")}
-        </div>
-
-        <div class="chatSub">
-          ${Object.keys(group.members || {}).length} members
-        </div>
-      </div>
-
-      <div class="headerButtons">
-        <button id="searchBtn" class="secondary small">🔎</button>
-        <button id="pinsBtn" class="secondary small">📌</button>
-        <button id="membersBtn" class="secondary small">👥</button>
-      </div>
-    `;
-
-  document.getElementById("searchBtn").onclick=
-    openSearch;
-
-  document.getElementById("pinsBtn").onclick=
-    showPins;
-
-  document.getElementById("membersBtn").onclick=
-    openGroupManagement;
-
-  await set(
-    ref(db,
-    `users/${key(currentUser)}/unread/group_${groupId}`),
-    0
-  );
-
-  document.getElementById("messages").innerHTML="";
-
-  document.getElementById("composer")
-    .classList.remove("hidden");
-
-  const messagesRef=
-    ref(db,`groupChats/${groupId}/messages`);
-
-  const added=
-    onChildAdded(messagesRef,snap=>{
-      currentMessages[snap.key]=snap.val();
-      renderMessage(snap.key,snap.val());
-      updateSearchResults();
-    });
-
-  const changed=
-    onChildChanged(messagesRef,snap=>{
-      currentMessages[snap.key]=snap.val();
-      rerenderMessage(snap.key);
-      updateSearchResults();
-    });
-
-  const removed=
-    onChildRemoved(messagesRef,snap=>{
-      delete currentMessages[snap.key];
-
-      const el=
-        document.querySelector(
-          `[data-message-id="${snap.key}"]`
+        await set(
+          ref(
+            db,
+            "users/"+member+
+            "/unread/group_"+currentGroup
+          ),
+          Date.now()
         );
 
-      if(el)el.remove();
+      }
 
-      updateSearchResults();
-    });
-
-  stopChatListener=()=>{
-    added();
-    changed();
-    removed();
-  };
-
-  updateUnreadBadge();
-  loadChats();
-}
-
-
-async function sendGroupMessage(){
-
-  if(!currentGroup)return;
-
-  const input=
-    document.getElementById("messageInput");
-
-  const text=input.value.trim();
-
-  if(!text)return;
-
-  const message={
-    username:currentUser,
-    text,
-    timestamp:Date.now(),
-    edited:false
-  };
-
-  if(replyTo){
-    message.replyTo=replyTo;
-  }
-
-  const messageRef=
-    push(
-      ref(db,
-      `groupChats/${currentGroup}/messages`)
-    );
-
-  await set(messageRef,message);
-
-  await updateConversationPreviewGroup(
-    currentGroup,
-    text,
-    currentUser,
-    message.timestamp
-  );
-
-  const snap=
-    await get(
-      ref(db,
-      `groupChats/${currentGroup}/members`)
-    );
-
-  if(snap.exists()){
-
-    const members=snap.val();
-
-    for(const member of Object.keys(members)){
-
-      if(member===key(currentUser))continue;
-
-      const unreadRef=
-        ref(db,
-        `users/${member}/unread/group_${currentGroup}`);
-
-      const unreadSnap=await get(unreadRef);
-
-      await set(
-        unreadRef,
-        (unreadSnap.val() || 0)+1
-      );
     }
+
   }
 
   input.value="";
-  cancelReply();
 
-  loadChats();
+  pendingImage=null;
+
+  document.getElementById("imageInput").value="";
+
+  clearReply();
+
+  stopTyping();
+
 }
 
+let pendingImage=null;
 
-/* ---------------- GROUP MANAGEMENT ---------------- */
 
-async function openGroupManagement(){
+/* MESSAGE RENDERING */
 
-  if(!currentGroup)return;
+async function renderMessage(id,data){
 
-  const snap=
-    await get(ref(db,`groupChats/${currentGroup}`));
+  currentMessages[id]=data;
 
-  if(!snap.exists())return;
-
-  const group=snap.val();
-
-  document.getElementById("renameGroupInput").value=
-    group.name || "";
-
-  const isCreator=
-    key(group.creator)===key(currentUser);
-
-  document.getElementById("renameGroupInput")
-    .disabled=!isCreator;
-
-  document.getElementById("renameGroupBtn")
-    .disabled=!isCreator;
-
-  renderGroupMembers(group);
-  renderGroupAddFriends(group);
-
-  document.getElementById("manageGroupError")
-    .textContent="";
-
-  document.getElementById("manageGroupModal")
-    .classList.remove("hidden");
-}
-
-
-async function renderGroupMembers(group){
-
-  const list=
-    document.getElementById("groupMembersList");
-
-  list.innerHTML="";
-
-  const members=group.members || {};
-
-  for(const memberKey of Object.keys(members)){
-
-    await refreshUserCache(memberKey);
-
-    const d=userDataCache[memberKey] || {};
-
-    const row=document.createElement("div");
-
-    row.className="memberRow";
-
-    const creator=
-      key(group.creator)===memberKey;
-
-    row.innerHTML=`
-      ${avatarHTML(memberKey)}
-      <div class="memberName">
-        ${escapeHTML(d.displayName || memberKey)}
-        ${creator
-          ? `<span class="creator">👑 Creator</span>`
-          : ""}
-      </div>
-    `;
-
-    if(
-      key(group.creator)===key(currentUser) &&
-      !creator
-    ){
-
-      const removeBtn=
-        document.createElement("button");
-
-      removeBtn.className="danger small";
-      removeBtn.textContent="Remove";
-
-      removeBtn.onclick=
-        ()=>removeGroupMember(memberKey);
-
-      row.appendChild(removeBtn);
-    }
-
-    list.appendChild(row);
-  }
-}
-
-
-async function renderGroupAddFriends(group){
-
-  const list=
-    document.getElementById("groupAddFriendsList");
-
-  list.innerHTML="";
-
-  if(key(group.creator)!==key(currentUser)){
-    list.innerHTML=
-      `<div class="empty">Only the group creator can add members.</div>`;
-    return;
-  }
-
-  const friendSnap=
-    await get(
-      ref(db,
-      `users/${key(currentUser)}/friends`)
-    );
-
-  const friends=
-    friendSnap.exists()?friendSnap.val():{};
-
-  for(const friendKey of Object.keys(friends)){
-
-    if(group.members?.[friendKey])continue;
-
-    const username=
-      friends[friendKey].username || friendKey;
-
-    const row=document.createElement("div");
-
-    row.className="memberRow";
-
-    row.innerHTML=`
-      ${avatarHTML(username)}
-      <div class="memberName">
-        ${escapeHTML(username)}
-      </div>
-    `;
-
-    const addBtn=
-      document.createElement("button");
-
-    addBtn.className="small";
-    addBtn.textContent="Add";
-
-    addBtn.onclick=
-      ()=>addGroupMember(username);
-
-    row.appendChild(addBtn);
-
-    list.appendChild(row);
-  }
-
-  if(!list.children.length){
-    list.innerHTML=
-      `<div class="empty">No friends available to add.</div>`;
-  }
-}
-
-
-async function renameGroup(){
-
-  if(!currentGroup)return;
-
-  const snap=
-    await get(ref(db,`groupChats/${currentGroup}`));
-
-  if(!snap.exists())return;
-
-  const group=snap.val();
-
-  if(key(group.creator)!==key(currentUser)){
-    return;
-  }
-
-  const name=
-    document.getElementById("renameGroupInput")
-      .value.trim();
-
-  if(!name){
-    document.getElementById("manageGroupError")
-      .textContent="Group name cannot be empty.";
-    return;
-  }
-
-  await update(
-    ref(db,`groupChats/${currentGroup}`),
-    {name}
-  );
-
-  const members=group.members || {};
-
-  for(const member of Object.keys(members)){
-
-    await update(
-      ref(db,
-      `users/${member}/groups/${currentGroup}`),
-      {name}
-    );
-  }
-
-  document.getElementById("manageGroupModal")
-    .classList.add("hidden");
-
-  openGroup(currentGroup);
-  loadChats();
-}
-
-
-async function addGroupMember(username){
-
-  if(!currentGroup)return;
-
-  const snap=
-    await get(ref(db,`groupChats/${currentGroup}`));
-
-  if(!snap.exists())return;
-
-  const group=snap.val();
-
-  if(key(group.creator)!==key(currentUser)){
-    return;
-  }
-
-  const memberKey=key(username);
-
-  await set(
-    ref(db,
-    `groupChats/${currentGroup}/members/${memberKey}`),
-    true
-  );
-
-  await set(
-    ref(db,
-    `users/${memberKey}/groups/${currentGroup}`),
-    {
-      name:group.name,
-      creator:group.creator
-    }
-  );
-
-  openGroupManagement();
-}
-
-
-async function removeGroupMember(username){
-
-  if(!currentGroup)return;
-
-  const snap=
-    await get(ref(db,`groupChats/${currentGroup}`));
-
-  if(!snap.exists())return;
-
-  const group=snap.val();
-
-  if(key(group.creator)!==key(currentUser)){
-    return;
-  }
-
-  const memberKey=key(username);
-
-  if(memberKey===key(group.creator))return;
-
-  if(!confirm(`Remove ${username} from this group?`))
-    return;
-
-  await remove(
-    ref(db,
-    `groupChats/${currentGroup}/members/${memberKey}`)
-  );
-
-  await remove(
-    ref(db,
-    `users/${memberKey}/groups/${currentGroup}`)
-  );
-
-  openGroupManagement();
-}
-
-
-/* ---------------- RENDER MESSAGE ---------------- */
-
-async function renderMessage(id,message){
-
-  const container=
+  const container =
     document.getElementById("messages");
 
-  if(!container)return;
+  if(document.getElementById("message-"+id))
+    return;
 
-  const old=
-    document.querySelector(
-      `[data-message-id="${id}"]`
-    );
+  const wrapper =
+    document.createElement("div");
 
-  if(old)old.remove();
-
-  await refreshUserCache(message.username);
-
-  const d=
-    userDataCache[key(message.username)] || {};
-
-  const wrapper=document.createElement("div");
+  wrapper.id="message-"+id;
 
   wrapper.className=
-    "message" +
-    (key(message.username)===key(currentUser)
-      ? " mine"
-      : "");
+    "message "+(data.pinned ? "pinned":"");
 
-  wrapper.dataset.messageId=id;
+  const avatar =
+    await avatarHTML(data.username);
+
+  const user =
+    await getUserData(data.username);
 
   let replyHTML="";
 
-  if(message.replyTo){
+  if(data.replyTo){
 
     replyHTML=`
       <div class="replyPreview"
-           data-reply-id="${escapeHTML(message.replyTo.id)}">
-        ↩️ <b>${escapeHTML(message.replyTo.username)}</b>:
-        ${escapeHTML(message.replyTo.text)}
+           onclick="jumpToMessage('${data.replyTo.id}')">
+        ↩️ ${escapeHTML(data.replyTo.username)}:
+        ${escapeHTML(data.replyTo.text || "[image]")}
       </div>
     `;
+
+  }
+
+  let imageHTML="";
+
+  if(data.image){
+
+    imageHTML=`
+      <img
+        class="messageImage"
+        src="${data.image}"
+        onclick="viewImage(this.src)"
+      >
+    `;
+
   }
 
   let reactionsHTML="";
 
-  if(message.reactions){
+  if(data.reactions){
 
     const counts={};
 
-    Object.values(message.reactions)
+    Object.values(data.reactions)
       .forEach(emoji=>{
         counts[emoji]=(counts[emoji]||0)+1;
       });
 
-    reactionsHTML=
-      `<div class="reactions">`+
+    reactionsHTML =
       Object.entries(counts)
         .map(([emoji,count])=>
-          `<span class="reaction">${emoji} ${count}</span>`
+          `<span>${emoji} ${count}</span>`
         )
-        .join("")+
-      `</div>`;
+        .join(" ");
+
   }
+
+  const own =
+    key(data.username)===key(currentUser);
 
   wrapper.innerHTML=`
 
-    ${avatarHTML(message.username)}
+    ${avatar}
 
     <div class="messageContent">
 
-      ${
-        currentChatType==="group"
-        ? `<div class="sender">
-             ${escapeHTML(d.displayName || message.username)}
-             ${
-               key(message.username)===key(
-                 currentGroup?.creator || ""
-               )
-               ? " 👑"
-               : ""
-             }
-           </div>`
-        : ""
-      }
+      <div class="msgTop">
+
+        <span
+          class="msgName"
+          style="cursor:pointer"
+          data-user="${escapeHTML(data.username)}"
+        >
+          ${escapeHTML(
+            user?.displayName || data.username
+          )}
+        </span>
+
+        <span class="msgTime">
+          ${timeString(data.timestamp)}
+        </span>
+
+        ${data.edited
+          ? `<span class="edited">(edited)</span>`
+          : ""}
+
+      </div>
 
       ${replyHTML}
 
-      <div class="bubble">
-        ${escapeHTML(message.text)}
+      ${data.text
+        ? `<div class="bubble">${escapeHTML(data.text)}</div>`
+        : ""}
+
+      ${imageHTML}
+
+      ${data.pinned
+        ? `<div class="pinLabel">📌 Pinned</div>`
+        : ""}
+
+      <div class="reactionBar">
+        ${reactionsHTML}
       </div>
 
-      <div class="messageTime">
-        ${formatTime(message.timestamp)}
-        ${
-          message.edited
-          ? `<span class="edited"> · edited</span>`
-          : ""
-        }
-      </div>
+      <div class="messageActions">
 
-      ${reactionsHTML}
+        <button data-action="reply">↩️</button>
+        <button data-action="copy">📋</button>
 
-      <div class="actions">
+        <button data-reaction="👍">👍</button>
+        <button data-reaction="❤️">❤️</button>
+        <button data-reaction="😂">😂</button>
+        <button data-reaction="🔥">🔥</button>
+        <button data-reaction="🎉">🎉</button>
 
-        <button data-reply>↩️</button>
-        <button data-copy>📋</button>
-
-        <button data-react="👍">👍</button>
-        <button data-react="❤️">❤️</button>
-        <button data-react="😂">😂</button>
-        <button data-react="🔥">🔥</button>
-
-        ${
-          message.username===currentUser
+        ${own
           ? `
-            <button data-edit>✏️</button>
-            <button data-delete class="danger">🗑️</button>
+            <button data-action="edit">✏️</button>
+            <button data-action="delete">🗑️</button>
           `
-          : ""
-        }
+          : ""}
 
-        <button data-pin>📌</button>
+        <button data-action="pin">
+          ${data.pinned ? "📍":"📌"}
+        </button>
 
       </div>
 
     </div>
   `;
 
-  wrapper.querySelector("[data-reply]")
-    .onclick=()=>startReply(id,message);
+  wrapper
+    .querySelector(".msgName")
+    .onclick=()=>showUserProfile(data.username);
 
-  wrapper.querySelector("[data-copy]")
-    .onclick=async()=>{
-      try{
-        await navigator.clipboard.writeText(message.text);
-      }catch{}
-    };
+  wrapper
+    .querySelector('[data-action="reply"]')
+    .onclick=()=>startReply(id,data);
 
-  wrapper.querySelectorAll("[data-react]")
-    .forEach(btn=>{
-      btn.onclick=()=>reactToMessage(
-        id,
-        btn.dataset.react
-      );
+  wrapper
+    .querySelector('[data-action="copy"]')
+    .onclick=()=>copyMessage(data);
+
+  wrapper
+    .querySelector('[data-action="pin"]')
+    .onclick=()=>togglePin(id,data);
+
+  wrapper
+    .querySelectorAll("[data-reaction]")
+    .forEach(button=>{
+
+      button.onclick=()=>
+        reactToMessage(
+          id,
+          button.dataset.reaction
+        );
+
     });
 
-  wrapper.querySelector("[data-pin]")
-    .onclick=()=>togglePin(id);
+  const editButton =
+    wrapper.querySelector('[data-action="edit"]');
 
-  const editBtn=
-    wrapper.querySelector("[data-edit]");
+  if(editButton)
+    editButton.onclick=()=>editMessage(id,data);
 
-  if(editBtn){
-    editBtn.onclick=()=>editMessage(id);
-  }
+  const deleteButton =
+    wrapper.querySelector('[data-action="delete"]');
 
-  const deleteBtn=
-    wrapper.querySelector("[data-delete]");
-
-  if(deleteBtn){
-    deleteBtn.onclick=()=>deleteMessage(id);
-  }
-
-  const replyPreview=
-    wrapper.querySelector(".replyPreview");
-
-  if(replyPreview){
-
-    replyPreview.onclick=()=>{
-      jumpToMessage(
-        replyPreview.dataset.replyId
-      );
-    };
-  }
+  if(deleteButton)
+    deleteButton.onclick=()=>deleteMessage(id);
 
   container.appendChild(wrapper);
 
   container.scrollTop=
     container.scrollHeight;
+
 }
 
+async function updateMessageUI(id,data){
 
-async function rerenderMessage(id){
+  const old =
+    document.getElementById("message-"+id);
 
-  const message=currentMessages[id];
+  if(old) old.remove();
 
-  if(!message)return;
+  delete currentMessages[id];
 
-  await renderMessage(id,message);
+  await renderMessage(id,data);
+
 }
 
+window.jumpToMessage=function(id){
 
-/* ---------------- REPLIES ---------------- */
+  const el =
+    document.getElementById("message-"+id);
 
-function startReply(id,message){
-
-  replyTo={
-    id,
-    username:message.username,
-    text:message.text
-  };
-
-  document.getElementById("replyText")
-    .textContent=
-      `↩️ Replying to ${message.username}: ${message.text}`;
-
-  document.getElementById("replyBar")
-    .classList.remove("hidden");
-
-  document.getElementById("messageInput")
-    .focus();
-}
-
-
-function cancelReply(){
-
-  replyTo=null;
-
-  document.getElementById("replyBar")
-    .classList.add("hidden");
-}
-
-
-function jumpToMessage(id){
-
-  const el=
-    document.querySelector(
-      `[data-message-id="${id}"]`
-    );
-
-  if(!el)return;
+  if(!el) return;
 
   el.scrollIntoView({
     behavior:"smooth",
     block:"center"
   });
 
-  el.classList.add("highlight");
+  el.style.outline="2px solid var(--accent)";
 
   setTimeout(()=>{
-    el.classList.remove("highlight");
-  },1200);
+    el.style.outline="";
+  },1500);
+
+};
+
+async function copyMessage(data){
+
+  try{
+
+    await navigator.clipboard.writeText(
+      data.text || "[Image]"
+    );
+
+    alert("Copied!");
+
+  }catch{
+
+    alert("Couldn't copy that message.");
+
+  }
+
 }
 
+function startReply(id,data){
 
-/* ---------------- REACTIONS ---------------- */
+  replyTarget={
+    id,
+    username:data.username,
+    text:data.text || ""
+  };
+
+  document.getElementById("replyText")
+    .textContent =
+      "Replying to "+data.username+
+      ": "+(data.text || "[image]");
+
+  document.getElementById("replyBar")
+    .classList.remove("hidden");
+
+  document.getElementById("messageInput")
+    .focus();
+
+}
+
+function clearReply(){
+
+  replyTarget=null;
+
+  document.getElementById("replyBar")
+    .classList.add("hidden");
+
+}
+
+async function editMessage(id,data){
+
+  if(key(data.username)!==key(currentUser))
+    return;
+
+  const newText =
+    prompt("Edit message:",data.text || "");
+
+  if(newText===null) return;
+
+  let base;
+
+  if(currentDMUser){
+
+    base =
+      "directMessages/"+
+      conversationID(currentUser,currentDMUser)+
+      "/messages/"+id;
+
+  }else if(currentGroup){
+
+    base =
+      "groupChats/"+currentGroup+
+      "/messages/"+id;
+
+  }else if(currentRoom){
+
+    base =
+      "rooms/"+currentRoom+
+      "/messages/"+id;
+
+  }else return;
+
+  await update(ref(db,base),{
+    text:newText,
+    edited:true
+  });
+
+}
+
+async function deleteMessage(id){
+
+  let base;
+
+  if(currentDMUser){
+
+    base =
+      "directMessages/"+
+      conversationID(currentUser,currentDMUser)+
+      "/messages/"+id;
+
+  }else if(currentGroup){
+
+    base =
+      "groupChats/"+currentGroup+
+      "/messages/"+id;
+
+  }else if(currentRoom){
+
+    base =
+      "rooms/"+currentRoom+
+      "/messages/"+id;
+
+  }else return;
+
+  await remove(ref(db,base));
+
+}
 
 async function reactToMessage(id,emoji){
 
-  let path="";
+  let base;
 
-  if(currentChatType==="dm"){
-    path=
-      `directMessages/${currentChatId}/messages/${id}/reactions/${key(currentUser)}`;
-  }else if(currentChatType==="group"){
-    path=
-      `groupChats/${currentGroup}/messages/${id}/reactions/${key(currentUser)}`;
-  }else{
-    return;
-  }
+  if(currentDMUser){
 
-  const snap=await get(ref(db,path));
+    base =
+      "directMessages/"+
+      conversationID(currentUser,currentDMUser)+
+      "/messages/"+id+
+      "/reactions/"+key(currentUser);
 
-  if(snap.exists() && snap.val()===emoji){
-    await remove(ref(db,path));
-  }else{
-    await set(ref(db,path),emoji);
-  }
+  }else if(currentGroup){
+
+    base =
+      "groupChats/"+currentGroup+
+      "/messages/"+id+
+      "/reactions/"+key(currentUser);
+
+  }else if(currentRoom){
+
+    base =
+      "rooms/"+currentRoom+
+      "/messages/"+id+
+      "/reactions/"+key(currentUser);
+
+  }else return;
+
+  await set(ref(db,base),emoji);
+
+}
+
+async function togglePin(id,data){
+
+  let base;
+
+  if(currentDMUser){
+
+    base =
+      "directMessages/"+
+      conversationID(currentUser,currentDMUser)+
+      "/messages/"+id;
+
+  }else if(currentGroup){
+
+    base =
+      "groupChats/"+currentGroup+
+      "/messages/"+id;
+
+  }else if(currentRoom){
+
+    base =
+      "rooms/"+currentRoom+
+      "/messages/"+id;
+
+  }else return;
+
+  await update(ref(db,base),{
+    pinned:!data.pinned
+  });
+
 }
 
 
-/* ---------------- PINNED MESSAGES ---------------- */
+/* IMAGE ATTACHMENTS */
 
-async function togglePin(id){
+async function compressImage(file){
 
-  let path="";
+  return new Promise((resolve,reject)=>{
 
-  if(currentChatType==="dm"){
-    path=
-      `directMessages/${currentChatId}/pinned/${id}`;
-  }else if(currentChatType==="group"){
-    path=
-      `groupChats/${currentGroup}/pinned/${id}`;
-  }else{
-    return;
-  }
+    const reader =
+      new FileReader();
 
-  const snap=await get(ref(db,path));
+    reader.onload=()=>{
 
-  if(snap.exists()){
-    await remove(ref(db,path));
-  }else{
-    await set(ref(db,path),true);
-  }
+      const img =
+        new Image();
+
+      img.onload=()=>{
+
+        const max=900;
+
+        let width=img.width;
+        let height=img.height;
+
+        if(width>max || height>max){
+
+          const ratio =
+            Math.min(max/width,max/height);
+
+          width*=ratio;
+          height*=ratio;
+
+        }
+
+        const canvas =
+          document.createElement("canvas");
+
+        canvas.width=width;
+        canvas.height=height;
+
+        const ctx =
+          canvas.getContext("2d");
+
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          width,
+          height
+        );
+
+        resolve(
+          canvas.toDataURL(
+            "image/jpeg",
+            0.72
+          )
+        );
+
+      };
+
+      img.onerror=reject;
+
+      img.src=reader.result;
+
+    };
+
+    reader.onerror=reject;
+
+    reader.readAsDataURL(file);
+
+  });
+
 }
 
+document.getElementById("imageInput")
+  .addEventListener("change",async event=>{
 
-async function showPins(){
+    const file =
+      event.target.files[0];
 
-  const list=
-    document.getElementById("pinsList");
+    if(!file) return;
+
+    if(file.size > 8*1024*1024){
+
+      alert("Please choose an image smaller than 8 MB.");
+
+      event.target.value="";
+
+      return;
+    }
+
+    try{
+
+      pendingImage =
+        await compressImage(file);
+
+      document.getElementById("messageInput")
+        .placeholder=
+          "Image attached — add a message or Send";
+
+    }catch{
+
+      alert("Couldn't process that image.");
+
+    }
+
+  });
+
+
+/* GROUPS */
+
+async function openGroupModal(){
+
+  const list =
+    document.getElementById("groupFriendsList");
 
   list.innerHTML="";
 
-  let base="";
-
-  if(currentChatType==="dm"){
-    base=`directMessages/${currentChatId}`;
-  }else if(currentChatType==="group"){
-    base=`groupChats/${currentGroup}`;
-  }else{
-    return;
-  }
-
-  const pinsSnap=
-    await get(ref(db,`${base}/pinned`));
-
-  const pins=
-    pinsSnap.exists()?pinsSnap.val():{};
-
-  if(!Object.keys(pins).length){
-
-    list.innerHTML=
-      `<div class="empty">No pinned messages.</div>`;
-
-    document.getElementById("pinsModal")
-      .classList.remove("hidden");
-
-    return;
-  }
-
-  for(const id of Object.keys(pins)){
-
-    const msg=currentMessages[id];
-
-    if(!msg)continue;
-
-    const item=document.createElement("div");
-
-    item.className="pinItem";
-
-    item.innerHTML=`
-      📌 <b>${escapeHTML(msg.username)}</b><br>
-      ${escapeHTML(msg.text)}
-    `;
-
-    item.onclick=()=>{
-      document.getElementById("pinsModal")
-        .classList.add("hidden");
-
-      jumpToMessage(id);
-    };
-
-    list.appendChild(item);
-  }
-
-  document.getElementById("pinsModal")
-    .classList.remove("hidden");
-}
-
-
-/* ---------------- MESSAGE SEARCH ---------------- */
-
-function openSearch(){
-
-  document.getElementById("searchBox")
-    .classList.add("show");
-
-  document.getElementById("messageSearch")
-    .focus();
-
-  updateSearchResults();
-}
-
-
-function closeSearch(){
-
-  document.getElementById("searchBox")
-    .classList.remove("show");
-
-  searchMatches=[];
-
-  document.querySelectorAll(".searchHighlight")
-    .forEach(el=>
-      el.classList.remove("searchHighlight")
-    );
-
-  document.getElementById("searchCount")
-    .textContent="";
-}
-
-
-function updateSearchResults(){
-
-  const input=
-    document.getElementById("messageSearch");
-
-  if(!input)return;
-
-  const query=input.value.trim().toLowerCase();
-
-  document.querySelectorAll(".searchHighlight")
-    .forEach(el=>
-      el.classList.remove("searchHighlight")
-    );
-
-  searchMatches=[];
-
-  if(!query){
-
-    document.getElementById("searchCount")
-      .textContent="";
-
-    return;
-  }
-
-  for(const id of Object.keys(currentMessages)){
-
-    const message=currentMessages[id];
-
-    if(
-      String(message.text || "")
-        .toLowerCase()
-        .includes(query)
-    ){
-      searchMatches.push(id);
-    }
-  }
-
-  searchIndex=0;
-
-  document.getElementById("searchCount")
-    .textContent=
-      searchMatches.length
-      ? `${searchMatches.length} match${searchMatches.length===1?"":"es"}`
-      : "No matches";
-
-  if(searchMatches.length){
-    jumpToSearchMatch();
-  }
-}
-
-
-function jumpToSearchMatch(){
-
-  if(!searchMatches.length)return;
-
-  document.querySelectorAll(".searchHighlight")
-    .forEach(el=>
-      el.classList.remove("searchHighlight")
-    );
-
-  const id=searchMatches[searchIndex];
-
-  const el=
-    document.querySelector(
-      `[data-message-id="${id}"]`
-    );
-
-  if(el){
-
-    el.classList.add("searchHighlight");
-
-    el.scrollIntoView({
-      behavior:"smooth",
-      block:"center"
-    });
-  }
-
-  document.getElementById("searchCount")
-    .textContent=
-      `${searchIndex+1}/${searchMatches.length} match${searchMatches.length===1?"":"es"}`;
-}
-
-
-function nextSearch(){
-
-  if(!searchMatches.length)return;
-
-  searchIndex=
-    (searchIndex+1)%searchMatches.length;
-
-  jumpToSearchMatch();
-}
-
-
-function previousSearch(){
-
-  if(!searchMatches.length)return;
-
-  searchIndex=
-    (searchIndex-1+searchMatches.length)
-    %searchMatches.length;
-
-  jumpToSearchMatch();
-}
-
-
-/* ---------------- UNREAD ---------------- */
-
-async function updateUnreadBadge(){
-
-  if(!currentUser)return;
-
-  const snap=
+  const snap =
     await get(
       ref(db,
-      `users/${key(currentUser)}/unread`)
+      "users/"+key(currentUser)+"/friends")
     );
 
-  const unread=snap.exists()?snap.val():{};
+  if(!snap.exists()){
 
-  let total=0;
+    list.innerHTML=
+      `<div class="status">You need friends before creating a group.</div>`;
 
-  Object.values(unread).forEach(v=>{
-    if(typeof v==="number")total+=v;
-  });
+  }else{
 
-  const tab=
-    document.getElementById("friendsTab");
+    for(const friendKey of Object.keys(snap.val())){
 
-  tab.innerHTML=
-    total>0
-    ? `👥 Friends <span class="tabUnread">${total}</span>`
-    : "👥 Friends";
+      const friend =
+        await getUserData(friendKey);
+
+      if(!friend) continue;
+
+      const row =
+        document.createElement("label");
+
+      row.className="friendCheck";
+
+      row.innerHTML=`
+        <input type="checkbox" value="${friendKey}">
+        ${escapeHTML(
+          friend.displayName || friend.username
+        )}
+      `;
+
+      list.appendChild(row);
+
+    }
+
+  }
+
+  document.getElementById("groupModal")
+    .classList.remove("hidden");
+
 }
 
+async function createGroup(){
 
-/* ---------------- ROOMS ---------------- */
-
-async function joinRoom(){
-
-  const code=
-    document.getElementById("roomCode")
+  const name =
+    document.getElementById("groupNameInput")
       .value.trim();
 
-  if(!/^\d{4}$/.test(code)){
-    document.getElementById("roomStatus")
-      .textContent="Room code must be 4 digits.";
+  if(!name){
+
+    alert("Enter a group name.");
+
     return;
   }
 
-  if(stopRoomListener){
-    stopRoomListener();
-    stopRoomListener=null;
+  const selected =
+    [...document.querySelectorAll(
+      "#groupFriendsList input:checked"
+    )]
+    .map(x=>x.value);
+
+  if(!selected.length){
+
+    alert("Choose at least one friend.");
+
+    return;
   }
 
-  stopCurrentChatListener();
+  const groupRef =
+    push(ref(db,"groupChats"));
 
-  currentRoom=code;
-  currentChatType="room";
-  currentChatId=code;
+  const groupId =
+    groupRef.key;
 
-  document.getElementById("roomStatus")
-    .textContent=`Joined room ${code}`;
+  const members={
+    [key(currentUser)]:true
+  };
 
-  document.getElementById("chatHeader")
-    .innerHTML=`
-      <div class="avatar">🏠</div>
-      <div class="chatHeaderInfo">
-        <div class="chatTitle">
-          Room ${code}
-        </div>
-        <div class="chatSub">
-          Public room
-        </div>
+  selected.forEach(x=>{
+    members[x]=true;
+  });
+
+  await set(groupRef,{
+    name,
+    creator:key(currentUser),
+    members,
+    createdAt:Date.now()
+  });
+
+  for(const member of Object.keys(members)){
+
+    await set(
+      ref(
+        db,
+        "users/"+member+"/groups/"+groupId
+      ),
+      true
+    );
+
+  }
+
+  document.getElementById("groupModal")
+    .classList.add("hidden");
+
+  document.getElementById("groupNameInput")
+    .value="";
+
+  alert("Group created!");
+
+  showChats();
+
+}
+
+async function showGroups(){
+
+  const sidebar =
+    document.getElementById("sidebarContent");
+
+  sidebar.innerHTML=`
+    <button id="newGroupButton">
+      ➕ New Group
+    </button>
+
+    <div id="groupsList"></div>
+  `;
+
+  document.getElementById("newGroupButton")
+    .onclick=openGroupModal;
+
+  const snap =
+    await get(
+      ref(db,
+      "users/"+key(currentUser)+"/groups")
+    );
+
+  const list =
+    document.getElementById("groupsList");
+
+  if(!snap.exists()){
+
+    list.innerHTML=
+      `<div class="empty">No groups yet.</div>`;
+
+    return;
+  }
+
+  for(const groupId of Object.keys(snap.val())){
+
+    const groupSnap =
+      await get(
+        ref(db,"groupChats/"+groupId)
+      );
+
+    if(!groupSnap.exists()) continue;
+
+    const group =
+      groupSnap.val();
+
+    const item =
+      document.createElement("div");
+
+    item.className="listItem";
+
+    item.innerHTML=`
+      <div class="listTitle">
+        👥 ${escapeHTML(group.name)}
+      </div>
+      <div class="listPreview">
+        ${Object.keys(group.members||{}).length} members
       </div>
     `;
 
-  document.getElementById("composer")
-    .classList.remove("hidden");
+    item.onclick=()=>openGroup(groupId);
+
+    list.appendChild(item);
+
+  }
+
+}
+
+async function openGroup(groupId){
+
+  stopCurrentChat();
+
+  currentGroup=groupId;
+
+  const groupSnap =
+    await get(
+      ref(db,"groupChats/"+groupId)
+    );
+
+  if(!groupSnap.exists()) return;
+
+  const group =
+    groupSnap.val();
+
+  document.getElementById("chatTitle")
+    .textContent="👥 "+group.name;
+
+  document.getElementById("chatSub")
+    .textContent=
+      Object.keys(group.members||{}).length+
+      " members";
 
   document.getElementById("messages")
     .innerHTML="";
 
-  const messagesRef=
-    ref(db,`rooms/${code}/messages`);
+  setActiveTab("chatsTab");
 
-  const added=
-    onChildAdded(messagesRef,snap=>{
-      currentMessages[snap.key]=snap.val();
-      renderMessage(snap.key,snap.val());
-    });
+  const messageRef =
+    ref(
+      db,
+      "groupChats/"+groupId+"/messages"
+    );
 
-  const changed=
-    onChildChanged(messagesRef,snap=>{
-      currentMessages[snap.key]=snap.val();
-      rerenderMessage(snap.key);
-    });
+  const unsubs=[];
 
-  const removed=
-    onChildRemoved(messagesRef,snap=>{
-      delete currentMessages[snap.key];
+  unsubs.push(
+    onChildAdded(
+      messageRef,
+      snap=>renderMessage(snap.key,snap.val())
+    )
+  );
 
-      const el=
-        document.querySelector(
-          `[data-message-id="${snap.key}"]`
-        );
+  unsubs.push(
+    onChildChanged(
+      messageRef,
+      snap=>updateMessageUI(snap.key,snap.val())
+    )
+  );
 
-      if(el)el.remove();
-    });
+  unsubs.push(
+    onChildRemoved(
+      messageRef,
+      snap=>{
 
-  stopRoomListener=()=>{
-    added();
-    changed();
-    removed();
+        const el =
+          document.getElementById(
+            "message-"+snap.key
+          );
+
+        if(el) el.remove();
+
+      }
+    )
+  );
+
+  stopChatListener=()=>{
+
+    unsubs.forEach(fn=>fn());
+
   };
 
   await set(
-    push(ref(db,`rooms/${code}/messages`)),
-    {
-      username:"System",
-      text:`${currentUser} joined the room.`,
-      timestamp:Date.now()
-    }
+    ref(
+      db,
+      "users/"+key(currentUser)+
+      "/unread/group_"+groupId
+    ),
+    0
   );
+
+  showGroupMembers(groupId,group);
+
+}
+
+function showGroupMembers(groupId,group){
+
+  document.getElementById("pinButton").onclick=()=>{
+    showPinnedMessages();
+  };
+
+  document.getElementById("searchButton").onclick=()=>{
+    openSearch();
+  };
+
 }
 
 
-async function sendRoomMessage(){
+/* ROOMS */
 
-  if(!currentRoom)return;
+function showRooms(){
 
-  const input=
-    document.getElementById("messageInput");
+  setActiveTab("roomsTab");
 
-  const text=input.value.trim();
+  currentDMUser=null;
+  currentGroup=null;
 
-  if(!text)return;
+  document.getElementById("sidebarContent")
+    .innerHTML=`
+
+      <input
+        id="roomCodeInput"
+        placeholder="4-digit room code"
+        maxlength="4"
+        inputmode="numeric"
+      >
+
+      <button id="joinRoomButton">
+        🚪 Join Room
+      </button>
+
+    `;
+
+  document.getElementById("joinRoomButton")
+    .onclick=joinRoom;
+
+  document.getElementById("chatTitle")
+    .textContent="Rooms";
+
+  document.getElementById("chatSub")
+    .textContent="Join a room using its 4-digit code";
+
+  clearMessages();
+
+}
+
+async function joinRoom(){
+
+  const code =
+    document.getElementById("roomCodeInput")
+      .value.trim();
+
+  if(!/^\d{4}$/.test(code)){
+
+    alert("Room code must be 4 digits.");
+
+    return;
+  }
+
+  openRoom(code);
+
+}
+
+function openRoom(code){
+
+  stopCurrentChat();
+
+  currentRoom=code;
+
+  document.getElementById("chatTitle")
+    .textContent="🏠 Room "+code;
+
+  document.getElementById("chatSub")
+    .textContent="Public room chat";
+
+  document.getElementById("messages")
+    .innerHTML="";
+
+  const messageRef =
+    ref(
+      db,
+      "rooms/"+code+"/messages"
+    );
+
+  const unsubs=[];
+
+  unsubs.push(
+    onChildAdded(
+      messageRef,
+      snap=>renderMessage(snap.key,snap.val())
+    )
+  );
+
+  unsubs.push(
+    onChildChanged(
+      messageRef,
+      snap=>updateMessageUI(snap.key,snap.val())
+    )
+  );
+
+  unsubs.push(
+    onChildRemoved(
+      messageRef,
+      snap=>{
+
+        const el =
+          document.getElementById(
+            "message-"+snap.key
+          );
+
+        if(el) el.remove();
+
+      }
+    )
+  );
+
+  stopChatListener=()=>{
+
+    unsubs.forEach(fn=>fn());
+
+  };
+
+}
+
+
+/* CHATS LIST */
+
+async function showChats(){
+
+  setActiveTab("chatsTab");
+
+  document.getElementById("sidebarContent")
+    .innerHTML=`
+      <div id="dmList"></div>
+
+      <h3>👥 Groups</h3>
+
+      <div id="groupList"></div>
+    `;
+
+  const dmList =
+    document.getElementById("dmList");
+
+  const convSnap =
+    await get(
+      ref(
+        db,
+        "users/"+key(currentUser)+
+        "/conversations"
+      )
+    );
+
+  if(convSnap.exists()){
+
+    for(const otherKey of Object.keys(convSnap.val())){
+
+      const user =
+        await getUserData(otherKey);
+
+      if(!user) continue;
+
+      const unreadSnap =
+        await get(
+          ref(
+            db,
+            "users/"+key(currentUser)+
+            "/unread/"+otherKey
+          )
+        );
+
+      const unread =
+        unreadSnap.exists() &&
+        unreadSnap.val();
+
+      const item =
+        document.createElement("div");
+
+      item.className="listItem";
+
+      item.innerHTML=`
+        ${unread
+          ? `<span class="unread">!</span>`
+          : ""}
+
+        <div class="listTitle">
+          ${escapeHTML(
+            user.displayName || user.username
+          )}
+        </div>
+
+        <div class="listPreview">
+          @${escapeHTML(user.username)}
+        </div>
+      `;
+
+      item.onclick=
+        ()=>openDM(user.username);
+
+      dmList.appendChild(item);
+
+    }
+
+  }
+
+  await renderGroupList();
+
+}
+
+async function renderGroupList(){
+
+  const list =
+    document.getElementById("groupList");
+
+  const snap =
+    await get(
+      ref(
+        db,
+        "users/"+key(currentUser)+"/groups"
+      )
+    );
+
+  if(!snap.exists()){
+
+    list.innerHTML=
+      `<div class="status">No groups.</div>`;
+
+    return;
+  }
+
+  for(const groupId of Object.keys(snap.val())){
+
+    const groupSnap =
+      await get(
+        ref(db,"groupChats/"+groupId)
+      );
+
+    if(!groupSnap.exists()) continue;
+
+    const group =
+      groupSnap.val();
+
+    const unreadSnap =
+      await get(
+        ref(
+          db,
+          "users/"+key(currentUser)+
+          "/unread/group_"+groupId
+        )
+      );
+
+    const unread =
+      unreadSnap.exists() &&
+      unreadSnap.val();
+
+    const item =
+      document.createElement("div");
+
+    item.className="listItem";
+
+    item.innerHTML=`
+      ${unread
+        ? `<span class="unread">!</span>`
+        : ""}
+
+      <div class="listTitle">
+        👥 ${escapeHTML(group.name)}
+      </div>
+
+      <div class="listPreview">
+        ${Object.keys(group.members||{}).length} members
+      </div>
+    `;
+
+    item.onclick=
+      ()=>openGroup(groupId);
+
+    list.appendChild(item);
+
+  }
+
+}
+
+
+/* PROFILE */
+
+async function showProfile(){
+
+  setActiveTab("profileTab");
+
+  currentRoom=null;
+  currentDMUser=null;
+  currentGroup=null;
+
+  stopCurrentChat();
+
+  const user =
+    await getUserData(currentUser);
+
+  const card =
+    document.getElementById("sidebarContent");
+
+  card.innerHTML=`
+
+    <div class="profileCard">
+
+      <div id="profileAvatar"
+           class="bigAvatar">
+      </div>
+
+      <input
+        id="profilePictureInput"
+        type="file"
+        accept="image/*"
+      >
+
+      <br><br>
+
+      <button id="removePictureButton"
+              class="secondary">
+        Remove Picture
+      </button>
+
+      <div class="field">
+        <label>Username</label>
+        <input
+          value="@${escapeHTML(user.username)}"
+          disabled
+        >
+      </div>
+
+      <div class="field">
+        <label>Display Name</label>
+        <input
+          id="displayNameInput"
+          value="${escapeHTML(user.displayName||user.username)}"
+          maxlength="30"
+        >
+      </div>
+
+      <div class="field">
+        <label>Bio</label>
+        <textarea
+          id="bioInput"
+          maxlength="160"
+          rows="4"
+        >${escapeHTML(user.bio||"")}</textarea>
+      </div>
+
+      <button id="saveProfileButton">
+        Save Profile
+      </button>
+
+    </div>
+  `;
+
+  if(user.profilePicture){
+
+    document.getElementById("profileAvatar")
+      .innerHTML=
+        `<img src="${user.profilePicture}">`;
+
+  }else{
+
+    document.getElementById("profileAvatar")
+      .textContent=
+        (user.displayName||user.username)
+        .charAt(0)
+        .toUpperCase();
+
+  }
+
+  document.getElementById("profilePictureInput")
+    .onchange=async event=>{
+
+      const file =
+        event.target.files[0];
+
+      if(!file) return;
+
+      try{
+
+        const picture =
+          await compressImage(file);
+
+        await set(
+          ref(
+            db,
+            "users/"+key(currentUser)+
+            "/profilePicture"
+          ),
+          picture
+        );
+
+        showProfile();
+        refreshSidebarUser();
+
+      }catch{
+
+        alert("Couldn't process image.");
+
+      }
+
+    };
+
+  document.getElementById("removePictureButton")
+    .onclick=async()=>{
+
+      await remove(
+        ref(
+          db,
+          "users/"+key(currentUser)+
+          "/profilePicture"
+        )
+      );
+
+      showProfile();
+      refreshSidebarUser();
+
+    };
+
+  document.getElementById("saveProfileButton")
+    .onclick=async()=>{
+
+      const displayName =
+        document.getElementById("displayNameInput")
+          .value.trim();
+
+      const bio =
+        document.getElementById("bioInput")
+          .value.trim();
+
+      if(!displayName){
+
+        alert("Display name can't be empty.");
+
+        return;
+      }
+
+      await update(
+        ref(db,"users/"+key(currentUser)),
+        {
+          displayName,
+          bio
+        }
+      );
+
+      alert("Profile saved!");
+
+      refreshSidebarUser();
+
+    };
+
+  document.getElementById("chatTitle")
+    .textContent="Profile";
+
+  document.getElementById("chatSub")
+    .textContent="@"+currentUser;
+
+  clearMessages();
+
+}
+
+
+/* OTHER USER PROFILE */
+
+async function showUserProfile(username){
+
+  const user =
+    await getUserData(username);
+
+  if(!user) return;
+
+  const modal =
+    document.getElementById("userProfileModal");
+
+  const content =
+    document.getElementById("userProfileContent");
+
+  let avatar;
+
+  if(user.profilePicture){
+
+    avatar=
+      `<div class="bigAvatar">
+        <img src="${user.profilePicture}">
+      </div>`;
+
+  }else{
+
+    avatar=
+      `<div class="bigAvatar">
+        ${escapeHTML(
+          (user.displayName||user.username)
+          .charAt(0)
+          .toUpperCase()
+        )}
+      </div>`;
+
+  }
+
+  content.innerHTML=`
+
+    ${avatar}
+
+    <h2 style="text-align:center">
+      ${escapeHTML(user.displayName||user.username)}
+    </h2>
+
+    <p style="text-align:center;color:var(--muted)">
+      @${escapeHTML(user.username)}
+    </p>
+
+    <p>
+      ${user.online
+        ? "🟢 Online"
+        : user.lastSeen
+        ? "Last seen "+dateString(user.lastSeen)
+        : "Offline"}
+    </p>
+
+    <hr>
+
+    <p>
+      ${escapeHTML(user.bio||"No bio yet.")}
+    </p>
+  `;
+
+  modal.classList.remove("hidden");
+
+}
+
+
+/* SETTINGS */
+
+function openSettings(){
+
+  document.getElementById("settingsModal")
+    .classList.remove("hidden");
+
+  updateNotificationStatus();
+
+}
+
+function updateNotificationStatus(){
+
+  const status =
+    document.getElementById("notificationStatus");
+
+  if(!("Notification" in window)){
+
+    status.textContent=
+      "This browser does not support notifications.";
+
+    return;
+  }
+
+  status.textContent=
+    "Permission: "+Notification.permission;
+
+}
+
+async function enableNotifications(){
+
+  if(!("Notification" in window)){
+
+    alert("Browser notifications aren't supported.");
+
+    return;
+  }
+
+  const permission =
+    await Notification.requestPermission();
+
+  updateNotificationStatus();
+
+  if(permission==="granted"){
+
+    new Notification("MyChat",{
+      body:"Notifications are enabled!"
+    });
+
+  }
+
+}
+
+async function changePassword(){
+
+  const oldPassword =
+    document.getElementById("oldPassword").value;
+
+  const newPassword =
+    document.getElementById("newPassword").value;
+
+  const status =
+    document.getElementById("passwordStatus");
+
+  status.textContent="";
+
+  if(newPassword.length<4){
+
+    status.textContent=
+      "New password must be at least 4 characters.";
+
+    return;
+  }
+
+  const snap =
+    await get(
+      ref(db,"users/"+key(currentUser))
+    );
+
+  const user =
+    snap.val();
+
+  const oldHash =
+    await hashPassword(oldPassword);
+
+  if(oldHash!==user.passwordHash){
+
+    status.textContent=
+      "Current password is incorrect.";
+
+    return;
+  }
+
+  const newHash =
+    await hashPassword(newPassword);
 
   await set(
-    push(
-      ref(db,`rooms/${currentRoom}/messages`)
+    ref(
+      db,
+      "users/"+key(currentUser)+
+      "/passwordHash"
     ),
-    {
-      username:currentUser,
-      text,
-      timestamp:Date.now()
-    }
+    newHash
   );
 
-  input.value="";
+  document.getElementById("oldPassword").value="";
+  document.getElementById("newPassword").value="";
+
+  status.textContent=
+    "Password changed successfully.";
+
 }
 
 
-/* ---------------- SEND ---------------- */
+/* SEARCH */
 
-async function sendCurrentMessage(){
+function openSearch(){
 
-  if(currentChatType==="dm"){
-    await sendDM();
-  }else if(currentChatType==="group"){
-    await sendGroupMessage();
-  }else if(currentChatType==="room"){
-    await sendRoomMessage();
+  if(!currentDMUser && !currentGroup && !currentRoom){
+
+    alert("Open a conversation first.");
+
+    return;
   }
+
+  document.getElementById("searchModal")
+    .classList.remove("hidden");
+
+  document.getElementById("searchInput")
+    .value="";
+
+  document.getElementById("searchResults")
+    .innerHTML="";
+
+}
+
+function searchMessages(){
+
+  const query =
+    document.getElementById("searchInput")
+      .value
+      .trim()
+      .toLowerCase();
+
+  const results =
+    document.getElementById("searchResults");
+
+  results.innerHTML="";
+
+  if(!query) return;
+
+  for(const [id,data] of Object.entries(currentMessages)){
+
+    if(
+      (data.text||"")
+      .toLowerCase()
+      .includes(query)
+    ){
+
+      const item =
+        document.createElement("div");
+
+      item.className="listItem";
+
+      item.innerHTML=`
+        <div class="listTitle">
+          ${escapeHTML(data.username)}
+        </div>
+
+        <div class="listPreview">
+          ${escapeHTML(data.text||"[Image]")}
+        </div>
+      `;
+
+      item.onclick=()=>{
+
+        document.getElementById("searchModal")
+          .classList.add("hidden");
+
+        jumpToMessage(id);
+
+      };
+
+      results.appendChild(item);
+
+    }
+
+  }
+
+  if(!results.children.length){
+
+    results.innerHTML=
+      `<div class="empty">No matches.</div>`;
+
+  }
+
+}
+
+function showPinnedMessages(){
+
+  const pinned =
+    Object.entries(currentMessages)
+      .filter(([id,data])=>data.pinned);
+
+  if(!pinned.length){
+
+    alert("No pinned messages.");
+
+    return;
+  }
+
+  const text =
+    pinned
+      .map(([id,data])=>
+        data.username+": "+
+        (data.text||"[Image]")
+      )
+      .join("\n\n");
+
+  alert("📌 Pinned Messages\n\n"+text);
+
 }
 
 
-/* ---------------- EVENTS ---------------- */
+/* TYPING */
 
-document.getElementById("loginBtn")
+function typingPath(){
+
+  if(currentDMUser){
+
+    return "typing/"+
+      conversationID(currentUser,currentDMUser);
+
+  }
+
+  if(currentGroup){
+
+    return "typing/group_"+currentGroup;
+
+  }
+
+  return null;
+
+}
+
+function startTyping(){
+
+  const path=typingPath();
+
+  if(!path) return;
+
+  set(
+    ref(
+      db,
+      path+"/"+key(currentUser)
+    ),
+    true
+  );
+
+  clearTimeout(typingTimer);
+
+  typingTimer =
+    setTimeout(stopTyping,2500);
+
+}
+
+function stopTyping(){
+
+  const path=typingPath();
+
+  if(!path) return;
+
+  set(
+    ref(
+      db,
+      path+"/"+key(currentUser)
+    ),
+    false
+  );
+
+}
+
+
+/* IMAGE VIEWER */
+
+window.viewImage=function(src){
+
+  document.getElementById("largeImage")
+    .src=src;
+
+  document.getElementById("imageViewer")
+    .classList.remove("hidden");
+
+};
+
+
+/* UI */
+
+function setActiveTab(id){
+
+  document.querySelectorAll(".tabs button")
+    .forEach(button=>
+      button.classList.remove("active")
+    );
+
+  document.getElementById(id)
+    .classList.add("active");
+
+}
+
+function clearMessages(){
+
+  stopCurrentChat();
+
+  document.getElementById("messages")
+    .innerHTML=
+      `<div class="empty">
+        Nothing to display here.
+      </div>`;
+
+}
+
+async function showHome(){
+
+  document.getElementById("authScreen")
+    .style.display="none";
+
+  document.getElementById("app")
+    .classList.add("visible");
+
+  await refreshSidebarUser();
+
+  showFriends();
+
+}
+
+function openChatSettings(){
+
+  if(currentGroup){
+
+    get(
+      ref(
+        db,
+        "groupChats/"+currentGroup
+      )
+    ).then(snap=>{
+
+      if(!snap.exists()) return;
+
+      const group=snap.val();
+
+      if(key(group.creator)!==key(currentUser)){
+
+        alert("Only the group creator can manage this group.");
+
+        return;
+      }
+
+      const newName =
+        prompt("Rename group:",group.name);
+
+      if(newName){
+
+        update(
+          ref(
+            db,
+            "groupChats/"+currentGroup
+          ),
+          {name:newName}
+        );
+
+        document.getElementById("chatTitle")
+          .textContent="👥 "+newName;
+
+      }
+
+    });
+
+  }
+
+}
+
+
+/* EVENT LISTENERS */
+
+document.getElementById("loginButton")
   .addEventListener("click",login);
 
-document.getElementById("createBtn")
+document.getElementById("createButton")
   .addEventListener("click",createAccount);
 
-document.getElementById("showCreateBtn")
+document.getElementById("showCreateButton")
   .addEventListener("click",showCreate);
 
-document.getElementById("showLoginBtn")
+document.getElementById("showLoginButton")
   .addEventListener("click",showLogin);
-
-document.getElementById("logoutBtn")
-  .addEventListener("click",logout);
 
 document.getElementById("friendsTab")
   .addEventListener("click",showFriends);
@@ -3201,103 +3715,194 @@ document.getElementById("friendsTab")
 document.getElementById("roomsTab")
   .addEventListener("click",showRooms);
 
+document.getElementById("chatsTab")
+  .addEventListener("click",showChats);
+
 document.getElementById("profileTab")
   .addEventListener("click",showProfile);
 
-document.getElementById("sendRequestBtn")
-  .addEventListener("click",sendFriendRequest);
+document.getElementById("settingsButton")
+  .addEventListener("click",openSettings);
 
-document.getElementById("newGroupBtn")
-  .addEventListener("click",openGroupModal);
-
-document.getElementById("cancelGroupBtn")
-  .addEventListener("click",()=>{
-    document.getElementById("groupModal")
-      .classList.add("hidden");
-  });
-
-document.getElementById("createGroupBtn")
-  .addEventListener("click",createGroup);
-
-document.getElementById("joinRoomBtn")
-  .addEventListener("click",joinRoom);
-
-document.getElementById("sendMessageBtn")
-  .addEventListener("click",sendCurrentMessage);
+document.getElementById("sendButton")
+  .addEventListener("click",sendMessage);
 
 document.getElementById("messageInput")
-  .addEventListener("keydown",e=>{
-    if(e.key==="Enter"){
-      e.preventDefault();
-      sendCurrentMessage();
+  .addEventListener("keydown",event=>{
+
+    if(event.key==="Enter"){
+
+      event.preventDefault();
+      sendMessage();
+
     }
+
   });
 
-document.getElementById("cancelReplyBtn")
-  .addEventListener("click",cancelReply);
+document.getElementById("messageInput")
+  .addEventListener("input",startTyping);
 
-document.getElementById("choosePictureBtn")
+document.getElementById("attachButton")
   .addEventListener("click",()=>{
-    document.getElementById("pictureInput").click();
+
+    document.getElementById("imageInput")
+      .click();
+
   });
 
-document.getElementById("pictureInput")
-  .addEventListener("change",e=>{
-    choosePicture(e.target.files[0]);
-  });
+document.getElementById("cancelReply")
+  .addEventListener("click",clearReply);
 
-document.getElementById("removePictureBtn")
-  .addEventListener("click",removePicture);
-
-document.getElementById("saveProfileBtn")
-  .addEventListener("click",saveProfile);
-
-document.getElementById("closeManageGroupBtn")
+document.getElementById("closeGroupButton")
   .addEventListener("click",()=>{
-    document.getElementById("manageGroupModal")
+
+    document.getElementById("groupModal")
       .classList.add("hidden");
+
   });
 
-document.getElementById("renameGroupBtn")
-  .addEventListener("click",renameGroup);
+document.getElementById("createGroupButton")
+  .addEventListener("click",createGroup);
 
-document.getElementById("closePinsBtn")
+document.getElementById("closeUserProfile")
   .addEventListener("click",()=>{
-    document.getElementById("pinsModal")
+
+    document.getElementById("userProfileModal")
       .classList.add("hidden");
+
   });
 
-document.getElementById("closeSearchBtn")
-  .addEventListener("click",closeSearch);
+document.getElementById("closeSettingsButton")
+  .addEventListener("click",()=>{
 
-document.getElementById("messageSearch")
-  .addEventListener("input",updateSearchResults);
+    document.getElementById("settingsModal")
+      .classList.add("hidden");
 
-document.getElementById("nextSearchBtn")
-  .addEventListener("click",nextSearch);
-
-document.getElementById("prevSearchBtn")
-  .addEventListener("click",previousSearch);
-
-
-/* Enter key on auth forms */
-
-document.getElementById("loginPassword")
-  .addEventListener("keydown",e=>{
-    if(e.key==="Enter")login();
   });
 
-document.getElementById("createPassword")
-  .addEventListener("keydown",e=>{
-    if(e.key==="Enter")createAccount();
+document.getElementById("notificationButton")
+  .addEventListener("click",enableNotifications);
+
+document.getElementById("changePasswordButton")
+  .addEventListener("click",changePassword);
+
+document.getElementById("logoutButton")
+  .addEventListener("click",logout);
+
+document.getElementById("darkThemeButton")
+  .addEventListener("click",()=>{
+
+    document.body.classList.remove("light");
+
+    localStorage.setItem(
+      "mychatTheme",
+      "dark"
+    );
+
+  });
+
+document.getElementById("lightThemeButton")
+  .addEventListener("click",()=>{
+
+    document.body.classList.add("light");
+
+    localStorage.setItem(
+      "mychatTheme",
+      "light"
+    );
+
+  });
+
+document.getElementById("searchButton")
+  .addEventListener("click",openSearch);
+
+document.getElementById("pinButton")
+  .addEventListener("click",showPinnedMessages);
+
+document.getElementById("closeSearchButton")
+  .addEventListener("click",()=>{
+
+    document.getElementById("searchModal")
+      .classList.add("hidden");
+
+  });
+
+document.getElementById("searchInput")
+  .addEventListener("input",searchMessages);
+
+document.getElementById("closeImageButton")
+  .addEventListener("click",()=>{
+
+    document.getElementById("imageViewer")
+      .classList.add("hidden");
+
   });
 
 
-/* Start */
+/* THEME RESTORE */
 
-showLogin();
+if(localStorage.getItem("mychatTheme")==="light"){
+
+  document.body.classList.add("light");
+
+}
+
+
+/* AUTO LOGIN */
+
+const savedUser =
+  localStorage.getItem("mychatUsername");
+
+if(savedUser){
+
+  get(
+    ref(db,"users/"+key(savedUser))
+  ).then(async snap=>{
+
+    if(snap.exists()){
+
+      currentUser=snap.val().username;
+
+      await set(
+        ref(
+          db,
+          "users/"+key(currentUser)+"/online"
+        ),
+        true
+      );
+
+      await set(
+        ref(
+          db,
+          "users/"+key(currentUser)+"/lastSeen"
+        ),
+        Date.now()
+      );
+
+      onDisconnect(
+        ref(
+          db,
+          "users/"+key(currentUser)+"/online"
+        )
+      ).set(false);
+
+      onDisconnect(
+        ref(
+          db,
+          "users/"+key(currentUser)+"/lastSeen"
+        )
+      ).set(Date.now());
+
+      showHome();
+
+    }
+
+  });
+
+}
 
 </script>
 
 </body>
 </html>
+```
