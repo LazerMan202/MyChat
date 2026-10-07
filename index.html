@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>MyChat 1.8</title>
+<title>MyChat 1.9</title>
 
 <style>
 :root{
@@ -468,6 +468,46 @@ a{
   white-space:nowrap;
 }
 
+/* ROOMS 2.0 */
+
+.roomJoinBox{
+  margin:12px 0 16px;
+  padding:12px;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:10px;
+}
+
+.roomJoinBox h3{
+  margin:0 0 10px;
+}
+
+.roomJoinBox button{
+  width:100%;
+  margin-top:8px;
+}
+
+.roomSectionTitle{
+  margin:16px 4px 7px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:bold;
+  text-transform:uppercase;
+}
+
+.roomItem{
+  position:relative;
+  padding-right:30px;
+}
+
+.roomStar{
+  position:absolute;
+  right:8px;
+  top:10px;
+  font-size:17px;
+  cursor:pointer;
+}
+
 /* PROFILE */
 
 .profileCard{
@@ -624,7 +664,7 @@ a{
   <div class="authBox">
 
     <div class="logo">💬 MyChat</div>
-    <div class="subtitle">MyChat 1.8</div>
+    <div class="subtitle">MyChat 1.9</div>
 
     <div id="loginForm">
       <h2>Log In</h2>
@@ -664,6 +704,24 @@ a{
     <div class="publicLog">
 
       <h3>📋 Update Log</h3>
+
+      <div class="updateItem">
+        <div class="updateVersion">🏠 MyChat 1.9 — ROOMS 2.0</div>
+        <div class="updateDate">October 2026</div>
+        <ul>
+          <li>Named rooms instead of 4-digit room codes</li>
+          <li>Public, unlisted, and private rooms</li>
+          <li>Numeric passwords for private rooms</li>
+          <li>Public room browser and search</li>
+          <li>Room descriptions and member counts</li>
+          <li>Room favorites</li>
+          <li>Room owner controls</li>
+          <li>Kick and ban controls</li>
+          <li>Room rename and settings</li>
+          <li>Unread room indicators</li>
+          <li>Room invite links</li>
+        </ul>
+      </div>
 
       <div class="updateItem">
         <div class="updateVersion">🚀 MyChat 1.8 — THE BIG UPDATE</div>
@@ -836,7 +894,7 @@ a{
 
     <div id="messages" class="messages">
       <div class="empty">
-        Welcome to MyChat 1.8!<br>
+        Welcome to MyChat 1.9!<br>
         Choose a friend, room, or conversation.
       </div>
     </div>
@@ -1923,10 +1981,26 @@ async function sendMessage(){
 
   }
 
-  await push(
+  const pushed=await push(
     ref(db,destination),
     message
   );
+
+  if(isRoom){
+    await update(ref(db,"rooms/"+currentRoom),{
+      lastMessage:text||"📷 Image",
+      lastMessageAt:Date.now(),
+      lastMessageUser:key(currentUser)
+    });
+
+    const roomSnap=await get(ref(db,"rooms/"+currentRoom+"/members"));
+    if(roomSnap.exists()){
+      for(const member of Object.keys(roomSnap.val())){
+        if(member===key(currentUser)) continue;
+        await set(ref(db,"users/"+member+"/roomUnread/"+currentRoom),Date.now());
+      }
+    }
+  }
 
   if(isDM){
 
@@ -2788,122 +2862,304 @@ function showGroupMembers(groupId,group){
 }
 
 
-/* ROOMS */
+/* ROOMS 2.0 */
 
-function showRooms(){
+function roomKey(name){
+  return key(name.trim());
+}
+
+function validRoomName(name){
+  return /^[A-Za-z0-9_]{3,30}$/.test(name);
+}
+
+function validRoomPassword(password){
+  return /^\d+$/.test(password);
+}
+
+function roomDisplayName(room,id){
+  return room && room.name ? room.name : id;
+}
+
+async function getRoom(id){
+  const snap=await get(ref(db,"rooms/"+id));
+  return snap.exists()?snap.val():null;
+}
+
+async function showRooms(){
 
   setActiveTab("roomsTab");
+  currentDMUser=null;
+  currentGroup=null;
+  stopCurrentChat();
+  const oldRoomActions=document.getElementById("roomActionsButton");
+  if(oldRoomActions) oldRoomActions.remove();
 
+  document.getElementById("sidebarContent").innerHTML=`
+    <button id="createRoomButton">➕ Create Room</button>
+    <input id="roomSearchInput" class="searchBox" placeholder="Search public rooms...">
+    <div id="roomJoinBox" class="roomJoinBox">
+      <h3>🚪 Join a Room</h3>
+      <input id="roomNameInput" placeholder="Room name" maxlength="30">
+      <button id="joinRoomButton">Join Room</button>
+    </div>
+    <div class="roomSectionTitle">🌎 Public Rooms</div>
+    <div id="publicRoomList"></div>
+    <div class="roomSectionTitle">⭐ Favorites</div>
+    <div id="favoriteRoomList"></div>
+    <div class="roomSectionTitle">📌 My Rooms</div>
+    <div id="myRoomList"></div>
+  `;
+
+  document.getElementById("createRoomButton").onclick=openCreateRoom;
+  document.getElementById("joinRoomButton").onclick=()=>joinRoom();
+  document.getElementById("roomSearchInput").oninput=()=>renderRoomLists();
+
+  document.getElementById("chatTitle").textContent="Rooms";
+  document.getElementById("chatSub").textContent="Public, unlisted, and private rooms";
+  clearMessages();
+  renderRoomLists();
+}
+
+async function renderRoomLists(){
+  const publicList=document.getElementById("publicRoomList");
+  const favList=document.getElementById("favoriteRoomList");
+  const myList=document.getElementById("myRoomList");
+  if(!publicList||!favList||!myList) return;
+
+  const query=(document.getElementById("roomSearchInput")?.value||"").trim().toLowerCase();
+  publicList.innerHTML=""; favList.innerHTML=""; myList.innerHTML="";
+
+  const snap=await get(ref(db,"rooms"));
+  const rooms=snap.exists()?snap.val():{};
+  const mineSnap=await get(ref(db,"users/"+key(currentUser)+"/rooms"));
+  const favSnap=await get(ref(db,"users/"+key(currentUser)+"/favoriteRooms"));
+  const mine=mineSnap.exists()?mineSnap.val():{};
+  const favs=favSnap.exists()?favSnap.val():{};
+
+  const entries=Object.entries(rooms).filter(([id,r])=>r && r.name);
+  const publics=entries.filter(([id,r])=>r.visibility==="public" && (!query || (r.name+" "+(r.description||"")).toLowerCase().includes(query)));
+  const favorites=entries.filter(([id,r])=>favs[id]);
+  const myRooms=entries.filter(([id,r])=>mine[id]);
+
+  if(!publics.length) publicList.innerHTML=`<div class="status">No public rooms found.</div>`;
+  if(!favorites.length) favList.innerHTML=`<div class="status">No favorite rooms.</div>`;
+  if(!myRooms.length) myList.innerHTML=`<div class="status">You haven't joined any named rooms yet.</div>`;
+
+  publics.forEach(([id,r])=>publicList.appendChild(roomListItem(id,r,favs[id])));
+  favorites.forEach(([id,r])=>favList.appendChild(roomListItem(id,r,true)));
+  myRooms.forEach(([id,r])=>myList.appendChild(roomListItem(id,r,!!favs[id])));
+}
+
+function roomListItem(id,room,favorite){
+  const item=document.createElement("div");
+  item.className="listItem roomItem";
+  const count=Object.keys(room.members||{}).length;
+  const icon=room.visibility==="private"?"🔒":room.visibility==="unlisted"?"👻":"🌎";
+  item.innerHTML=`
+    <span class="roomStar">${favorite?"⭐":"☆"}</span>
+    <div class="listTitle">${icon} ${escapeHTML(roomDisplayName(room,id))}</div>
+    <div class="listPreview">${escapeHTML(room.lastMessage||room.description||"No messages yet")} · ${count} member${count===1?"":"s"}</div>
+  `;
+  item.onclick=()=>openRoom(id);
+  item.querySelector(".roomStar").onclick=async e=>{
+    e.stopPropagation();
+    const path="users/"+key(currentUser)+"/favoriteRooms/"+id;
+    if(favorite) await remove(ref(db,path)); else await set(ref(db,path),true);
+    renderRoomLists();
+  };
+  return item;
+}
+
+async function openCreateRoom(){
+  const name=prompt("Room name (3–30 letters, numbers, or underscores):");
+  if(name===null) return;
+  if(!validRoomName(name.trim())){ alert("Room names must be 3–30 characters and use only letters, numbers, or underscores."); return; }
+  const id=roomKey(name);
+  const existing=await getRoom(id);
+  if(existing){ alert("That room name is already taken."); return; }
+
+  const description=prompt("Room description (optional):")||"";
+  const visibility=prompt("Visibility: public, unlisted, or private","public");
+  if(!["public","unlisted","private"].includes((visibility||"").toLowerCase())){ alert("Visibility must be public, unlisted, or private."); return; }
+  const mode=visibility.toLowerCase();
+  let passwordHash=null;
+  if(mode==="private"){
+    const password=prompt("Private room numeric password:");
+    if(password===null) return;
+    if(!validRoomPassword(password)){ alert("Private room passwords must contain numbers only."); return; }
+    passwordHash=await hashPassword(password);
+  }
+
+  const room={name:name.trim(),nameKey:id,description:description.trim(),visibility:mode,passwordHash,owner:key(currentUser),createdAt:Date.now(),members:{[key(currentUser)]:true},banned:{}};
+  await set(ref(db,"rooms/"+id),room);
+  await set(ref(db,"users/"+key(currentUser)+"/rooms/"+id),true);
+  openRoom(id);
+}
+
+async function joinRoom(nameFromButton){
+  const input=document.getElementById("roomNameInput");
+  const name=(nameFromButton||input?.value||"").trim();
+  if(!name){ alert("Enter a room name."); return; }
+  const id=roomKey(name);
+  const room=await getRoom(id);
+  if(!room){ alert("That room does not exist."); return; }
+  if((room.banned||{})[key(currentUser)]){ alert("You are banned from this room."); return; }
+
+  if(room.visibility==="private"){
+    const password=prompt("Enter the numeric room password:");
+    if(password===null) return;
+    const hash=await hashPassword(password);
+    if(hash!==room.passwordHash){ alert("Incorrect room password."); return; }
+  }
+
+  await set(ref(db,"rooms/"+id+"/members/"+key(currentUser)),true);
+  await set(ref(db,"users/"+key(currentUser)+"/rooms/"+id),true);
+  await set(ref(db,"users/"+key(currentUser)+"/roomUnread/"+id),0);
+  openRoom(id);
+}
+
+async function openRoom(id){
+  const room=await getRoom(id);
+  if(!room){ alert("That room no longer exists."); return; }
+  if((room.banned||{})[key(currentUser)]){ alert("You are banned from this room."); return; }
+
+  const isMember=!!((room.members||{})[key(currentUser)]);
+
+  if(room.visibility==="private" && !isMember && key(currentUser)!==room.owner){
+    const password=prompt("Enter the numeric room password:");
+    if(password===null) return;
+    if(await hashPassword(password)!==room.passwordHash){ alert("Incorrect room password."); return; }
+  }
+
+  if(!isMember){
+    await set(ref(db,"rooms/"+id+"/members/"+key(currentUser)),true);
+    await set(ref(db,"users/"+key(currentUser)+"/rooms/"+id),true);
+  }
+
+  stopCurrentChat();
+  currentRoom=id;
   currentDMUser=null;
   currentGroup=null;
 
-  document.getElementById("sidebarContent")
-    .innerHTML=`
+  document.getElementById("chatTitle").textContent="🏠 "+roomDisplayName(room,id);
+  document.getElementById("chatSub").textContent=(room.visibility==="private"?"🔒 Private":room.visibility==="unlisted"?"👻 Unlisted":"🌎 Public")+" · "+Object.keys(room.members||{}).length+" members";
+  document.getElementById("messages").innerHTML="";
 
-      <input
-        id="roomCodeInput"
-        placeholder="4-digit room code"
-        maxlength="4"
-        inputmode="numeric"
-      >
+  await set(ref(db,"users/"+key(currentUser)+"/roomUnread/"+id),0);
 
-      <button id="joinRoomButton">
-        🚪 Join Room
-      </button>
-
-    `;
-
-  document.getElementById("joinRoomButton")
-    .onclick=joinRoom;
-
-  document.getElementById("chatTitle")
-    .textContent="Rooms";
-
-  document.getElementById("chatSub")
-    .textContent="Join a room using its 4-digit code";
-
-  clearMessages();
-
-}
-
-async function joinRoom(){
-
-  const code =
-    document.getElementById("roomCodeInput")
-      .value.trim();
-
-  if(!/^\d{4}$/.test(code)){
-
-    alert("Room code must be 4 digits.");
-
-    return;
-  }
-
-  openRoom(code);
-
-}
-
-function openRoom(code){
-
-  stopCurrentChat();
-
-  currentRoom=code;
-
-  document.getElementById("chatTitle")
-    .textContent="🏠 Room "+code;
-
-  document.getElementById("chatSub")
-    .textContent="Public room chat";
-
-  document.getElementById("messages")
-    .innerHTML="";
-
-  const messageRef =
-    ref(
-      db,
-      "rooms/"+code+"/messages"
-    );
-
+  const messageRef=ref(db,"rooms/"+id+"/messages");
   const unsubs=[];
+  unsubs.push(onChildAdded(messageRef,snap=>renderMessage(snap.key,snap.val())));
+  unsubs.push(onChildChanged(messageRef,snap=>updateMessageUI(snap.key,snap.val())));
+  unsubs.push(onChildRemoved(messageRef,snap=>{const el=document.getElementById("message-"+snap.key);if(el)el.remove();}));
+  stopChatListener=()=>unsubs.forEach(fn=>fn());
 
-  unsubs.push(
-    onChildAdded(
-      messageRef,
-      snap=>renderMessage(snap.key,snap.val())
-    )
-  );
-
-  unsubs.push(
-    onChildChanged(
-      messageRef,
-      snap=>updateMessageUI(snap.key,snap.val())
-    )
-  );
-
-  unsubs.push(
-    onChildRemoved(
-      messageRef,
-      snap=>{
-
-        const el =
-          document.getElementById(
-            "message-"+snap.key
-          );
-
-        if(el) el.remove();
-
-      }
-    )
-  );
-
-  stopChatListener=()=>{
-
-    unsubs.forEach(fn=>fn());
-
-  };
-
+  document.getElementById("pinButton").onclick=()=>showPinnedMessages();
+  document.getElementById("searchButton").onclick=()=>openSearch();
+  showRoomHeaderActions(id,room);
+  renderRoomLists();
 }
 
+function showRoomHeaderActions(id,room){
+  const old=document.getElementById("roomActionsButton");
+  if(old) old.remove();
+  const header=document.querySelector(".chatHeader");
+  if(!header) return;
+  const button=document.createElement("button");
+  button.id="roomActionsButton";
+  button.className="secondary";
+  button.textContent="⚙️";
+  button.onclick=()=>openRoomSettings(id);
+  header.appendChild(button);
+}
+
+async function openRoomSettings(id=currentRoom){
+  if(!id) return;
+  const room=await getRoom(id);
+  if(!room) return;
+  const owner=key(currentUser)===room.owner;
+  const choice=prompt("Room settings:\n1 = Room info\n2 = Favorite/unfavorite\n3 = Invite link"+(owner?"\n4 = Rename\n5 = Description\n6 = Visibility/password\n7 = Manage members\n8 = Delete room":""));
+  if(choice===null) return;
+  if(choice==="1"){
+    alert((room.name||id)+"\n\n"+(room.description||"No description")+"\n\nVisibility: "+room.visibility+"\nMembers: "+Object.keys(room.members||{}).length+"\nOwner: @"+room.owner);
+  }else if(choice==="2"){
+    const path="users/"+key(currentUser)+"/favoriteRooms/"+id;
+    const snap=await get(ref(db,path));
+    if(snap.exists()) await remove(ref(db,path)); else await set(ref(db,path),true);
+    renderRoomLists();
+  }else if(choice==="3"){
+    const link=location.origin+location.pathname+"?room="+encodeURIComponent(room.name||id);
+    try{await navigator.clipboard.writeText(link);alert("Invite link copied:\n\n"+link);}catch{alert(link);}
+  }else if(owner && choice==="4"){
+    await renameRoom(id,room);
+  }else if(owner && choice==="5"){
+    const description=prompt("New description:",room.description||"");
+    if(description===null) return;
+    await update(ref(db,"rooms/"+id),{description:description.trim()});
+    openRoom(id);
+  }else if(owner && choice==="6"){
+    const visibility=prompt("Visibility: public, unlisted, or private",room.visibility||"public");
+    if(visibility===null) return;
+    const mode=visibility.toLowerCase();
+    if(!["public","unlisted","private"].includes(mode)){alert("Invalid visibility.");return;}
+    let passwordHash=null;
+    if(mode==="private"){
+      const password=prompt("New numeric password:");
+      if(password===null||!validRoomPassword(password)){alert("Password must contain numbers only.");return;}
+      passwordHash=await hashPassword(password);
+    }
+    await update(ref(db,"rooms/"+id),{visibility:mode,passwordHash});
+    openRoom(id);
+  }else if(owner && choice==="7"){
+    await manageRoomMembers(id);
+  }else if(owner && choice==="8"){
+    if(confirm("Delete this room permanently?")){
+      await remove(ref(db,"rooms/"+id));
+      await remove(ref(db,"users/"+key(currentUser)+"/rooms/"+id));
+      currentRoom=null;
+      stopCurrentChat();
+      showRooms();
+    }
+  }
+}
+
+async function renameRoom(id,room){
+  const newName=prompt("New room name:",room.name||id);
+  if(newName===null) return;
+  if(!validRoomName(newName.trim())){alert("Room names must be 3–30 characters and use only letters, numbers, or underscores.");return;}
+  const newId=roomKey(newName);
+  if(newId===id) return;
+  if(await getRoom(newId)){alert("That room name is already taken.");return;}
+  const newRoom={...room,name:newName.trim(),nameKey:newId};
+  await set(ref(db,"rooms/"+newId),newRoom);
+  const members=room.members||{};
+  for(const member of Object.keys(members)) await set(ref(db,"users/"+member+"/rooms/"+newId),true);
+  await remove(ref(db,"rooms/"+id));
+  for(const member of Object.keys(members)) await remove(ref(db,"users/"+member+"/rooms/"+id));
+  currentRoom=newId;
+  openRoom(newId);
+}
+
+async function manageRoomMembers(id){
+  const room=await getRoom(id);
+  if(!room) return;
+  const members=Object.keys(room.members||{});
+  const target=prompt("Member username to manage:\n\n"+members.map(x=>"@"+x).join("\n"));
+  if(!target) return;
+  const k=key(target);
+  if(k===room.owner){alert("The room owner cannot be kicked or banned.");return;}
+  if(!room.members||!room.members[k]){alert("That user is not a member.");return;}
+  const action=prompt("Action for @"+k+":\n1 = Kick\n2 = Ban");
+  if(action==="1"){
+    await remove(ref(db,"rooms/"+id+"/members/"+k));
+    await remove(ref(db,"users/"+k+"/rooms/"+id));
+  }else if(action==="2"){
+    await set(ref(db,"rooms/"+id+"/banned/"+k),true);
+    await remove(ref(db,"rooms/"+id+"/members/"+k));
+    await remove(ref(db,"users/"+k+"/rooms/"+id));
+  }
+  openRoom(id);
+}
 
 /* CHATS LIST */
 
@@ -3612,6 +3868,9 @@ window.viewImage=function(src){
 
 function setActiveTab(id){
 
+  const roomActions=document.getElementById("roomActionsButton");
+  if(roomActions && id!=="roomsTab") roomActions.remove();
+
   document.querySelectorAll(".tabs button")
     .forEach(button=>
       button.classList.remove("active")
@@ -3901,6 +4160,13 @@ if(savedUser){
 
 }
 
+
+const requestedRoom=new URLSearchParams(location.search).get("room");
+if(requestedRoom){
+  setTimeout(async()=>{
+    if(currentUser) await joinRoom(requestedRoom);
+  },1200);
+}
 </script>
 
 </body>
