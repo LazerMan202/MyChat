@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>MyChat 2.0 — Calls</title>
+<title>MyChat 2.1 — Group Calls</title>
 
 <style>
 :root{
@@ -621,6 +621,9 @@ a{
 
 
 /* VOICE + VIDEO CALLS */
+.groupCallButtons{display:flex;gap:6px;align-items:center}
+.groupCallButtons button{padding:9px 11px;white-space:nowrap}
+#groupCallRoster{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;font-size:13px;color:var(--muted)}
 .callButtons{display:flex;gap:6px;align-items:center}
 .callButtons button{padding:9px 11px;white-space:nowrap}
 #callModal{z-index:60;background:#070910e8}
@@ -760,7 +763,7 @@ a{
   <div class="authBox">
 
     <div class="logo">💬 MyChat</div>
-    <div class="subtitle">MyChat 2.0 — Calls</div>
+    <div class="subtitle">MyChat 2.1 — Group Calls</div>
 
     <div id="loginForm">
       <h2>Log In</h2>
@@ -800,6 +803,18 @@ a{
     <div class="publicLog">
 
       <h3>📋 Update Log</h3>
+
+      <div class="updateItem">
+        <div class="updateVersion">👥 MyChat 2.1 — GROUP CALLING</div>
+        <div class="updateDate">October 2026</div>
+        <ul>
+          <li>Start voice or video calls from group chats</li>
+          <li>Every group member receives an incoming-call invitation</li>
+          <li>Members can join or decline independently</li>
+          <li>Peer-to-peer WebRTC connections with a participant list</li>
+          <li>Existing direct-message calls remain available</li>
+        </ul>
+      </div>
 
       <div class="updateItem">
         <div class="updateVersion">📞 MyChat 2.0 — CALLING UPDATE</div>
@@ -1000,12 +1015,16 @@ a{
         <button id="voiceCallButton" class="success" title="Voice call">📞</button>
         <button id="videoCallButton" class="success" title="Video call">📹</button>
       </div>
+      <div id="groupCallButtons" class="groupCallButtons hidden">
+        <button id="groupVoiceCallButton" class="success" title="Start group voice call">📞 Group</button>
+        <button id="groupVideoCallButton" class="success" title="Start group video call">📹 Group</button>
+      </div>
 
     </header>
 
     <div id="messages" class="messages">
       <div class="empty">
-        Welcome to MyChat 2.0!<br>
+        Welcome to MyChat 2.1!<br>
         Choose a friend, room, or conversation.
       </div>
     </div>
@@ -1206,7 +1225,8 @@ a{
   <div class="callBox">
     <h2 id="callHeading">📞 Call</h2>
     <div id="callStatus" class="callStatus">Connecting…</div>
-    <div class="callVideos">
+    <div id="groupCallRoster"></div>
+    <div class="callVideos" id="callVideos">
       <div class="callVideoTile" id="localVideoTile">
         <video id="localVideo" autoplay playsinline muted></video>
         <span class="videoLabel">You</span>
@@ -1287,6 +1307,9 @@ let localMediaStream = null;
 let remoteMediaStream = null;
 let callRole = null;
 let callKind = "audio";
+let groupCallSession = null;
+let groupInviteUnsub = null;
+let groupIncomingCallData = null;
 
 
 
@@ -1960,6 +1983,8 @@ function stopCurrentChat(){
   currentMessages={};
   const callButtonsEl=document.getElementById("callButtons");
   if(callButtonsEl) callButtonsEl.classList.add("hidden");
+  const groupCallButtonsEl=document.getElementById("groupCallButtons");
+  if(groupCallButtonsEl) groupCallButtonsEl.classList.add("hidden");
 
   document.getElementById("typingIndicator")
     .textContent="";
@@ -2935,6 +2960,7 @@ async function openGroup(groupId){
   stopCurrentChat();
 
   currentGroup=groupId;
+  document.getElementById("groupCallButtons")?.classList.remove("hidden");
 
   const groupSnap =
     await get(
@@ -4048,13 +4074,14 @@ function setCallStatus(message){
 }
 
 function showIncomingCall(callId,data){
-  if(!currentUser || !data || data.status!=="ringing" || activeCall) return;
+  if(!currentUser || !data || data.status!=="ringing" || activeCall || groupCallSession) return;
   if(incomingCallData) return;
-  incomingCallData={callId,data};
+  incomingCallData={callId,data,isGroupCall:!!data.isGroupCall,groupId:data.groupId};
   document.getElementById("incomingCallTitle").textContent =
-    (data.type==="video" ? "📹 Incoming video call" : "📞 Incoming voice call");
-  document.getElementById("incomingCallText").textContent =
-    (data.caller||"Someone")+" is calling you.";
+    (data.isGroupCall ? (data.type==="video" ? "📹 Group video call" : "📞 Group voice call") : (data.type==="video" ? "📹 Incoming video call" : "📞 Incoming voice call"));
+  document.getElementById("incomingCallText").textContent = data.isGroupCall
+    ? ((data.caller||"Someone")+" started a call in “"+(data.groupName||"group chat")+"”. Everyone in the group was notified.")
+    : ((data.caller||"Someone")+" is calling you.");
   document.getElementById("incomingCallModal").classList.remove("hidden");
   if("Notification" in window && Notification.permission==="granted"){
     try{new Notification("MyChat call",{body:(data.caller||"Someone")+" is calling you."});}catch(e){}
@@ -4064,6 +4091,21 @@ function showIncomingCall(callId,data){
 function setupIncomingCallListener(){
   if(!currentUser) return;
   if(stopIncomingCalls){stopIncomingCalls();stopIncomingCalls=null;}
+  if(groupInviteUnsub){groupInviteUnsub();groupInviteUnsub=null;}
+  const inviteRef=ref(db,"groupCallInvites/"+key(currentUser));
+  const groupInviteAdded=onChildAdded(inviteRef,snap=>{
+    const d=snap.val();
+    if(d && d.status==="ringing" && key(d.caller)!==key(currentUser)){
+      showIncomingCall(snap.key,{...d,isGroupCall:true});
+    }
+  });
+  const groupInviteChanged=onChildChanged(inviteRef,snap=>{
+    const d=snap.val();
+    if(incomingCallData?.isGroupCall && incomingCallData.callId===snap.key && (!d || d.status!=="ringing")){
+      incomingCallData=null;document.getElementById("incomingCallModal").classList.add("hidden");
+    }
+  });
+  groupInviteUnsub=()=>{groupInviteAdded();groupInviteChanged();};
   const incomingRef=ref(db,"calls/"+key(currentUser));
   const unsubs=[
     onChildAdded(incomingRef,snap=>{
@@ -4097,7 +4139,7 @@ async function startCall(type){
     alert("Open a friend's direct message first.");
     return;
   }
-  if(activeCall){alert("You're already in a call.");return;}
+  if(activeCall || groupCallSession){alert("You're already in a call.");return;}
   if(!window.RTCPeerConnection || !navigator.mediaDevices?.getUserMedia){
     alert("Calls aren't supported here. Open MyChat on a supported browser over HTTPS.");
     return;
@@ -4190,7 +4232,8 @@ function beginCallUI(peer,type){
 
 async function acceptIncomingCall(){
   const pending=incomingCallData;
-  if(!pending || activeCall) return;
+  if(!pending || activeCall || groupCallSession) return;
+  if(pending.isGroupCall){incomingCallData=null;document.getElementById("incomingCallModal").classList.add("hidden");await joinGroupCall(pending.groupId,pending.callId,pending.data);return;}
   const {callId,data}=pending;
   const callRef=ref(db,"calls/"+key(currentUser)+"/"+callId);
   document.getElementById("incomingCallModal").classList.add("hidden");
@@ -4254,6 +4297,7 @@ async function declineIncomingCall(){
   incomingCallData=null;
   document.getElementById("incomingCallModal").classList.add("hidden");
   if(pending){
+    if(pending.isGroupCall){try{await update(ref(db,"groupCallInvites/"+key(currentUser)+"/"+pending.callId),{status:"declined",declinedAt:Date.now()});}catch(e){} return;}
     try{await update(ref(db,"calls/"+key(currentUser)+"/"+pending.callId),{status:"declined",declinedAt:Date.now()});}
     catch(e){}
     setTimeout(()=>remove(ref(db,"calls/"+key(currentUser)+"/"+pending.callId)).catch(()=>{}),2500);
@@ -4261,6 +4305,7 @@ async function declineIncomingCall(){
 }
 
 async function finishCallUI(message="Call ended.",notifyPeer=true){
+  if(groupCallSession){await finishGroupCall(message,notifyPeer);return;}
   const old=activeCall;
   activeCall=null;
   if(callStatusUnsub){callStatusUnsub();callStatusUnsub=null;}
@@ -4285,6 +4330,131 @@ async function finishCallUI(message="Call ended.",notifyPeer=true){
   callRole=null;
 }
 
+
+/* GROUP VOICE + VIDEO CALLS
+   Mesh WebRTC: every participant connects directly to every other participant.
+   Firebase carries invitations and signaling only; media stays peer-to-peer. */
+function groupCallRoot(groupId,callId){return "groupCalls/"+groupId+"/"+callId;}
+function groupLinkKey(a,b){return [key(a),key(b)].sort().join("__");}
+function setGroupRoster(){
+  const el=document.getElementById("groupCallRoster"); if(!el||!groupCallSession)return;
+  const names=Object.values(groupCallSession.participants||{}).map(p=>p.username||p.displayName||"Member");
+  el.textContent="In call: "+names.join(" · ");
+}
+function addGroupVideoTile(peerKey,username,stream){
+  const videos=document.getElementById("callVideos"); if(!videos)return;
+  const id="group-peer-"+key(peerKey).replace(/[^a-z0-9_-]/g,"_");
+  let tile=document.getElementById(id);
+  if(!tile){tile=document.createElement("div");tile.id=id;tile.className="callVideoTile";
+    const video=document.createElement("video");video.autoplay=true;video.playsInline=true;video.dataset.peer=peerKey;
+    const label=document.createElement("span");label.className="videoLabel";label.textContent=username;
+    tile.append(video,label);videos.appendChild(tile);
+  }
+  const video=tile.querySelector("video");video.srcObject=stream;
+  tile.classList.toggle("hidden",groupCallSession?.type!=="video");
+}
+function setupGroupPeerMedia(peerKey,username,stream){
+  if(groupCallSession?.type==="video")addGroupVideoTile(peerKey,username,stream);
+  else {
+    const id="group-audio-"+key(peerKey).replace(/[^a-z0-9_-]/g,"_");
+    let audio=document.getElementById(id);if(!audio){audio=document.createElement("audio");audio.id=id;audio.autoplay=true;document.getElementById("callVideos").appendChild(audio);}audio.srcObject=stream;
+  }
+}
+async function ensureGroupPeer(peerKey,participant){
+  const session=groupCallSession;if(!session||key(peerKey)===key(currentUser)||session.pcs[key(peerKey)])return;
+  const callRef=ref(db,groupCallRoot(session.groupId,session.callId));
+  const linkRef=ref(db,groupCallRoot(session.groupId,session.callId)+"/links/"+groupLinkKey(currentUser,peerKey));
+  const isOfferer=key(currentUser)<key(peerKey);
+  const pc=new RTCPeerConnection(rtcConfig);
+  const remote=new MediaStream();
+  session.pcs[key(peerKey)]={pc,remote,username:participant.username||peerKey,unsubs:[],queued:[],linkRef};
+  if(localMediaStream)localMediaStream.getTracks().forEach(t=>pc.addTrack(t,localMediaStream));
+  pc.ontrack=e=>{(e.streams[0]?.getTracks()||[e.track]).forEach(t=>{if(!remote.getTracks().some(x=>x.id===t.id))remote.addTrack(t);});setupGroupPeerMedia(peerKey,participant.username||peerKey,remote);};
+  pc.onicecandidate=e=>{if(e.candidate&&groupCallSession){push(ref(db,groupCallRoot(session.groupId,session.callId)+"/links/"+groupLinkKey(currentUser,peerKey)+"/candidates/"+key(currentUser)),e.candidate.toJSON()).catch(()=>{});}};
+  pc.onconnectionstatechange=()=>{if(!groupCallSession)return;const states=Object.values(groupCallSession.pcs).map(x=>x.pc.connectionState);setCallStatus(states.some(x=>x==="connected")?"Group call connected · "+states.filter(x=>x==="connected").length+" peer(s) connected":"Connecting to group…");};
+  const candidateUnsub=onChildAdded(ref(db,groupCallRoot(session.groupId,session.callId)+"/links/"+groupLinkKey(currentUser,peerKey)+"/candidates/"+key(peerKey)),async snap=>{
+    const c=snap.val();if(!c||!groupCallSession?.pcs[key(peerKey)])return;
+    const state=groupCallSession.pcs[key(peerKey)];if(pc.remoteDescription){try{await pc.addIceCandidate(new RTCIceCandidate(c));}catch(e){}}else state.queued.push(c);
+  });
+  session.pcs[key(peerKey)].unsubs.push(candidateUnsub);
+  if(isOfferer){
+    const snap=await get(linkRef);if(!groupCallSession||!groupCallSession.pcs[key(peerKey)])return;
+    if(!snap.exists()||!snap.val()?.offer){const offer=await pc.createOffer();await pc.setLocalDescription(offer);await update(linkRef,{offer:{type:offer.type,sdp:offer.sdp},offerFrom:key(currentUser),updatedAt:Date.now()});}
+    const unsub=onValue(linkRef,async snap2=>{const d=snap2.val();if(!d?.answer||!groupCallSession?.pcs[key(peerKey)]||pc.remoteDescription)return;try{await pc.setRemoteDescription(new RTCSessionDescription(d.answer));const st=groupCallSession.pcs[key(peerKey)];for(const c of st.queued.splice(0)){try{await pc.addIceCandidate(new RTCIceCandidate(c));}catch(e){}}}catch(e){console.warn("Group call answer failed",e);}});
+    session.pcs[key(peerKey)].unsubs.push(unsub);
+  }else{
+    const unsub=onValue(linkRef,async snap=>{const d=snap.val();if(!d?.offer||key(d.offerFrom)!==key(peerKey)||pc.remoteDescription||!groupCallSession?.pcs[key(peerKey)])return;try{await pc.setRemoteDescription(new RTCSessionDescription(d.offer));const answer=await pc.createAnswer();await pc.setLocalDescription(answer);await update(linkRef,{answer:{type:answer.type,sdp:answer.sdp},answerFrom:key(currentUser),updatedAt:Date.now()});const st=groupCallSession.pcs[key(peerKey)];for(const c of st.queued.splice(0)){try{await pc.addIceCandidate(new RTCIceCandidate(c));}catch(e){}}}catch(e){console.warn("Group call offer failed",e);}});
+    session.pcs[key(peerKey)].unsubs.push(unsub);
+  }
+}
+async function joinGroupCall(groupId,callId,inviteData={}){
+  if(activeCall||groupCallSession){alert("You're already in a call.");return;}
+  if(!window.RTCPeerConnection||!navigator.mediaDevices?.getUserMedia){alert("Group calls need a supported browser over HTTPS.");return;}
+  const root=groupCallRoot(groupId,callId);const callSnap=await get(ref(db,root));const call=callSnap.val();
+  if(!call||call.status!=="active"){alert("This group call has already ended.");return;}
+  try{
+    const type=call.type||inviteData.type||"audio";
+    localMediaStream=await navigator.mediaDevices.getUserMedia({audio:true,video:type==="video"?{facingMode:"user"}:false});
+    groupCallSession={groupId,callId,type,pcs:{},participants:{},unsubs:[],startedAt:call.startedAt||Date.now()};
+    callKind=type;callRole="group";
+    beginCallUI("Group: "+(call.groupName||inviteData.groupName||"chat"),type);
+    document.getElementById("callHeading").textContent=(type==="video"?"📹 Group video call — ":"📞 Group voice call — ")+(call.groupName||inviteData.groupName||"Group chat");
+    document.getElementById("localVideo").srcObject=localMediaStream;
+    document.getElementById("localVideoTile").classList.toggle("hidden",type!=="video");
+    document.getElementById("remoteVideoTile").classList.add("hidden");
+    document.getElementById("remoteAudio").muted=true;
+    await set(ref(db,root+"/participants/"+key(currentUser)),{username:currentUser,joinedAt:Date.now(),status:"active"});
+    await update(ref(db,"groupCallInvites/"+key(currentUser)+"/"+callId),{status:"accepted",acceptedAt:Date.now()});
+    const partsRef=ref(db,root+"/participants");
+    const partsUnsub=onValue(partsRef,async snap=>{
+      if(!groupCallSession||groupCallSession.callId!==callId)return;
+      const participants=snap.val()||{};groupCallSession.participants=participants;setGroupRoster();
+      for(const [pk,state] of Object.entries(groupCallSession.pcs)){
+        if(!participants[pk]||participants[pk].status!=="active"){
+          state.unsubs.forEach(fn=>{try{fn();}catch(e){}});try{state.pc.close();}catch(e){}
+          const safe=pk.replace(/[^a-z0-9_-]/g,"_");
+          const tile=document.getElementById("group-peer-"+safe);if(tile)tile.remove();
+          const audio=document.getElementById("group-audio-"+safe);if(audio){audio.srcObject=null;audio.remove();}
+          delete groupCallSession.pcs[pk];
+        }
+      }
+      for(const [pk,p] of Object.entries(participants)){if(p?.status==="active"&&key(pk)!==key(currentUser))await ensureGroupPeer(pk,p);}
+    });groupCallSession.unsubs.push(partsUnsub);
+    const statusUnsub=onValue(ref(db,root+"/status"),snap=>{if(groupCallSession?.callId===callId&&snap.val()!=="active")finishGroupCall("The group call ended.",false);});groupCallSession.unsubs.push(statusUnsub);
+    setCallStatus("Joining group call…");
+  }catch(e){console.error("Group call join failed",e);alert("Couldn't join the group call. Check microphone/camera permissions.");await finishGroupCall("Could not join group call.",true);}
+}
+async function startGroupCall(type){
+  if(!currentUser||!currentGroup){alert("Open a group chat first.");return;}
+  if(activeCall||groupCallSession){alert("You're already in a call.");return;}
+  const groupSnap=await get(ref(db,"groupChats/"+currentGroup));if(!groupSnap.exists()){alert("Group not found.");return;}
+  const group=groupSnap.val();const members=Object.keys(group.members||{});
+  if(members.length<2){alert("Add at least one other member before starting a group call.");return;}
+  const callId=push(ref(db,"groupCalls/"+currentGroup)).key;
+  const call={groupId:currentGroup,groupName:group.name,caller:currentUser,type,status:"active",startedAt:Date.now(),members:group.members};
+  await set(ref(db,groupCallRoot(currentGroup,callId)),call);
+  for(const member of members){if(key(member)===key(currentUser))continue;await set(ref(db,"groupCallInvites/"+key(member)+"/"+callId),{groupId:currentGroup,groupName:group.name,callId,caller:currentUser,type,status:"ringing",createdAt:Date.now()});}
+  await joinGroupCall(currentGroup,callId,{groupName:group.name,type});
+  if("Notification" in window&&Notification.permission==="granted"){try{new Notification("MyChat group call",{body:"Your group “"+group.name+"” is being called by "+currentUser+"."});}catch(e){}}
+}
+async function finishGroupCall(message="Call ended.",notify=true){
+  const session=groupCallSession;if(!session)return;groupCallSession=null;
+  session.unsubs.forEach(fn=>{try{fn();}catch(e){}});
+  for(const state of Object.values(session.pcs)){state.unsubs.forEach(fn=>{try{fn();}catch(e){}});try{state.pc.close();}catch(e){}}
+  if(localMediaStream){localMediaStream.getTracks().forEach(t=>t.stop());localMediaStream=null;}
+  document.querySelectorAll("#callVideos video[data-peer],#callVideos audio[id^='group-audio-']").forEach(el=>{try{el.srcObject=null;}catch(e){}el.parentElement?.remove();if(el.tagName==="AUDIO")el.remove();});
+  document.getElementById("localVideo").srcObject=null;document.getElementById("callModal").classList.add("hidden");document.getElementById("groupCallRoster").textContent="";
+  if(notify){try{await remove(ref(db,groupCallRoot(session.groupId,session.callId)+"/participants/"+key(currentUser)));}catch(e){} }
+  else {try{await remove(ref(db,groupCallRoot(session.groupId,session.callId)+"/participants/"+key(currentUser)));}catch(e){}}
+  const remaining=await get(ref(db,groupCallRoot(session.groupId,session.callId)+"/participants"));
+  if(notify&&Object.keys(remaining.val()||{}).length===0){
+    try{await update(ref(db,groupCallRoot(session.groupId,session.callId)),{status:"ended",endedAt:Date.now()});}catch(e){}
+    const callSnap=await get(ref(db,groupCallRoot(session.groupId,session.callId)));
+    const members=Object.keys(callSnap.val()?.members||{});
+    for(const member of members){try{await update(ref(db,"groupCallInvites/"+key(member)+"/"+session.callId),{status:"ended",endedAt:Date.now()});}catch(e){}}
+  }
+  callRole=null;setCallStatus(message);
+}
 
 /* UI */
 
@@ -4384,6 +4554,10 @@ document.getElementById("voiceCallButton")
 
 document.getElementById("videoCallButton")
   .addEventListener("click",()=>startCall("video"));
+document.getElementById("groupVoiceCallButton")
+  .addEventListener("click",()=>startGroupCall("audio"));
+document.getElementById("groupVideoCallButton")
+  .addEventListener("click",()=>startGroupCall("video"));
 
 document.getElementById("acceptCallButton")
   .addEventListener("click",acceptIncomingCall);
