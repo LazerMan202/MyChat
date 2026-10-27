@@ -1,0 +1,4747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MyChat 2.2 — Fresh Start</title>
+
+<style>
+:root{
+  --bg:#0f1117;
+  --panel:#181b24;
+  --panel2:#202431;
+  --border:#303544;
+  --text:#f1f3f7;
+  --muted:#9ba3b4;
+  --accent:#5865f2;
+  --danger:#ed4245;
+  --success:#43b581;
+  --bubble:#252a38;
+}
+
+body.light{
+  --bg:#f2f4f8;
+  --panel:#ffffff;
+  --panel2:#e8ebf1;
+  --border:#d3d7df;
+  --text:#171a21;
+  --muted:#687080;
+  --bubble:#e4e7ed;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+
+button,input,textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.hidden{
+  display:none!important;
+}
+
+button{
+  border:0;
+  border-radius:8px;
+  padding:10px 14px;
+  background:var(--accent);
+  color:white;
+}
+
+button.secondary{
+  background:var(--panel2);
+  color:var(--text);
+}
+
+button.danger{
+  background:var(--danger);
+}
+
+button.success{
+  background:var(--success);
+}
+
+input,textarea{
+  width:100%;
+  padding:11px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:var(--panel2);
+  color:var(--text);
+  outline:none;
+}
+
+textarea{
+  resize:vertical;
+}
+
+a{
+  color:#7289ff;
+}
+
+/* LOGIN */
+
+#authScreen{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.authBox{
+  width:min(440px,100%);
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:28px;
+  box-shadow:0 15px 50px #0005;
+}
+
+.logo{
+  font-size:32px;
+  font-weight:bold;
+  text-align:center;
+  margin-bottom:6px;
+}
+
+.subtitle{
+  color:var(--muted);
+  text-align:center;
+  margin-bottom:24px;
+}
+
+.authBox h2{
+  margin-top:0;
+}
+
+.authBox button{
+  width:100%;
+  margin-top:10px;
+}
+
+.authSwitch{
+  text-align:center;
+  margin-top:15px;
+  color:var(--muted);
+}
+
+.authSwitch span{
+  color:#7289ff;
+  cursor:pointer;
+}
+
+.error{
+  color:#ff7777;
+  margin-top:10px;
+}
+
+/* PUBLIC UPDATE LOG */
+
+.publicLog{
+  margin-top:25px;
+  border-top:1px solid var(--border);
+  padding-top:20px;
+}
+
+.publicLog h3{
+  margin-top:0;
+}
+
+.updateItem{
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px;
+  margin:9px 0;
+}
+
+.updateVersion{
+  font-weight:bold;
+}
+
+.updateDate{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.updateItem ul{
+  margin-bottom:0;
+  padding-left:20px;
+}
+
+/* APP */
+
+#app{
+  display:none;
+  height:100vh;
+  overflow:hidden;
+}
+
+#app.visible{
+  display:flex;
+}
+
+.sidebar{
+  width:270px;
+  background:var(--panel);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+}
+
+.userBar{
+  padding:14px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.userInfo{
+  flex:1;
+  min-width:0;
+}
+
+.username{
+  font-weight:bold;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.status{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.tabs{
+  display:flex;
+  width:100%;
+  padding:8px;
+  gap:3px;
+  position:relative;
+  z-index:10;
+}
+
+.tabs button{
+  flex:1 1 0;
+  min-width:0;
+  padding:10px 5px;
+  background:transparent;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  position:relative;
+  z-index:11;
+  pointer-events:auto;
+}
+
+.tabs button.active{
+  background:var(--panel2);
+  color:var(--text);
+}
+
+.sidebarContent{
+  flex:1;
+  overflow:auto;
+  padding:10px;
+}
+
+.listItem{
+  padding:11px;
+  border-radius:9px;
+  margin-bottom:5px;
+  cursor:pointer;
+}
+
+.listItem:hover,
+.listItem.active{
+  background:var(--panel2);
+}
+
+.listTitle{
+  font-weight:bold;
+}
+
+.listPreview{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:3px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.unread{
+  float:right;
+  background:var(--accent);
+  color:white;
+  border-radius:20px;
+  padding:2px 7px;
+  font-size:11px;
+}
+
+/* MAIN CHAT */
+
+.main{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+}
+
+.chatHeader{
+  height:64px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  padding:10px 16px;
+  gap:10px;
+}
+
+.chatHeaderInfo{
+  flex:1;
+}
+
+.chatTitle{
+  font-weight:bold;
+  font-size:17px;
+}
+
+.chatSub{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.messages{
+  flex:1;
+  overflow:auto;
+  padding:18px;
+}
+
+.message{
+  display:flex;
+  gap:9px;
+  margin-bottom:13px;
+  max-width:900px;
+}
+
+.messageContent{
+  max-width:min(700px,80%);
+}
+
+.avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:var(--accent);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  flex-shrink:0;
+  overflow:hidden;
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.msgTop{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.msgName{
+  font-weight:bold;
+}
+
+.msgTime{
+  color:var(--muted);
+  font-size:11px;
+}
+
+.bubble{
+  margin-top:3px;
+  background:var(--bubble);
+  padding:9px 11px;
+  border-radius:10px;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+
+.edited{
+  color:var(--muted);
+  font-size:10px;
+}
+
+.messageActions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin-top:4px;
+}
+
+.messageActions button{
+  padding:3px 6px;
+  font-size:11px;
+  background:var(--panel2);
+}
+
+.replyPreview{
+  border-left:3px solid var(--accent);
+  padding-left:8px;
+  margin-bottom:6px;
+  color:var(--muted);
+  font-size:12px;
+  cursor:pointer;
+}
+
+.reactionBar{
+  margin-top:4px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.messageImage{
+  max-width:350px;
+  max-height:350px;
+  border-radius:10px;
+  margin-top:5px;
+  cursor:pointer;
+}
+
+.pinned{
+  border:1px solid #e5b93f;
+}
+
+.pinLabel{
+  color:#e5b93f;
+  font-size:11px;
+}
+
+.typing{
+  min-height:25px;
+  padding:3px 18px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.composer{
+  border-top:1px solid var(--border);
+  padding:10px;
+}
+
+.replyBar{
+  background:var(--panel2);
+  padding:8px;
+  border-radius:8px;
+  margin-bottom:7px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.replyBar span{
+  flex:1;
+  color:var(--muted);
+}
+
+.composeRow{
+  display:flex;
+  gap:7px;
+}
+
+.composeRow input{
+  flex:1;
+}
+
+.composeRow button{
+  white-space:nowrap;
+}
+
+/* ROOMS 2.0 */
+
+.roomJoinBox{
+  margin:12px 0 16px;
+  padding:12px;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:10px;
+}
+
+.roomJoinBox h3{
+  margin:0 0 10px;
+}
+
+.roomJoinBox button{
+  width:100%;
+  margin-top:8px;
+}
+
+.roomSectionTitle{
+  margin:16px 4px 7px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:bold;
+  text-transform:uppercase;
+}
+
+.roomItem{
+  position:relative;
+  padding-right:30px;
+}
+
+.roomStar{
+  position:absolute;
+  right:8px;
+  top:10px;
+  font-size:17px;
+  cursor:pointer;
+}
+
+/* PROFILE */
+
+.profileCard{
+  max-width:600px;
+  margin:auto;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px;
+}
+
+.bigAvatar{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  background:var(--accent);
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:38px;
+  font-weight:bold;
+  margin:auto auto 15px;
+  overflow:hidden;
+}
+
+.bigAvatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.field{
+  margin:12px 0;
+}
+
+.field label{
+  display:block;
+  margin-bottom:5px;
+  color:var(--muted);
+}
+
+/* SETTINGS */
+
+.settingsPanel{
+  max-width:600px;
+  margin:auto;
+  padding:20px;
+}
+
+/* MODALS */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:#0008;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:20;
+}
+
+.modalBox{
+  width:min(500px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px;
+}
+
+.modalBox h2{
+  margin-top:0;
+}
+
+.friendCheck{
+  display:flex;
+  gap:8px;
+  padding:7px;
+  background:var(--panel2);
+  border-radius:7px;
+  margin:5px 0;
+}
+
+.friendCheck input{
+  width:auto;
+}
+
+.searchBox{
+  margin-bottom:10px;
+}
+
+.empty{
+  text-align:center;
+  color:var(--muted);
+  padding:35px 10px;
+}
+
+
+/* VOICE + VIDEO CALLS */
+.groupCallButtons{display:flex;gap:6px;align-items:center}
+.groupCallButtons button{padding:9px 11px;white-space:nowrap}
+#groupCallRoster{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;font-size:13px;color:var(--muted)}
+.callButtons{display:flex;gap:6px;align-items:center}
+.callButtons button{padding:9px 11px;white-space:nowrap}
+#callModal{z-index:60;background:#070910e8}
+.callBox{width:min(760px,100%);max-height:92vh;overflow:auto;background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 18px 60px #0008}
+.callBox h2{margin:0 0 8px}
+.callStatus{color:var(--muted);margin:5px 0 14px}
+.callVideos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.callVideoTile{position:relative;min-height:150px;background:#080a10;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.callVideoTile video{width:100%;height:100%;max-height:48vh;object-fit:cover}
+.callVideoTile .videoLabel{position:absolute;left:9px;bottom:8px;background:#0009;color:white;padding:4px 7px;border-radius:6px;font-size:12px}
+.callControls{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:14px}
+.callControls button{min-width:100px}
+#incomingCallModal{z-index:70}
+.incomingCallActions{display:flex;gap:8px}
+.incomingCallActions button{flex:1}
+@media(max-width:520px){
+ .callButtons{gap:4px}
+ .callButtons button{padding:8px 7px;font-size:13px}
+ .callVideos{grid-template-columns:1fr}
+ .callVideoTile{min-height:130px}
+ .callVideoTile video{max-height:32vh}
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+  .sidebar{
+    width:210px;
+  }
+
+  .messageContent{
+    max-width:82%;
+  }
+
+  .chatHeader{
+    padding:8px;
+  }
+
+  .messages{
+    padding:10px;
+  }
+}
+
+@media(max-width:700px){
+  #app{
+    flex-direction:column;
+  }
+
+  .sidebar{
+    width:100%;
+    height:40vh;
+    min-height:230px;
+    max-height:360px;
+    border-right:0;
+    border-bottom:1px solid var(--border);
+    flex-shrink:0;
+  }
+
+  .main{
+    width:100%;
+    height:60vh;
+    min-height:0;
+    flex:1;
+  }
+
+  .tabs{
+    display:flex;
+    flex-direction:row;
+    width:100%;
+    padding:6px;
+    gap:4px;
+    flex-shrink:0;
+    position:relative;
+    z-index:10;
+  }
+
+  .tabs button{
+    flex:1 1 0;
+    min-width:0;
+    height:42px;
+    padding:8px 4px;
+    font-size:14px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    position:relative;
+    z-index:11;
+    pointer-events:auto;
+  }
+
+  .sidebarContent{
+    min-height:0;
+    overflow:auto;
+  }
+
+  .listItem{
+    text-align:left;
+  }
+}
+
+@media(max-width:420px){
+  .sidebar{
+    height:42vh;
+    min-height:220px;
+  }
+
+  .main{
+    height:58vh;
+  }
+
+  .userBar{
+    padding:8px 10px;
+  }
+
+  .sidebar .userInfo{
+    display:block;
+  }
+
+  .tabs button{
+    font-size:13px;
+    padding:7px 2px;
+  }
+
+  .tabs button span{
+    display:inline;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- AUTH -->
+
+<div id="authScreen">
+
+  <div class="authBox">
+
+    <div class="logo">💬 MyChat</div>
+    <div class="subtitle">MyChat 2.2 — Fresh Start · Username login, no email</div>
+    <div class="status" style="margin:8px 0 14px">Use at least 6 characters for your password. No email means forgotten passwords cannot be reset.</div>
+
+    <div id="loginForm">
+      <h2>Log In</h2>
+
+      <input id="loginUsername" placeholder="Username" maxlength="20">
+      <br><br>
+      <input id="loginPassword" type="password" placeholder="Password">
+
+      <button id="loginButton">Log In</button>
+
+      <div id="loginError" class="error"></div>
+
+      <div class="authSwitch">
+        Don't have an account?
+        <span id="showCreateButton">Create one</span>
+      </div>
+    </div>
+
+    <div id="createForm" class="hidden">
+      <h2>Create Account</h2>
+
+      <input id="createUsername" placeholder="Username" maxlength="20">
+      <br><br>
+      <input id="createPassword" type="password" placeholder="Password">
+
+      <button id="createButton">Create Account</button>
+
+      <div id="createError" class="error"></div>
+
+      <div class="authSwitch">
+        Already have an account?
+        <span id="showLoginButton">Log in</span>
+      </div>
+    </div>
+
+    <!-- PUBLIC UPDATE LOG -->
+    <div class="publicLog">
+
+      <h3>📋 Update Log</h3>
+
+      <div class="updateItem">
+        <div class="updateVersion">🔐 MyChat 2.2 — FRESH START</div>
+        <div class="updateDate">October 2026</div>
+        <ul>
+          <li>Firebase-managed username-and-password login across devices</li>
+          <li>No real email address or Google account required</li>
+          <li>Fresh account, room, and group data</li>
+          <li>Database rules designed around the logged-in username</li>
+        </ul>
+      </div>
+
+      <div class="updateVersion">👥 MyChat 2.1 — GROUP CALLING</div>
+        <div class="updateDate">October 2026</div>
+        <ul>
+          <li>Start voice or video calls from group chats</li>
+          <li>Every group member receives an incoming-call invitation</li>
+          <li>Members can join or decline independently</li>
+          <li>Peer-to-peer WebRTC connections with a participant list</li>
+          <li>Existing direct-message calls remain available</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">📞 MyChat 2.0 — CALLING UPDATE</div>
+        <div class="updateDate">October 2026</div>
+        <ul>
+          <li>Voice calls and video calls in direct messages</li>
+          <li>Incoming call notifications with answer and decline</li>
+          <li>Microphone mute, camera toggle, and hang up</li>
+          <li>WebRTC audio/video with Firebase signaling</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">🏠 MyChat 1.9 — ROOMS 2.0</div>
+        <div class="updateDate">October 2026</div>
+        <ul>
+          <li>Named rooms instead of 4-digit room codes</li>
+          <li>Public, unlisted, and private rooms</li>
+          <li>Numeric passwords for private rooms</li>
+          <li>Public room browser and search</li>
+          <li>Room descriptions and member counts</li>
+          <li>Room favorites</li>
+          <li>Room owner controls</li>
+          <li>Kick and ban controls</li>
+          <li>Room rename and settings</li>
+          <li>Unread room indicators</li>
+          <li>Room invite links</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">🚀 MyChat 1.8 — THE BIG UPDATE</div>
+        <div class="updateDate">October 2026</div>
+        <ul>
+          <li>Image attachments</li>
+          <li>Browser notifications</li>
+          <li>Online/offline + last seen</li>
+          <li>Typing indicators</li>
+          <li>Profiles 2.0</li>
+          <li>Settings and password changing</li>
+          <li>Light and dark themes</li>
+          <li>Improved mobile layout</li>
+          <li>Public update log</li>
+          <li>Better message search and pins</li>
+          <li>Improved groups</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">✨ MyChat 1.7</div>
+        <div class="updateDate">October 2026</div>
+        <ul>
+          <li>Message search</li>
+          <li>Pinned messages</li>
+          <li>Better group management</li>
+          <li>Conversation previews</li>
+          <li>Improved notifications</li>
+          <li>UI improvements</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">👥 MyChat 1.6</div>
+        <div class="updateDate">October 2026</div>
+        <ul>
+          <li>Group chats</li>
+          <li>Profile pictures</li>
+          <li>Group messaging</li>
+          <li>Group unread counts</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">↩️ MyChat 1.5</div>
+        <div class="updateDate">October 2026</div>
+        <ul>
+          <li>Message replies</li>
+          <li>Copy messages</li>
+          <li>More reactions</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">✨ MyChat 1.4</div>
+        <ul>
+          <li>Message reactions</li>
+          <li>Edit messages</li>
+          <li>Improved mobile layout</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">👤 MyChat 1.3</div>
+        <ul>
+          <li>Profiles</li>
+          <li>Online status</li>
+          <li>Unread messages</li>
+          <li>Improved DMs</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">💬 MyChat 1.2</div>
+        <ul>
+          <li>Friends</li>
+          <li>Friend requests</li>
+          <li>Direct messages</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">🔐 MyChat 1.1</div>
+        <ul>
+          <li>Accounts</li>
+          <li>Passwords</li>
+          <li>Login system</li>
+        </ul>
+      </div>
+
+      <div class="updateItem">
+        <div class="updateVersion">🎉 MyChat 1.0</div>
+        <ul>
+          <li>Rooms</li>
+          <li>Realtime chat</li>
+          <li>4-digit room codes</li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<!-- APP -->
+
+<div id="app">
+
+  <aside class="sidebar">
+
+    <div class="userBar">
+
+      <div id="sidebarAvatar" class="avatar"></div>
+
+      <div class="userInfo">
+        <div id="sidebarUsername" class="username"></div>
+        <div id="sidebarStatus" class="status">Online</div>
+      </div>
+
+      <button id="settingsButton" class="secondary">⚙️</button>
+
+    </div>
+
+    <div class="tabs">
+
+      <button id="friendsTab" class="active">
+        👥 <span>Friends</span>
+      </button>
+
+      <button id="roomsTab">
+        🏠 <span>Rooms</span>
+      </button>
+
+      <button id="chatsTab">
+        💬 <span>Chats</span>
+      </button>
+
+      <button id="profileTab">
+        👤 <span>Profile</span>
+      </button>
+
+    </div>
+
+    <div id="sidebarContent" class="sidebarContent"></div>
+
+  </aside>
+
+
+  <main class="main">
+
+    <header class="chatHeader">
+
+      <div class="chatHeaderInfo">
+
+        <div id="chatTitle" class="chatTitle">
+          Welcome to MyChat
+        </div>
+
+        <div id="chatSub" class="chatSub">
+          Select a conversation
+        </div>
+
+      </div>
+
+      <button id="searchButton" class="secondary">🔎</button>
+      <button id="pinButton" class="secondary">📌</button>
+      <div id="callButtons" class="callButtons hidden">
+        <button id="voiceCallButton" class="success" title="Voice call">📞</button>
+        <button id="videoCallButton" class="success" title="Video call">📹</button>
+      </div>
+      <div id="groupCallButtons" class="groupCallButtons hidden">
+        <button id="groupVoiceCallButton" class="success" title="Start group voice call">📞 Group</button>
+        <button id="groupVideoCallButton" class="success" title="Start group video call">📹 Group</button>
+      </div>
+
+    </header>
+
+    <div id="messages" class="messages">
+      <div class="empty">
+        Welcome to MyChat 2.1!<br>
+        Choose a friend, room, or conversation.
+      </div>
+    </div>
+
+    <div id="typingIndicator" class="typing"></div>
+
+    <div class="composer">
+
+      <div id="replyBar" class="replyBar hidden">
+        <span id="replyText"></span>
+        <button id="cancelReply" class="secondary">✕</button>
+      </div>
+
+      <div class="composeRow">
+
+        <input
+          id="messageInput"
+          placeholder="Type a message..."
+          autocomplete="off"
+        >
+
+        <input
+          id="imageInput"
+          type="file"
+          accept="image/*"
+          class="hidden"
+        >
+
+        <button id="attachButton" class="secondary">📎</button>
+        <button id="sendButton">Send</button>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- GROUP MODAL -->
+
+<div id="groupModal" class="modal hidden">
+
+  <div class="modalBox">
+
+    <h2>👥 Create Group</h2>
+
+    <input id="groupNameInput" placeholder="Group name" maxlength="40">
+
+    <h3>Add friends</h3>
+
+    <div id="groupFriendsList"></div>
+
+    <br>
+
+    <button id="createGroupButton">Create Group</button>
+    <button id="closeGroupButton" class="secondary">Cancel</button>
+
+  </div>
+
+</div>
+
+
+<!-- PROFILE MODAL -->
+
+<div id="userProfileModal" class="modal hidden">
+
+  <div class="modalBox">
+
+    <div id="userProfileContent"></div>
+
+    <br>
+
+    <button id="closeUserProfile" class="secondary">
+      Close
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- SETTINGS MODAL -->
+
+<div id="settingsModal" class="modal hidden">
+
+  <div class="modalBox">
+
+    <h2>⚙️ Settings</h2>
+
+    <h3>Appearance</h3>
+
+    <button id="darkThemeButton">🌙 Dark</button>
+    <button id="lightThemeButton">☀️ Light</button>
+
+    <h3>Notifications</h3>
+
+    <button id="notificationButton">
+      🔔 Enable Browser Notifications
+    </button>
+
+    <p id="notificationStatus" class="status"></p>
+
+    <h3>Change Password</h3>
+
+    <input id="oldPassword" type="password" placeholder="Current password">
+    <br><br>
+    <input id="newPassword" type="password" placeholder="New password">
+    <br><br>
+
+    <button id="changePasswordButton">
+      Change Password
+    </button>
+
+    <p id="passwordStatus"></p>
+
+    <h3>Account</h3>
+
+    <button id="logoutButton" class="danger">
+      Log Out
+    </button>
+
+    <br><br>
+
+    <button id="closeSettingsButton" class="secondary">
+      Close
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- SEARCH MODAL -->
+
+<div id="searchModal" class="modal hidden">
+
+  <div class="modalBox">
+
+    <h2>🔎 Search Messages</h2>
+
+    <input
+      id="searchInput"
+      placeholder="Search this conversation..."
+    >
+
+    <div id="searchResults"></div>
+
+    <br>
+
+    <button id="closeSearchButton" class="secondary">
+      Close
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- IMAGE VIEWER -->
+
+<div id="imageViewer" class="modal hidden">
+
+  <div class="modalBox" style="text-align:center">
+
+    <img
+      id="largeImage"
+      style="max-width:100%;max-height:75vh;border-radius:10px"
+    >
+
+    <br><br>
+
+    <button id="closeImageButton" class="secondary">
+      Close
+    </button>
+
+  </div>
+
+</div>
+
+
+
+<!-- INCOMING CALL -->
+<div id="incomingCallModal" class="modal hidden">
+  <div class="modalBox">
+    <h2 id="incomingCallTitle">📞 Incoming call</h2>
+    <p id="incomingCallText" class="callStatus">Someone is calling you.</p>
+    <div class="incomingCallActions">
+      <button id="acceptCallButton" class="success">Answer</button>
+      <button id="declineCallButton" class="danger">Decline</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACTIVE CALL -->
+<div id="callModal" class="modal hidden">
+  <div class="callBox">
+    <h2 id="callHeading">📞 Call</h2>
+    <div id="callStatus" class="callStatus">Connecting…</div>
+    <div id="groupCallRoster"></div>
+    <div class="callVideos" id="callVideos">
+      <div class="callVideoTile" id="localVideoTile">
+        <video id="localVideo" autoplay playsinline muted></video>
+        <span class="videoLabel">You</span>
+      </div>
+      <div class="callVideoTile" id="remoteVideoTile">
+        <video id="remoteVideo" autoplay playsinline></video>
+        <span class="videoLabel" id="remoteVideoLabel">Other person</span>
+      </div>
+    </div>
+    <audio id="remoteAudio" autoplay></audio>
+    <div class="callControls">
+      <button id="muteCallButton" class="secondary">🎙️ Mute</button>
+      <button id="cameraCallButton" class="secondary">📷 Camera off</button>
+      <button id="hangupCallButton" class="danger">📵 Hang up</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  get,
+  set,
+  push,
+  remove,
+  update,
+  onChildAdded,
+  onChildChanged,
+  onChildRemoved,
+  onValue,
+  onDisconnect
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  deleteUser
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDFun3M-6mzjBL8DFcfmJzDv7blNODQd0",
+  authDomain: "mychat-8dac2.firebaseapp.com",
+  databaseURL: "https://mychat-8dac2-default-rtdb.firebaseio.com",
+  projectId: "mychat-8dac2",
+  storageBucket: "mychat-8dac2.firebasestorage.app",
+  messagingSenderId: "906137277444",
+  appId: "1:906137277444:web:b9d52ef4ec1f76afe09151"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+let activeAuthUid = null;
+
+
+/* STATE */
+
+let currentUser = null;
+let currentRoom = null;
+let currentDMUser = null;
+let currentGroup = null;
+
+let stopChatListener = null;
+let stopTypingListener = null;
+let typingTimer = null;
+
+let currentMessages = {};
+
+let replyTarget = null;
+
+/* WEBRTC CALL STATE */
+let activeCall = null;
+let stopIncomingCalls = null;
+let incomingCallData = null;
+let callStatusUnsub = null;
+let candidateUnsubs = [];
+let queuedRemoteCandidates = [];
+let localMediaStream = null;
+let remoteMediaStream = null;
+let callRole = null;
+let callKind = "audio";
+let groupCallSession = null;
+let groupInviteUnsub = null;
+let groupIncomingCallData = null;
+
+
+
+/* HELPERS */
+
+function key(username){
+  return String(username ?? "").trim().toLowerCase();
+}
+
+// Firebase Authentication requires an email-formatted identifier for its
+// password provider. This reserved .invalid address is generated internally;
+// users never enter or need access to an email inbox.
+function authAlias(username){
+  return key(username) + "@mychat.invalid";
+}
+
+async function usernameFromAuth(user){
+  if(!user?.uid) return null;
+  // Resolve the username from the UID-bound mapping, not from a mutable email claim.
+  try{
+    const mapping = await get(ref(db,"usernamesByUid/"+user.uid));
+    if(mapping.exists()) return String(mapping.val()).toLowerCase();
+  }catch(e){ console.warn("Could not read account identity mapping",e); }
+  // Fallback is useful only during initial signup, before the mapping is written.
+  const email = String(user?.email || "").toLowerCase();
+  const suffix = "@mychat.invalid";
+  if(!email.endsWith(suffix)) return null;
+  return email.slice(0, -suffix.length);
+}
+
+function friendlyAuthError(error){
+  const code = error?.code || "";
+  if(code === "auth/email-already-in-use") return "That username is already taken.";
+  if(code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found") return "Username or password is incorrect.";
+  if(code === "auth/weak-password" || code === "auth/password-does-not-meet-requirements") return "Choose a stronger password (at least 6 characters).";
+  if(code === "auth/operation-not-allowed") return "Email/Password sign-in is not enabled in Firebase Authentication yet.";
+  if(code === "auth/invalid-email") return "Firebase rejected the internal username identifier. This setup needs to be checked in Firebase before using it.";
+  if(code === "auth/network-request-failed") return "Network error. Check your connection and try again.";
+  if(code === "PERMISSION_DENIED" || /permission_denied|permission denied/i.test(error?.message || "")) return "Firebase denied this operation. Make sure the MyChat 2.2 database rules have been installed.";
+  return error?.message || "Something went wrong. Please try again.";
+}
+
+function escapeHTML(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function timeString(timestamp){
+  if(!timestamp) return "";
+
+  return new Date(timestamp).toLocaleTimeString([],{
+    hour:"numeric",
+    minute:"2-digit"
+  });
+}
+
+function dateString(timestamp){
+  if(!timestamp) return "";
+
+  return new Date(timestamp).toLocaleString();
+}
+
+async function hashPassword(password){
+
+  const data = new TextEncoder().encode(password);
+
+  const hash = await crypto.subtle.digest(
+    "SHA-256",
+    data
+  );
+
+  return [...new Uint8Array(hash)]
+    .map(b=>b.toString(16).padStart(2,"0"))
+    .join("");
+}
+
+
+/* AVATARS */
+
+async function getUserData(username){
+  const normalized = key(username);
+  if(!normalized) return null;
+  const snap = await get(ref(db,"profiles/"+normalized));
+  return snap.exists() ? snap.val() : null;
+}
+
+async function avatarHTML(username,sizeClass="avatar"){
+
+  const user = await getUserData(username);
+
+  if(user?.profilePicture){
+
+    return `
+      <div class="${sizeClass}">
+        <img src="${user.profilePicture}">
+      </div>
+    `;
+
+  }
+
+  return `
+    <div class="${sizeClass}">
+      ${escapeHTML(
+        (user?.displayName || username)
+        .charAt(0)
+        .toUpperCase()
+      )}
+    </div>
+  `;
+}
+
+async function refreshSidebarUser(){
+
+  if(!currentUser) return;
+
+  document.getElementById("sidebarUsername").textContent =
+    currentUser;
+
+  document.getElementById("sidebarAvatar").outerHTML =
+    await avatarHTML(currentUser,"avatar");
+
+  const avatar = document.querySelector(".userBar .avatar");
+
+  if(avatar){
+    avatar.id = "sidebarAvatar";
+  }
+
+}
+
+
+/* AUTH */
+
+function showLogin(){
+
+  document.getElementById("loginForm")
+    .classList.remove("hidden");
+
+  document.getElementById("createForm")
+    .classList.add("hidden");
+
+}
+
+function showCreate(){
+
+  document.getElementById("loginForm")
+    .classList.add("hidden");
+
+  document.getElementById("createForm")
+    .classList.remove("hidden");
+
+}
+
+async function createAccount(){
+  const username = document.getElementById("createUsername").value.trim();
+  const password = document.getElementById("createPassword").value;
+  const error = document.getElementById("createError");
+  error.textContent = "";
+
+  if(!/^[A-Za-z0-9_]{3,20}$/.test(username)){
+    error.textContent = "Username must be 3–20 letters, numbers, or underscores.";
+    return;
+  }
+  if(password.length < 6){
+    error.textContent = "Password must be at least 6 characters.";
+    return;
+  }
+
+  let credential = null;
+  try{
+    // Firebase Auth owns password verification; no password hashes are stored in RTDB.
+    credential = await createUserWithEmailAndPassword(auth, authAlias(username), password);
+    const canonical = key(username);
+    // Bind the selected username to Firebase's immutable UID. Database rules
+    // use this mapping rather than trusting the mutable email claim.
+    await set(ref(db,"usernameOwners/"+canonical), credential.user.uid);
+    await set(ref(db,"usernamesByUid/"+credential.user.uid), canonical);
+    const profile = {
+      username,
+      displayName: username,
+      bio: "",
+      profilePicture: null,
+      online: false,
+      lastSeen: Date.now()
+    };
+    // Profile data is public to signed-in MyChat users; personal indexes remain private.
+    await set(ref(db,"profiles/"+canonical), profile);
+    const initialPrivateData = {
+      friends: {},
+      friendRequests: {},
+      conversations: {},
+      unread: {},
+      groups: {},
+      rooms: {},
+      favoriteRooms: {},
+      roomUnread: {}
+    };
+    for(const [section,value] of Object.entries(initialPrivateData)){
+      await set(ref(db,"users/"+canonical+"/"+section), value);
+    }
+
+    document.getElementById("createUsername").value = "";
+    document.getElementById("createPassword").value = "";
+    document.getElementById("loginUsername").value = username;
+    document.getElementById("loginPassword").value = "";
+    await activateSession(credential.user, profile);
+  }catch(e){
+    console.error("Account creation failed", e);
+    // If database initialization failed, don't leave an orphaned Auth account.
+    if(credential?.user){
+      const canonical = key(username);
+      for(const section of ["friends","friendRequests","conversations","unread","groups","rooms","favoriteRooms","roomUnread"]){
+        try{ await remove(ref(db,"users/"+canonical+"/"+section)); }catch{}
+      }
+      try{ await remove(ref(db,"profiles/"+canonical)); }catch{}
+      try{ await remove(ref(db,"usernamesByUid/"+credential.user.uid)); }catch{}
+      try{ await remove(ref(db,"usernameOwners/"+canonical)); }catch{}
+      try{ await deleteUser(credential.user); }catch{}
+    }
+    error.textContent = friendlyAuthError(e);
+  }
+}
+
+async function login(){
+  const username = document.getElementById("loginUsername").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const error = document.getElementById("loginError");
+  error.textContent = "";
+  if(!/^[A-Za-z0-9_]{3,20}$/.test(username) || !password){
+    error.textContent = "Enter your username and password.";
+    return;
+  }
+  try{
+    const credential = await signInWithEmailAndPassword(auth, authAlias(username), password);
+    const profile = await getUserData(username);
+    if(!profile){
+      await signOut(auth);
+      error.textContent = "This account has no MyChat profile. It may be incomplete; contact the app owner before trying to create it again.";
+      return;
+    }
+    await activateSession(credential.user, profile);
+  }catch(e){
+    console.error("Login failed", e);
+    error.textContent = friendlyAuthError(e);
+  }
+}
+
+async function activateSession(firebaseUser, knownProfile=null){
+  if(!firebaseUser || activeAuthUid === firebaseUser.uid && currentUser) return;
+  const username = await usernameFromAuth(firebaseUser);
+  if(!username) return;
+  const profile = knownProfile || await getUserData(username);
+  if(!profile) return;
+  activeAuthUid = firebaseUser.uid;
+  currentUser = profile.username || username;
+  await set(ref(db,"profiles/"+key(currentUser)+"/online"), true);
+  await set(ref(db,"profiles/"+key(currentUser)+"/lastSeen"), Date.now());
+  onDisconnect(ref(db,"profiles/"+key(currentUser)+"/online")).set(false);
+  onDisconnect(ref(db,"profiles/"+key(currentUser)+"/lastSeen")).set(Date.now());
+  document.getElementById("authScreen").style.display = "none";
+  document.getElementById("app").classList.add("visible");
+  await refreshSidebarUser();
+  showFriends();
+  setupPresenceListener();
+  setupIncomingCallListener();
+}
+
+/* LOGOUT */
+
+async function logout(){
+
+  if(!currentUser) return;
+
+  await set(ref(db,"profiles/"+key(currentUser)+"/online"), false);
+  await set(ref(db,"profiles/"+key(currentUser)+"/lastSeen"), Date.now());
+
+  stopCurrentChat();
+  if(stopIncomingCalls){stopIncomingCalls();stopIncomingCalls=null;}
+  if(activeCall) await finishCallUI("Logged out.",true);
+
+  currentUser=null;
+  activeAuthUid=null;
+  try{ await signOut(auth); }catch(e){ console.warn("Sign out warning",e); }
+  document.getElementById("app").classList.remove("visible");
+  document.getElementById("authScreen").style.display="flex";
+
+}
+
+
+/* PRESENCE */
+
+function setupPresenceListener(){
+
+  if(!currentUser) return;
+
+  onValue(
+    ref(db,"profiles/"+key(currentUser)+"/online"),
+    snap=>{
+
+      const status =
+        document.getElementById("sidebarStatus");
+
+      if(status){
+
+        status.textContent =
+          snap.val() ? "Online" : "Offline";
+
+      }
+
+    }
+  );
+
+}
+
+
+/* FRIENDS */
+
+async function showFriends(){
+
+  setActiveTab("friendsTab");
+
+  currentRoom=null;
+  currentDMUser=null;
+  currentGroup=null;
+
+  document.getElementById("sidebarContent").innerHTML=`
+    <input
+      id="friendSearch"
+      class="searchBox"
+      placeholder="Search username..."
+    >
+
+    <button id="addFriendButton">
+      ➕ Add Friend
+    </button>
+
+    <button id="createGroupOpenButton" class="secondary">
+      👥 Group
+    </button>
+
+    <h3>Friend Requests</h3>
+
+    <div id="requestsList"></div>
+
+    <h3>Friends</h3>
+
+    <div id="friendsList"></div>
+  `;
+
+  document.getElementById("friendSearch")
+    .addEventListener("input",searchFriend);
+
+  document.getElementById("addFriendButton")
+    .addEventListener("click",sendFriendRequest);
+
+  document.getElementById("createGroupOpenButton")
+    .addEventListener("click",openGroupModal);
+
+  await renderFriendRequests();
+  await renderFriends();
+
+  document.getElementById("chatTitle")
+    .textContent="Friends";
+
+  document.getElementById("chatSub")
+    .textContent="Manage your friends";
+
+  clearMessages();
+
+}
+
+async function searchFriend(){
+
+  const value =
+    document.getElementById("friendSearch")
+      .value.trim();
+
+  if(value.length < 2) return;
+
+  const snap =
+    await get(ref(db,"profiles/"+key(value)));
+
+  if(!snap.exists()) return;
+
+  const friend =
+    snap.val();
+
+  if(key(friend.username) === key(currentUser))
+    return;
+
+  const list =
+    document.getElementById("friendsList");
+
+  const existing =
+    [...list.children]
+      .some(x=>x.dataset.user === key(friend.username));
+
+  if(existing) return;
+
+  const item =
+    document.createElement("div");
+
+  item.className="listItem";
+
+  item.dataset.user =
+    key(friend.username);
+
+  item.innerHTML=`
+    <div class="listTitle">
+      ${escapeHTML(friend.displayName || friend.username)}
+    </div>
+    <div class="listPreview">
+      @${escapeHTML(friend.username)}
+    </div>
+  `;
+
+  item.onclick=()=>openDM(friend.username);
+
+  list.prepend(item);
+
+}
+
+async function sendFriendRequest(){
+
+  const username =
+    prompt("Enter username:");
+
+  if(!username) return;
+
+  if(key(username) === key(currentUser)){
+
+    alert("You can't add yourself.");
+
+    return;
+  }
+
+  const snap =
+    await get(ref(db,"profiles/"+key(username)));
+
+  if(!snap.exists()){
+
+    alert("User not found.");
+
+    return;
+  }
+
+  await set(
+    ref(
+      db,
+      "users/"+key(username)+
+      "/friendRequests/"+key(currentUser)
+    ),
+    true
+  );
+
+  alert("Friend request sent!");
+
+}
+
+async function renderFriendRequests(){
+
+  const list =
+    document.getElementById("requestsList");
+
+  const snap =
+    await get(
+      ref(db,
+      "users/"+key(currentUser)+"/friendRequests")
+    );
+
+  list.innerHTML="";
+
+  if(!snap.exists()){
+
+    list.innerHTML=
+      `<div class="status">No requests</div>`;
+
+    return;
+  }
+
+  for(const usernameKey of Object.keys(snap.val())){
+
+    const userSnap =
+      await get(
+        ref(db,"profiles/"+usernameKey)
+      );
+
+    if(!userSnap.exists()) continue;
+
+    const user =
+      userSnap.val();
+
+    const item =
+      document.createElement("div");
+
+    item.className="listItem";
+
+    item.innerHTML=`
+      <div class="listTitle">
+        ${escapeHTML(user.displayName || user.username)}
+      </div>
+      <button class="success">Accept</button>
+      <button class="danger">Decline</button>
+    `;
+
+    item.querySelector(".success")
+      .onclick=async()=>{
+
+        await set(
+          ref(
+            db,
+            "users/"+key(currentUser)+
+            "/friends/"+usernameKey
+          ),
+          true
+        );
+
+        await set(
+          ref(
+            db,
+            "users/"+usernameKey+
+            "/friends/"+key(currentUser)
+          ),
+          true
+        );
+
+        await remove(
+          ref(
+            db,
+            "users/"+key(currentUser)+
+            "/friendRequests/"+usernameKey
+          )
+        );
+
+        await renderFriendRequests();
+        await renderFriends();
+
+      };
+
+    item.querySelector(".danger")
+      .onclick=async()=>{
+
+        await remove(
+          ref(
+            db,
+            "users/"+key(currentUser)+
+            "/friendRequests/"+usernameKey
+          )
+        );
+
+        renderFriendRequests();
+
+      };
+
+    list.appendChild(item);
+  }
+
+}
+
+async function renderFriends(){
+
+  const list =
+    document.getElementById("friendsList");
+
+  const snap =
+    await get(
+      ref(db,
+      "users/"+key(currentUser)+"/friends")
+    );
+
+  list.innerHTML="";
+
+  if(!snap.exists()){
+
+    list.innerHTML=
+      `<div class="status">No friends yet.</div>`;
+
+    return;
+  }
+
+  for(const usernameKey of Object.keys(snap.val())){
+
+    const userSnap =
+      await get(ref(db,"profiles/"+usernameKey));
+
+    if(!userSnap.exists()) continue;
+
+    const user =
+      userSnap.val();
+
+    const item =
+      document.createElement("div");
+
+    item.className="listItem";
+
+    item.innerHTML=`
+      <div class="listTitle">
+        ${escapeHTML(user.displayName || user.username)}
+      </div>
+
+      <div class="listPreview">
+        ${user.online ? "🟢 Online" :
+          user.lastSeen ?
+          "Last seen "+dateString(user.lastSeen) :
+          "Offline"}
+      </div>
+    `;
+
+    item.onclick=()=>openDM(user.username);
+
+    list.appendChild(item);
+  }
+
+}
+
+
+/* DMs */
+
+function conversationID(a,b){
+  // Nested path segments let database rules verify both people in a DM.
+  return [key(a),key(b)].sort().join("/");
+}
+
+function stopCurrentChat(){
+
+  if(stopChatListener){
+
+    stopChatListener();
+    stopChatListener=null;
+
+  }
+
+  if(stopTypingListener){
+
+    stopTypingListener();
+    stopTypingListener=null;
+
+  }
+
+  currentDMUser=null;
+  currentGroup=null;
+  currentRoom=null;
+  currentMessages={};
+  const callButtonsEl=document.getElementById("callButtons");
+  if(callButtonsEl) callButtonsEl.classList.add("hidden");
+  const groupCallButtonsEl=document.getElementById("groupCallButtons");
+  if(groupCallButtonsEl) groupCallButtonsEl.classList.add("hidden");
+
+  document.getElementById("typingIndicator")
+    .textContent="";
+
+}
+
+async function openDM(username){
+
+  stopCurrentChat();
+
+  currentDMUser=username;
+  // Keep the inbox indexes in sync for both sides of the conversation.
+  await set(ref(db,"users/"+key(currentUser)+"/conversations/"+key(username)), true);
+  await set(ref(db,"users/"+key(username)+"/conversations/"+key(currentUser)), true);
+  document.getElementById("callButtons").classList.remove("hidden");
+
+  document.getElementById("chatTitle")
+    .textContent=username;
+
+  const user =
+    await getUserData(username);
+
+  document.getElementById("chatSub")
+    .textContent =
+      user?.online
+      ? "🟢 Online"
+      : user?.lastSeen
+      ? "Last seen "+dateString(user.lastSeen)
+      : "Offline";
+
+  document.getElementById("messages").innerHTML="";
+
+  setActiveTab("chatsTab");
+
+  const path =
+    "directMessages/"+
+    conversationID(currentUser,username)+
+    "/messages";
+
+  const messageRef =
+    ref(db,path);
+
+  const unsubs=[];
+
+  unsubs.push(
+    onChildAdded(
+      messageRef,
+      snap=>renderMessage(snap.key,snap.val())
+    )
+  );
+
+  unsubs.push(
+    onChildChanged(
+      messageRef,
+      snap=>updateMessageUI(snap.key,snap.val())
+    )
+  );
+
+  unsubs.push(
+    onChildRemoved(
+      messageRef,
+      snap=>{
+
+        const el =
+          document.getElementById("message-"+snap.key);
+
+        if(el) el.remove();
+
+        delete currentMessages[snap.key];
+
+      }
+    )
+  );
+
+  stopChatListener=()=>{
+
+    unsubs.forEach(fn=>fn());
+
+  };
+
+  await set(
+    ref(
+      db,
+      "users/"+key(currentUser)+
+      "/unread/"+key(username)
+    ),
+    0
+  );
+
+  listenTypingDM(username);
+
+}
+
+function listenTypingDM(username){
+
+  const typingRef =
+    ref(
+      db,
+      "typing/"+conversationID(currentUser,username)
+    );
+
+  stopTypingListener =
+    onValue(typingRef,snap=>{
+
+      const data =
+        snap.val() || {};
+
+      const names =
+        Object.entries(data)
+          .filter(([u,v])=>u!==key(currentUser)&&v)
+          .map(([u])=>u);
+
+      document.getElementById("typingIndicator")
+        .textContent =
+          names.length
+          ? names.join(", ")+" typing..."
+          : "";
+
+    });
+
+}
+
+async function sendMessage(){
+
+  if(!currentUser) return;
+
+  let destination;
+
+  let isDM=false;
+  let isGroup=false;
+  let isRoom=false;
+
+  if(currentDMUser){
+
+    destination =
+      "directMessages/"+
+      conversationID(currentUser,currentDMUser)+
+      "/messages";
+
+    isDM=true;
+
+  }else if(currentGroup){
+
+    destination =
+      "groupChats/"+currentGroup+"/messages";
+
+    isGroup=true;
+
+  }else if(currentRoom){
+
+    destination =
+      "rooms/"+currentRoom+"/messages";
+
+    isRoom=true;
+
+  }else{
+
+    return;
+
+  }
+
+  const input =
+    document.getElementById("messageInput");
+
+  const text =
+    input.value.trim();
+
+  if(!text && !pendingImage) return;
+
+  const message={
+
+    username:currentUser,
+    text,
+    timestamp:Date.now(),
+
+    replyTo:replyTarget || null,
+
+    reactions:{},
+
+    edited:false,
+    pinned:false
+
+  };
+
+  if(pendingImage){
+
+    message.image =
+      pendingImage;
+
+  }
+
+  const pushed=await push(
+    ref(db,destination),
+    message
+  );
+
+  if(isRoom){
+    const preview=text||"📷 Image";
+    const stamp=Date.now();
+    await set(ref(db,"rooms/"+currentRoom+"/lastMessage"),preview);
+    await set(ref(db,"rooms/"+currentRoom+"/lastMessageAt"),stamp);
+    await set(ref(db,"rooms/"+currentRoom+"/lastMessageUser"),key(currentUser));
+    const roomMeta=await getRoom(currentRoom);
+    if(roomMeta?.visibility==="public"){
+      await set(ref(db,"roomDirectory/"+currentRoom+"/lastMessage"),preview);
+      await set(ref(db,"roomDirectory/"+currentRoom+"/lastMessageAt"),stamp);
+      await set(ref(db,"publicRoomDirectory/"+currentRoom+"/lastMessage"),preview);
+      await set(ref(db,"publicRoomDirectory/"+currentRoom+"/lastMessageAt"),stamp);
+    }
+
+    const roomSnap=await get(ref(db,"rooms/"+currentRoom+"/members"));
+    if(roomSnap.exists()){
+      for(const member of Object.keys(roomSnap.val())){
+        if(member===key(currentUser)) continue;
+        await set(ref(db,"users/"+member+"/roomUnread/"+currentRoom),Date.now());
+      }
+    }
+  }
+
+  if(isDM){
+
+    await set(
+      ref(
+        db,
+        "users/"+key(currentDMUser)+
+        "/unread/"+key(currentUser)
+      ),
+      Date.now()
+    );
+
+  }
+
+  if(isGroup){
+
+    const groupSnap =
+      await get(
+        ref(db,"groupChats/"+currentGroup+"/members")
+      );
+
+    if(groupSnap.exists()){
+
+      for(const member of Object.keys(groupSnap.val())){
+
+        if(member === key(currentUser)) continue;
+
+        await set(
+          ref(
+            db,
+            "users/"+member+
+            "/unread/group_"+currentGroup
+          ),
+          Date.now()
+        );
+
+      }
+
+    }
+
+  }
+
+  input.value="";
+
+  pendingImage=null;
+
+  document.getElementById("imageInput").value="";
+
+  clearReply();
+
+  stopTyping();
+
+}
+
+let pendingImage=null;
+
+
+/* MESSAGE RENDERING */
+
+async function renderMessage(id,data){
+
+  currentMessages[id]=data;
+
+  const container =
+    document.getElementById("messages");
+
+  if(document.getElementById("message-"+id))
+    return;
+
+  const wrapper =
+    document.createElement("div");
+
+  wrapper.id="message-"+id;
+
+  wrapper.className=
+    "message "+(data.pinned ? "pinned":"");
+
+  const avatar =
+    await avatarHTML(data.username);
+
+  const user =
+    await getUserData(data.username);
+
+  let replyHTML="";
+
+  if(data.replyTo){
+
+    replyHTML=`
+      <div class="replyPreview"
+           onclick="jumpToMessage('${data.replyTo.id}')">
+        ↩️ ${escapeHTML(data.replyTo.username)}:
+        ${escapeHTML(data.replyTo.text || "[image]")}
+      </div>
+    `;
+
+  }
+
+  let imageHTML="";
+
+  if(data.image){
+
+    imageHTML=`
+      <img
+        class="messageImage"
+        src="${data.image}"
+        onclick="viewImage(this.src)"
+      >
+    `;
+
+  }
+
+  let reactionsHTML="";
+
+  if(data.reactions){
+
+    const counts={};
+
+    Object.values(data.reactions)
+      .forEach(emoji=>{
+        counts[emoji]=(counts[emoji]||0)+1;
+      });
+
+    reactionsHTML =
+      Object.entries(counts)
+        .map(([emoji,count])=>
+          `<span>${emoji} ${count}</span>`
+        )
+        .join(" ");
+
+  }
+
+  const own =
+    key(data.username)===key(currentUser);
+
+  wrapper.innerHTML=`
+
+    ${avatar}
+
+    <div class="messageContent">
+
+      <div class="msgTop">
+
+        <span
+          class="msgName"
+          style="cursor:pointer"
+          data-user="${escapeHTML(data.username)}"
+        >
+          ${escapeHTML(
+            user?.displayName || data.username
+          )}
+        </span>
+
+        <span class="msgTime">
+          ${timeString(data.timestamp)}
+        </span>
+
+        ${data.edited
+          ? `<span class="edited">(edited)</span>`
+          : ""}
+
+      </div>
+
+      ${replyHTML}
+
+      ${data.text
+        ? `<div class="bubble">${escapeHTML(data.text)}</div>`
+        : ""}
+
+      ${imageHTML}
+
+      ${data.pinned
+        ? `<div class="pinLabel">📌 Pinned</div>`
+        : ""}
+
+      <div class="reactionBar">
+        ${reactionsHTML}
+      </div>
+
+      <div class="messageActions">
+
+        <button data-action="reply">↩️</button>
+        <button data-action="copy">📋</button>
+
+        <button data-reaction="👍">👍</button>
+        <button data-reaction="❤️">❤️</button>
+        <button data-reaction="😂">😂</button>
+        <button data-reaction="🔥">🔥</button>
+        <button data-reaction="🎉">🎉</button>
+
+        ${own
+          ? `
+            <button data-action="edit">✏️</button>
+            <button data-action="delete">🗑️</button>
+          `
+          : ""}
+
+        <button data-action="pin">
+          ${data.pinned ? "📍":"📌"}
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+  wrapper
+    .querySelector(".msgName")
+    .onclick=()=>showUserProfile(data.username);
+
+  wrapper
+    .querySelector('[data-action="reply"]')
+    .onclick=()=>startReply(id,data);
+
+  wrapper
+    .querySelector('[data-action="copy"]')
+    .onclick=()=>copyMessage(data);
+
+  wrapper
+    .querySelector('[data-action="pin"]')
+    .onclick=()=>togglePin(id,data);
+
+  wrapper
+    .querySelectorAll("[data-reaction]")
+    .forEach(button=>{
+
+      button.onclick=()=>
+        reactToMessage(
+          id,
+          button.dataset.reaction
+        );
+
+    });
+
+  const editButton =
+    wrapper.querySelector('[data-action="edit"]');
+
+  if(editButton)
+    editButton.onclick=()=>editMessage(id,data);
+
+  const deleteButton =
+    wrapper.querySelector('[data-action="delete"]');
+
+  if(deleteButton)
+    deleteButton.onclick=()=>deleteMessage(id);
+
+  container.appendChild(wrapper);
+
+  container.scrollTop=
+    container.scrollHeight;
+
+}
+
+async function updateMessageUI(id,data){
+
+  const old =
+    document.getElementById("message-"+id);
+
+  if(old) old.remove();
+
+  delete currentMessages[id];
+
+  await renderMessage(id,data);
+
+}
+
+window.jumpToMessage=function(id){
+
+  const el =
+    document.getElementById("message-"+id);
+
+  if(!el) return;
+
+  el.scrollIntoView({
+    behavior:"smooth",
+    block:"center"
+  });
+
+  el.style.outline="2px solid var(--accent)";
+
+  setTimeout(()=>{
+    el.style.outline="";
+  },1500);
+
+};
+
+async function copyMessage(data){
+
+  try{
+
+    await navigator.clipboard.writeText(
+      data.text || "[Image]"
+    );
+
+    alert("Copied!");
+
+  }catch{
+
+    alert("Couldn't copy that message.");
+
+  }
+
+}
+
+function startReply(id,data){
+
+  replyTarget={
+    id,
+    username:data.username,
+    text:data.text || ""
+  };
+
+  document.getElementById("replyText")
+    .textContent =
+      "Replying to "+data.username+
+      ": "+(data.text || "[image]");
+
+  document.getElementById("replyBar")
+    .classList.remove("hidden");
+
+  document.getElementById("messageInput")
+    .focus();
+
+}
+
+function clearReply(){
+
+  replyTarget=null;
+
+  document.getElementById("replyBar")
+    .classList.add("hidden");
+
+}
+
+async function editMessage(id,data){
+
+  if(key(data.username)!==key(currentUser))
+    return;
+
+  const newText =
+    prompt("Edit message:",data.text || "");
+
+  if(newText===null) return;
+
+  let base;
+
+  if(currentDMUser){
+
+    base =
+      "directMessages/"+
+      conversationID(currentUser,currentDMUser)+
+      "/messages/"+id;
+
+  }else if(currentGroup){
+
+    base =
+      "groupChats/"+currentGroup+
+      "/messages/"+id;
+
+  }else if(currentRoom){
+
+    base =
+      "rooms/"+currentRoom+
+      "/messages/"+id;
+
+  }else return;
+
+  await set(ref(db,base+"/text"),newText);
+  await set(ref(db,base+"/edited"),true);
+
+}
+
+async function deleteMessage(id){
+
+  let base;
+
+  if(currentDMUser){
+
+    base =
+      "directMessages/"+
+      conversationID(currentUser,currentDMUser)+
+      "/messages/"+id;
+
+  }else if(currentGroup){
+
+    base =
+      "groupChats/"+currentGroup+
+      "/messages/"+id;
+
+  }else if(currentRoom){
+
+    base =
+      "rooms/"+currentRoom+
+      "/messages/"+id;
+
+  }else return;
+
+  await remove(ref(db,base));
+
+}
+
+async function reactToMessage(id,emoji){
+
+  let base;
+
+  if(currentDMUser){
+
+    base =
+      "directMessages/"+
+      conversationID(currentUser,currentDMUser)+
+      "/messages/"+id+
+      "/reactions/"+key(currentUser);
+
+  }else if(currentGroup){
+
+    base =
+      "groupChats/"+currentGroup+
+      "/messages/"+id+
+      "/reactions/"+key(currentUser);
+
+  }else if(currentRoom){
+
+    base =
+      "rooms/"+currentRoom+
+      "/messages/"+id+
+      "/reactions/"+key(currentUser);
+
+  }else return;
+
+  await set(ref(db,base),emoji);
+
+}
+
+async function togglePin(id,data){
+
+  let base;
+
+  if(currentDMUser){
+
+    base =
+      "directMessages/"+
+      conversationID(currentUser,currentDMUser)+
+      "/messages/"+id;
+
+  }else if(currentGroup){
+
+    base =
+      "groupChats/"+currentGroup+
+      "/messages/"+id;
+
+  }else if(currentRoom){
+
+    base =
+      "rooms/"+currentRoom+
+      "/messages/"+id;
+
+  }else return;
+
+  await set(ref(db,base+"/pinned"),!data.pinned);
+
+}
+
+
+/* IMAGE ATTACHMENTS */
+
+async function compressImage(file){
+
+  return new Promise((resolve,reject)=>{
+
+    const reader =
+      new FileReader();
+
+    reader.onload=()=>{
+
+      const img =
+        new Image();
+
+      img.onload=()=>{
+
+        const max=900;
+
+        let width=img.width;
+        let height=img.height;
+
+        if(width>max || height>max){
+
+          const ratio =
+            Math.min(max/width,max/height);
+
+          width*=ratio;
+          height*=ratio;
+
+        }
+
+        const canvas =
+          document.createElement("canvas");
+
+        canvas.width=width;
+        canvas.height=height;
+
+        const ctx =
+          canvas.getContext("2d");
+
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          width,
+          height
+        );
+
+        resolve(
+          canvas.toDataURL(
+            "image/jpeg",
+            0.72
+          )
+        );
+
+      };
+
+      img.onerror=reject;
+
+      img.src=reader.result;
+
+    };
+
+    reader.onerror=reject;
+
+    reader.readAsDataURL(file);
+
+  });
+
+}
+
+document.getElementById("imageInput")
+  .addEventListener("change",async event=>{
+
+    const file =
+      event.target.files[0];
+
+    if(!file) return;
+
+    if(file.size > 8*1024*1024){
+
+      alert("Please choose an image smaller than 8 MB.");
+
+      event.target.value="";
+
+      return;
+    }
+
+    try{
+
+      pendingImage =
+        await compressImage(file);
+
+      document.getElementById("messageInput")
+        .placeholder=
+          "Image attached — add a message or Send";
+
+    }catch{
+
+      alert("Couldn't process that image.");
+
+    }
+
+  });
+
+
+/* GROUPS */
+
+async function openGroupModal(){
+
+  const list =
+    document.getElementById("groupFriendsList");
+
+  list.innerHTML="";
+
+  const snap =
+    await get(
+      ref(db,
+      "users/"+key(currentUser)+"/friends")
+    );
+
+  if(!snap.exists()){
+
+    list.innerHTML=
+      `<div class="status">You need friends before creating a group.</div>`;
+
+  }else{
+
+    for(const friendKey of Object.keys(snap.val())){
+
+      const friend =
+        await getUserData(friendKey);
+
+      if(!friend) continue;
+
+      const row =
+        document.createElement("label");
+
+      row.className="friendCheck";
+
+      row.innerHTML=`
+        <input type="checkbox" value="${friendKey}">
+        ${escapeHTML(
+          friend.displayName || friend.username
+        )}
+      `;
+
+      list.appendChild(row);
+
+    }
+
+  }
+
+  document.getElementById("groupModal")
+    .classList.remove("hidden");
+
+}
+
+async function createGroup(){
+  const name=document.getElementById("groupNameInput").value.trim();
+  if(!name){alert("Enter a group name.");return;}
+  const selected=[...document.querySelectorAll("#groupFriendsList input:checked")].map(x=>x.value);
+  if(!selected.length){alert("Choose at least one friend.");return;}
+  const groupRef=push(ref(db,"groupChats"));
+  const groupId=groupRef.key;
+  const creator=key(currentUser);
+  const members={[creator]:true};
+  try{
+    // Create the secure group with only the creator, then add mutual friends one at a time.
+    await set(groupRef,{name,creator,members,createdAt:Date.now()});
+    await set(ref(db,"users/"+creator+"/groups/"+groupId),true);
+    for(const friendKey of selected){
+      await set(ref(db,"groupChats/"+groupId+"/members/"+friendKey),true);
+      await set(ref(db,"users/"+friendKey+"/groups/"+groupId),true);
+    }
+    document.getElementById("groupModal").classList.add("hidden");
+    document.getElementById("groupNameInput").value="";
+    alert("Group created!");
+    showChats();
+  }catch(e){
+    console.error("Group creation failed",e);
+    alert("Couldn't create the group. Confirm that both users are mutual friends and that MyChat 2.2 rules are installed.");
+  }
+}
+
+async function showGroups(){
+
+  const sidebar =
+    document.getElementById("sidebarContent");
+
+  sidebar.innerHTML=`
+    <button id="newGroupButton">
+      ➕ New Group
+    </button>
+
+    <div id="groupsList"></div>
+  `;
+
+  document.getElementById("newGroupButton")
+    .onclick=openGroupModal;
+
+  const snap =
+    await get(
+      ref(db,
+      "users/"+key(currentUser)+"/groups")
+    );
+
+  const list =
+    document.getElementById("groupsList");
+
+  if(!snap.exists()){
+
+    list.innerHTML=
+      `<div class="empty">No groups yet.</div>`;
+
+    return;
+  }
+
+  for(const groupId of Object.keys(snap.val())){
+
+    const groupSnap =
+      await get(
+        ref(db,"groupChats/"+groupId)
+      );
+
+    if(!groupSnap.exists()) continue;
+
+    const group =
+      groupSnap.val();
+
+    const item =
+      document.createElement("div");
+
+    item.className="listItem";
+
+    item.innerHTML=`
+      <div class="listTitle">
+        👥 ${escapeHTML(group.name)}
+      </div>
+      <div class="listPreview">
+        ${Object.keys(group.members||{}).length} members
+      </div>
+    `;
+
+    item.onclick=()=>openGroup(groupId);
+
+    list.appendChild(item);
+
+  }
+
+}
+
+async function openGroup(groupId){
+
+  stopCurrentChat();
+
+  currentGroup=groupId;
+  document.getElementById("groupCallButtons")?.classList.remove("hidden");
+
+  const groupSnap =
+    await get(
+      ref(db,"groupChats/"+groupId)
+    );
+
+  if(!groupSnap.exists()) return;
+
+  const group =
+    groupSnap.val();
+
+  document.getElementById("chatTitle")
+    .textContent="👥 "+group.name;
+
+  document.getElementById("chatSub")
+    .textContent=
+      Object.keys(group.members||{}).length+
+      " members";
+
+  document.getElementById("messages")
+    .innerHTML="";
+
+  setActiveTab("chatsTab");
+
+  const messageRef =
+    ref(
+      db,
+      "groupChats/"+groupId+"/messages"
+    );
+
+  const unsubs=[];
+
+  unsubs.push(
+    onChildAdded(
+      messageRef,
+      snap=>renderMessage(snap.key,snap.val())
+    )
+  );
+
+  unsubs.push(
+    onChildChanged(
+      messageRef,
+      snap=>updateMessageUI(snap.key,snap.val())
+    )
+  );
+
+  unsubs.push(
+    onChildRemoved(
+      messageRef,
+      snap=>{
+
+        const el =
+          document.getElementById(
+            "message-"+snap.key
+          );
+
+        if(el) el.remove();
+
+      }
+    )
+  );
+
+  stopChatListener=()=>{
+
+    unsubs.forEach(fn=>fn());
+
+  };
+
+  await set(
+    ref(
+      db,
+      "users/"+key(currentUser)+
+      "/unread/group_"+groupId
+    ),
+    0
+  );
+
+  showGroupMembers(groupId,group);
+
+}
+
+function showGroupMembers(groupId,group){
+
+  document.getElementById("pinButton").onclick=()=>{
+    showPinnedMessages();
+  };
+
+  document.getElementById("searchButton").onclick=()=>{
+    openSearch();
+  };
+
+}
+
+
+/* ROOMS 2.0 */
+
+function roomKey(name){
+  return key(name.trim());
+}
+
+function validRoomName(name){
+  return /^[A-Za-z0-9_]{3,30}$/.test(name);
+}
+
+function validRoomPassword(password){
+  return /^\d{8,12}$/.test(password);
+}
+
+function roomDisplayName(room,id){
+  return room && room.name ? room.name : id;
+}
+
+async function getRoom(id){
+  const snap=await get(ref(db,"rooms/"+id));
+  return snap.exists()?snap.val():null;
+}
+
+async function showRooms(){
+
+  setActiveTab("roomsTab");
+  currentDMUser=null;
+  currentGroup=null;
+  stopCurrentChat();
+  const oldRoomActions=document.getElementById("roomActionsButton");
+  if(oldRoomActions) oldRoomActions.remove();
+
+  document.getElementById("sidebarContent").innerHTML=`
+    <button id="createRoomButton">➕ Create Room</button>
+    <input id="roomSearchInput" class="searchBox" placeholder="Search public rooms...">
+    <div id="roomJoinBox" class="roomJoinBox">
+      <h3>🚪 Join a Room</h3>
+      <input id="roomNameInput" placeholder="Room name" maxlength="30">
+      <button id="joinRoomButton">Join Room</button>
+    </div>
+    <div class="roomSectionTitle">🌎 Public Rooms</div>
+    <div id="publicRoomList"></div>
+    <div class="roomSectionTitle">⭐ Favorites</div>
+    <div id="favoriteRoomList"></div>
+    <div class="roomSectionTitle">📌 My Rooms</div>
+    <div id="myRoomList"></div>
+  `;
+
+  document.getElementById("createRoomButton").onclick=openCreateRoom;
+  document.getElementById("joinRoomButton").onclick=()=>joinRoom();
+  document.getElementById("roomSearchInput").oninput=()=>renderRoomLists();
+
+  document.getElementById("chatTitle").textContent="Rooms";
+  document.getElementById("chatSub").textContent="Public, unlisted, and private rooms";
+  clearMessages();
+  renderRoomLists();
+}
+
+async function renderRoomLists(){
+  const publicList=document.getElementById("publicRoomList");
+  const favList=document.getElementById("favoriteRoomList");
+  const myList=document.getElementById("myRoomList");
+  if(!publicList||!favList||!myList) return;
+  const query=(document.getElementById("roomSearchInput")?.value||"").trim().toLowerCase();
+  publicList.innerHTML=""; favList.innerHTML=""; myList.innerHTML="";
+  const [publicSnap,mineSnap,favSnap]=await Promise.all([
+    get(ref(db,"publicRoomDirectory")),
+    get(ref(db,"users/"+key(currentUser)+"/rooms")),
+    get(ref(db,"users/"+key(currentUser)+"/favoriteRooms"))
+  ]);
+  const publicRooms=publicSnap.exists()?publicSnap.val():{};
+  const mine=mineSnap.exists()?mineSnap.val():{};
+  const favs=favSnap.exists()?favSnap.val():{};
+  const publics=Object.entries(publicRooms).filter(([id,r])=>r && r.name && (!query || (r.name+" "+(r.description||"")).toLowerCase().includes(query)));
+  const favorites=[];
+  const myRooms=[];
+  for(const id of Object.keys(favs)){
+    try{const snap=await get(ref(db,"roomDirectory/"+id));if(snap.exists())favorites.push([id,snap.val()]);}catch{}
+  }
+  for(const id of Object.keys(mine)){
+    try{const snap=await get(ref(db,"roomDirectory/"+id));if(snap.exists())myRooms.push([id,snap.val()]);}catch{}
+  }
+  if(!publics.length) publicList.innerHTML=`<div class="status">No public rooms found.</div>`;
+  if(!favorites.length) favList.innerHTML=`<div class="status">No favorite rooms.</div>`;
+  if(!myRooms.length) myList.innerHTML=`<div class="status">You haven't joined any named rooms yet.</div>`;
+  publics.forEach(([id,r])=>publicList.appendChild(roomListItem(id,r,!!favs[id])));
+  favorites.forEach(([id,r])=>favList.appendChild(roomListItem(id,r,true)));
+  myRooms.forEach(([id,r])=>myList.appendChild(roomListItem(id,r,!!favs[id])));
+}
+
+function roomListItem(id,room,favorite){
+  const item=document.createElement("div");
+  item.className="listItem roomItem";
+  const count=Number(room.memberCount || Object.keys(room.members||{}).length || 0);
+  const icon=room.visibility==="private"?"🔒":room.visibility==="unlisted"?"👻":"🌎";
+  item.innerHTML=`
+    <span class="roomStar">${favorite?"⭐":"☆"}</span>
+    <div class="listTitle">${icon} ${escapeHTML(roomDisplayName(room,id))}</div>
+    <div class="listPreview">${escapeHTML(room.lastMessage||room.description||"No messages yet")} · ${count} member${count===1?"":"s"}</div>
+  `;
+  item.onclick=()=>openRoom(id);
+  item.querySelector(".roomStar").onclick=async e=>{
+    e.stopPropagation();
+    const path="users/"+key(currentUser)+"/favoriteRooms/"+id;
+    if(favorite) await remove(ref(db,path)); else await set(ref(db,path),true);
+    renderRoomLists();
+  };
+  return item;
+}
+
+async function openCreateRoom(){
+  const name=prompt("Room name (3–30 letters, numbers, or underscores):");
+  if(name===null) return;
+  if(!validRoomName(name.trim())){ alert("Room names must be 3–30 characters and use only letters, numbers, or underscores."); return; }
+  const id=roomKey(name);
+  try{const existing=await get(ref(db,"roomDirectory/"+id));if(existing.exists()){alert("That room name is already taken.");return;}}catch{alert("Couldn't check the room name. Please try again.");return;}
+  const description=prompt("Room description (optional):")||"";
+  const visibility=prompt("Visibility: public, unlisted, or private","public");
+  if(!["public","unlisted","private"].includes((visibility||"").toLowerCase())){ alert("Visibility must be public, unlisted, or private."); return; }
+  const mode=visibility.toLowerCase();
+  let passwordHash=null;
+  if(mode==="private"){
+    const password=prompt("Private room password (8–12 digits):");
+    if(password===null) return;
+    if(!validRoomPassword(password)){ alert("Private room passwords must be 8–12 digits."); return; }
+    passwordHash=await hashPassword(password);
+  }
+  const room={name:name.trim(),nameKey:id,description:description.trim(),visibility:mode,owner:key(currentUser),createdAt:Date.now(),members:{[key(currentUser)]:true},banned:{},memberCount:1};
+  const directory={name:room.name,nameKey:id,description:room.description,visibility:mode,owner:room.owner,createdAt:room.createdAt,memberCount:1,lastMessage:"",lastMessageAt:0};
+  try{
+    await set(ref(db,"rooms/"+id),room);
+    if(mode==="private") await set(ref(db,"roomSecrets/"+id+"/passwordHash"),passwordHash);
+    await set(ref(db,"roomDirectory/"+id),directory);
+    if(mode==="public") await set(ref(db,"publicRoomDirectory/"+id),directory);
+    await set(ref(db,"users/"+key(currentUser)+"/rooms/"+id),true);
+    openRoom(id);
+  }catch(e){console.error("Room creation failed",e);alert("Couldn't create the room. Check that the MyChat 2.2 database rules are installed.");}
+}
+
+async function joinRoom(nameFromButton){
+  const input=document.getElementById("roomNameInput");
+  const name=(nameFromButton||input?.value||"").trim();
+  if(!name){ alert("Enter a room name."); return; }
+  const id=roomKey(name);
+  let directory=null;
+  try{
+    const dirSnap=await get(ref(db,"roomDirectory/"+id));
+    if(dirSnap.exists()) directory=dirSnap.val();
+  }catch{}
+
+  if(directory?.visibility==="private" || !directory){
+    const password=prompt("Private room password (8–12 digits). If this isn't a private room, cancel and check the room name:");
+    if(password===null) return;
+    if(!validRoomPassword(password)){alert("Private room passwords must be 8–12 digits.");return;}
+    try{
+      // The database rule compares this hash against the hidden room hash.
+      // A wrong hash is rejected by Firebase, not merely by client-side code.
+      await set(ref(db,"roomAccess/"+id+"/"+key(currentUser)),await hashPassword(password));
+    }catch(e){alert("Room not found or incorrect password.");return;}
+  }
+
+  try{
+    // Add self first; room rules allow this only for public/unlisted rooms or after
+    // Firebase validates the submitted private-room password hash.
+    await set(ref(db,"rooms/"+id+"/members/"+key(currentUser)),true);
+    const roomSnap=await get(ref(db,"rooms/"+id));
+    if(!roomSnap.exists()){alert("That room does not exist.");return;}
+    const room=roomSnap.val();
+    if((room.banned||{})[key(currentUser)]){alert("You are banned from this room.");return;}
+    await set(ref(db,"users/"+key(currentUser)+"/rooms/"+id),true);
+    await set(ref(db,"users/"+key(currentUser)+"/roomUnread/"+id),0);
+    const count=Object.keys(room.members||{}).length;
+    await set(ref(db,"rooms/"+id+"/memberCount"),count);
+    await set(ref(db,"roomDirectory/"+id+"/memberCount"),count);
+    if(room.visibility==="public") await set(ref(db,"publicRoomDirectory/"+id+"/memberCount"),count);
+    await openRoom(id);
+  }catch(e){console.error("Join room failed",e);alert("Couldn't join. The room may not exist, you may be banned, the password may be wrong, or the Firebase rules may not be installed.");}
+}
+
+async function openRoom(id){
+  let directory=null;
+  try{const snap=await get(ref(db,"roomDirectory/"+id));if(snap.exists())directory=snap.val();}catch{}
+  if(!directory){
+    alert("Room not found or access not granted. Use Join Room with the room name and password if required.");
+    return;
+  }
+  if(directory.visibility==="private"){
+    let roomForCheck=null;
+    try{const snap=await get(ref(db,"rooms/"+id));if(snap.exists())roomForCheck=snap.val();}catch{}
+    if(!roomForCheck || !(roomForCheck.members||{})[key(currentUser)]){
+      await joinRoom(directory.name||id);
+      return;
+    }
+  }else{
+    try{await set(ref(db,"rooms/"+id+"/members/"+key(currentUser)),true);}catch(e){alert("Couldn't join this room.");return;}
+  }
+  let room=null;
+  try{const snap=await get(ref(db,"rooms/"+id));if(snap.exists())room=snap.val();}catch{}
+  if(!room){alert("You don't have access to this room yet. Use Join Room and enter the password if it is private.");return;}
+  if((room.banned||{})[key(currentUser)]){ alert("You are banned from this room."); return; }
+  if(!(room.members||{})[key(currentUser)]){alert("Join this room first.");return;}
+  await set(ref(db,"users/"+key(currentUser)+"/rooms/"+id),true);
+  await set(ref(db,"users/"+key(currentUser)+"/roomUnread/"+id),0);
+  const count=Object.keys(room.members||{}).length;
+  await set(ref(db,"rooms/"+id+"/memberCount"),count);
+  await set(ref(db,"roomDirectory/"+id+"/memberCount"),count);
+  if(room.visibility==="public") await set(ref(db,"publicRoomDirectory/"+id+"/memberCount"),count);
+  stopCurrentChat();
+  currentRoom=id;
+  currentDMUser=null;
+  currentGroup=null;
+  document.getElementById("chatTitle").textContent="🏠 "+roomDisplayName(room,id);
+  document.getElementById("chatSub").textContent=(room.visibility==="private"?"🔒 Private":room.visibility==="unlisted"?"👻 Unlisted":"🌎 Public")+" · "+Object.keys(room.members||{}).length+" members";
+  document.getElementById("messages").innerHTML="";
+  const messageRef=ref(db,"rooms/"+id+"/messages");
+  const unsubs=[];
+  unsubs.push(onChildAdded(messageRef,snap=>renderMessage(snap.key,snap.val())));
+  unsubs.push(onChildChanged(messageRef,snap=>updateMessageUI(snap.key,snap.val())));
+  unsubs.push(onChildRemoved(messageRef,snap=>{const el=document.getElementById("message-"+snap.key);if(el)el.remove();}));
+  stopChatListener=()=>unsubs.forEach(fn=>fn());
+  document.getElementById("pinButton").onclick=()=>showPinnedMessages();
+  document.getElementById("searchButton").onclick=()=>openSearch();
+  showRoomHeaderActions(id,room);
+  renderRoomLists();
+}
+
+function showRoomHeaderActions(id,room){
+  const old=document.getElementById("roomActionsButton");
+  if(old) old.remove();
+  const header=document.querySelector(".chatHeader");
+  if(!header) return;
+  const button=document.createElement("button");
+  button.id="roomActionsButton";
+  button.className="secondary";
+  button.textContent="⚙️";
+  button.onclick=()=>openRoomSettings(id);
+  header.appendChild(button);
+}
+
+async function openRoomSettings(id=currentRoom){
+  if(!id) return;
+  const room=await getRoom(id);
+  if(!room) return;
+  const owner=key(currentUser)===room.owner;
+  const choice=prompt("Room settings:\n1 = Room info\n2 = Favorite/unfavorite\n3 = Invite link"+(owner?"\n4 = Rename\n5 = Description\n6 = Visibility/password\n7 = Manage members\n8 = Delete room":""));
+  if(choice===null) return;
+  if(choice==="1"){
+    alert((room.name||id)+"\n\n"+(room.description||"No description")+"\n\nVisibility: "+room.visibility+"\nMembers: "+Object.keys(room.members||{}).length+"\nOwner: @"+room.owner);
+  }else if(choice==="2"){
+    const path="users/"+key(currentUser)+"/favoriteRooms/"+id;
+    const snap=await get(ref(db,path));
+    if(snap.exists()) await remove(ref(db,path)); else await set(ref(db,path),true);
+    renderRoomLists();
+  }else if(choice==="3"){
+    const link=location.origin+location.pathname+"?room="+encodeURIComponent(room.name||id);
+    try{await navigator.clipboard.writeText(link);alert("Invite link copied:\n\n"+link);}catch{alert(link);}
+  }else if(owner && choice==="4"){
+    await renameRoom(id,room);
+  }else if(owner && choice==="5"){
+    const description=prompt("New description:",room.description||"");
+    if(description===null) return;
+    await set(ref(db,"rooms/"+id+"/description"),description.trim());
+    await set(ref(db,"roomDirectory/"+id+"/description"),description.trim());
+    if(room.visibility==="public") await set(ref(db,"publicRoomDirectory/"+id+"/description"),description.trim());
+    openRoom(id);
+  }else if(owner && choice==="6"){
+    const visibility=prompt("Visibility: public, unlisted, or private",room.visibility||"public");
+    if(visibility===null) return;
+    const mode=visibility.toLowerCase();
+    if(!["public","unlisted","private"].includes(mode)){alert("Invalid visibility.");return;}
+    let passwordHash=null;
+    if(mode==="private"){
+      const password=prompt("New room password (8–12 digits):");
+      if(password===null||!validRoomPassword(password)){alert("Password must be 8–12 digits.");return;}
+      passwordHash=await hashPassword(password);
+    }
+    await set(ref(db,"rooms/"+id+"/visibility"),mode);
+    if(mode==="private") await set(ref(db,"roomSecrets/"+id+"/passwordHash"),passwordHash);
+    else await remove(ref(db,"roomSecrets/"+id));
+    await set(ref(db,"roomDirectory/"+id+"/visibility"),mode);
+    if(mode==="public"){
+      const meta=await get(ref(db,"roomDirectory/"+id));
+      if(meta.exists()) await set(ref(db,"publicRoomDirectory/"+id),{...meta.val(),visibility:"public"});
+    }else{
+      await remove(ref(db,"publicRoomDirectory/"+id));
+    }
+    openRoom(id);
+  }else if(owner && choice==="7"){
+    await manageRoomMembers(id);
+  }else if(owner && choice==="8"){
+    if(confirm("Delete this room permanently?")){
+      await remove(ref(db,"roomSecrets/"+id));
+      await remove(ref(db,"rooms/"+id));
+      await remove(ref(db,"roomDirectory/"+id));
+      await remove(ref(db,"publicRoomDirectory/"+id));
+      await remove(ref(db,"users/"+key(currentUser)+"/rooms/"+id));
+      currentRoom=null;
+      stopCurrentChat();
+      showRooms();
+    }
+  }
+}
+
+async function renameRoom(id,room){
+  const newName=prompt("New room name:",room.name||id);
+  if(newName===null) return;
+  if(!validRoomName(newName.trim())){alert("Room names must be 3–30 characters and use only letters, numbers, or underscores.");return;}
+  const newId=roomKey(newName);
+  if(newId===id) return;
+  try{const exists=await get(ref(db,"roomDirectory/"+newId));if(exists.exists()){alert("That room name is already taken.");return;}}catch{alert("Couldn't check whether that room name is available.");return;}
+  const newRoom={...room,name:newName.trim(),nameKey:newId};
+  const legacyPasswordHash=newRoom.passwordHash||null;
+  delete newRoom.passwordHash;
+  await set(ref(db,"rooms/"+newId),newRoom);
+  if(newRoom.visibility==="private"){
+    const secretSnap=await get(ref(db,"roomSecrets/"+id+"/passwordHash"));
+    const hashToMove=secretSnap.exists()?secretSnap.val():legacyPasswordHash;
+    if(hashToMove) await set(ref(db,"roomSecrets/"+newId+"/passwordHash"),hashToMove);
+  }
+  const newDirectory={name:newRoom.name,nameKey:newId,description:newRoom.description||"",visibility:newRoom.visibility,owner:newRoom.owner,createdAt:newRoom.createdAt||Date.now(),memberCount:Object.keys(newRoom.members||{}).length,lastMessage:newRoom.visibility==="public"?(newRoom.lastMessage||""):"",lastMessageAt:newRoom.visibility==="public"?(newRoom.lastMessageAt||0):0};
+  await set(ref(db,"roomDirectory/"+newId),newDirectory);
+  if(newRoom.visibility==="public") await set(ref(db,"publicRoomDirectory/"+newId),newDirectory);
+  const members=room.members||{};
+  for(const member of Object.keys(members)) await set(ref(db,"users/"+member+"/rooms/"+newId),true);
+  // Remove the old member indexes before deleting the old room, so rules can
+  // still verify the owner's authority while those index entries are removed.
+  for(const member of Object.keys(members)) await remove(ref(db,"users/"+member+"/rooms/"+id));
+  await remove(ref(db,"roomSecrets/"+id));
+  await remove(ref(db,"rooms/"+id));
+  await remove(ref(db,"roomDirectory/"+id));
+  await remove(ref(db,"publicRoomDirectory/"+id));
+  currentRoom=newId;
+  openRoom(newId);
+}
+
+async function manageRoomMembers(id){
+  const room=await getRoom(id);
+  if(!room) return;
+  const members=Object.keys(room.members||{});
+  const target=prompt("Member username to manage:\n\n"+members.map(x=>"@"+x).join("\n"));
+  if(!target) return;
+  const k=key(target);
+  if(k===room.owner){alert("The room owner cannot be kicked or banned.");return;}
+  if(!room.members||!room.members[k]){alert("That user is not a member.");return;}
+  const action=prompt("Action for @"+k+":\n1 = Kick\n2 = Ban");
+  if(action==="1"){
+    await remove(ref(db,"users/"+k+"/rooms/"+id));
+    await remove(ref(db,"rooms/"+id+"/members/"+k));
+  }else if(action==="2"){
+    await set(ref(db,"rooms/"+id+"/banned/"+k),true);
+    await remove(ref(db,"users/"+k+"/rooms/"+id));
+    await remove(ref(db,"rooms/"+id+"/members/"+k));
+  }
+  openRoom(id);
+}
+
+/* CHATS LIST */
+
+async function showChats(){
+
+  setActiveTab("chatsTab");
+
+  document.getElementById("sidebarContent")
+    .innerHTML=`
+      <div id="dmList"></div>
+
+      <h3>👥 Groups</h3>
+
+      <div id="groupList"></div>
+    `;
+
+  const dmList =
+    document.getElementById("dmList");
+
+  const convSnap =
+    await get(
+      ref(
+        db,
+        "users/"+key(currentUser)+
+        "/conversations"
+      )
+    );
+
+  if(convSnap.exists()){
+
+    for(const otherKey of Object.keys(convSnap.val())){
+
+      const user =
+        await getUserData(otherKey);
+
+      if(!user) continue;
+
+      const unreadSnap =
+        await get(
+          ref(
+            db,
+            "users/"+key(currentUser)+
+            "/unread/"+otherKey
+          )
+        );
+
+      const unread =
+        unreadSnap.exists() &&
+        unreadSnap.val();
+
+      const item =
+        document.createElement("div");
+
+      item.className="listItem";
+
+      item.innerHTML=`
+        ${unread
+          ? `<span class="unread">!</span>`
+          : ""}
+
+        <div class="listTitle">
+          ${escapeHTML(
+            user.displayName || user.username
+          )}
+        </div>
+
+        <div class="listPreview">
+          @${escapeHTML(user.username)}
+        </div>
+      `;
+
+      item.onclick=
+        ()=>openDM(user.username);
+
+      dmList.appendChild(item);
+
+    }
+
+  }
+
+  await renderGroupList();
+
+}
+
+async function renderGroupList(){
+
+  const list =
+    document.getElementById("groupList");
+
+  const snap =
+    await get(
+      ref(
+        db,
+        "users/"+key(currentUser)+"/groups"
+      )
+    );
+
+  if(!snap.exists()){
+
+    list.innerHTML=
+      `<div class="status">No groups.</div>`;
+
+    return;
+  }
+
+  for(const groupId of Object.keys(snap.val())){
+
+    const groupSnap =
+      await get(
+        ref(db,"groupChats/"+groupId)
+      );
+
+    if(!groupSnap.exists()) continue;
+
+    const group =
+      groupSnap.val();
+
+    const unreadSnap =
+      await get(
+        ref(
+          db,
+          "users/"+key(currentUser)+
+          "/unread/group_"+groupId
+        )
+      );
+
+    const unread =
+      unreadSnap.exists() &&
+      unreadSnap.val();
+
+    const item =
+      document.createElement("div");
+
+    item.className="listItem";
+
+    item.innerHTML=`
+      ${unread
+        ? `<span class="unread">!</span>`
+        : ""}
+
+      <div class="listTitle">
+        👥 ${escapeHTML(group.name)}
+      </div>
+
+      <div class="listPreview">
+        ${Object.keys(group.members||{}).length} members
+      </div>
+    `;
+
+    item.onclick=
+      ()=>openGroup(groupId);
+
+    list.appendChild(item);
+
+  }
+
+}
+
+
+/* PROFILE */
+
+async function showProfile(){
+
+  setActiveTab("profileTab");
+
+  currentRoom=null;
+  currentDMUser=null;
+  currentGroup=null;
+
+  stopCurrentChat();
+
+  const user =
+    await getUserData(currentUser);
+
+  const card =
+    document.getElementById("sidebarContent");
+
+  card.innerHTML=`
+
+    <div class="profileCard">
+
+      <div id="profileAvatar"
+           class="bigAvatar">
+      </div>
+
+      <input
+        id="profilePictureInput"
+        type="file"
+        accept="image/*"
+      >
+
+      <br><br>
+
+      <button id="removePictureButton"
+              class="secondary">
+        Remove Picture
+      </button>
+
+      <div class="field">
+        <label>Username</label>
+        <input
+          value="@${escapeHTML(user.username)}"
+          disabled
+        >
+      </div>
+
+      <div class="field">
+        <label>Display Name</label>
+        <input
+          id="displayNameInput"
+          value="${escapeHTML(user.displayName||user.username)}"
+          maxlength="30"
+        >
+      </div>
+
+      <div class="field">
+        <label>Bio</label>
+        <textarea
+          id="bioInput"
+          maxlength="160"
+          rows="4"
+        >${escapeHTML(user.bio||"")}</textarea>
+      </div>
+
+      <button id="saveProfileButton">
+        Save Profile
+      </button>
+
+    </div>
+  `;
+
+  if(user.profilePicture){
+
+    document.getElementById("profileAvatar")
+      .innerHTML=
+        `<img src="${user.profilePicture}">`;
+
+  }else{
+
+    document.getElementById("profileAvatar")
+      .textContent=
+        (user.displayName||user.username)
+        .charAt(0)
+        .toUpperCase();
+
+  }
+
+  document.getElementById("profilePictureInput")
+    .onchange=async event=>{
+
+      const file =
+        event.target.files[0];
+
+      if(!file) return;
+
+      try{
+
+        const picture =
+          await compressImage(file);
+
+        await set(
+          ref(
+            db,
+            "profiles/"+key(currentUser)+
+            "/profilePicture"
+          ),
+          picture
+        );
+
+        showProfile();
+        refreshSidebarUser();
+
+      }catch{
+
+        alert("Couldn't process image.");
+
+      }
+
+    };
+
+  document.getElementById("removePictureButton")
+    .onclick=async()=>{
+
+      await remove(
+        ref(
+          db,
+          "profiles/"+key(currentUser)+
+          "/profilePicture"
+        )
+      );
+
+      showProfile();
+      refreshSidebarUser();
+
+    };
+
+  document.getElementById("saveProfileButton")
+    .onclick=async()=>{
+
+      const displayName =
+        document.getElementById("displayNameInput")
+          .value.trim();
+
+      const bio =
+        document.getElementById("bioInput")
+          .value.trim();
+
+      if(!displayName){
+
+        alert("Display name can't be empty.");
+
+        return;
+      }
+
+      await update(
+        ref(db,"profiles/"+key(currentUser)),
+        {
+          displayName,
+          bio
+        }
+      );
+
+      alert("Profile saved!");
+
+      refreshSidebarUser();
+
+    };
+
+  document.getElementById("chatTitle")
+    .textContent="Profile";
+
+  document.getElementById("chatSub")
+    .textContent="@"+currentUser;
+
+  clearMessages();
+
+}
+
+
+/* OTHER USER PROFILE */
+
+async function showUserProfile(username){
+
+  const user =
+    await getUserData(username);
+
+  if(!user) return;
+
+  const modal =
+    document.getElementById("userProfileModal");
+
+  const content =
+    document.getElementById("userProfileContent");
+
+  let avatar;
+
+  if(user.profilePicture){
+
+    avatar=
+      `<div class="bigAvatar">
+        <img src="${user.profilePicture}">
+      </div>`;
+
+  }else{
+
+    avatar=
+      `<div class="bigAvatar">
+        ${escapeHTML(
+          (user.displayName||user.username)
+          .charAt(0)
+          .toUpperCase()
+        )}
+      </div>`;
+
+  }
+
+  content.innerHTML=`
+
+    ${avatar}
+
+    <h2 style="text-align:center">
+      ${escapeHTML(user.displayName||user.username)}
+    </h2>
+
+    <p style="text-align:center;color:var(--muted)">
+      @${escapeHTML(user.username)}
+    </p>
+
+    <p>
+      ${user.online
+        ? "🟢 Online"
+        : user.lastSeen
+        ? "Last seen "+dateString(user.lastSeen)
+        : "Offline"}
+    </p>
+
+    <hr>
+
+    <p>
+      ${escapeHTML(user.bio||"No bio yet.")}
+    </p>
+  `;
+
+  modal.classList.remove("hidden");
+
+}
+
+
+/* SETTINGS */
+
+function openSettings(){
+
+  document.getElementById("settingsModal")
+    .classList.remove("hidden");
+
+  updateNotificationStatus();
+
+}
+
+function updateNotificationStatus(){
+
+  const status =
+    document.getElementById("notificationStatus");
+
+  if(!("Notification" in window)){
+
+    status.textContent=
+      "This browser does not support notifications.";
+
+    return;
+  }
+
+  status.textContent=
+    "Permission: "+Notification.permission;
+
+}
+
+async function enableNotifications(){
+
+  if(!("Notification" in window)){
+
+    alert("Browser notifications aren't supported.");
+
+    return;
+  }
+
+  const permission =
+    await Notification.requestPermission();
+
+  updateNotificationStatus();
+
+  if(permission==="granted"){
+
+    new Notification("MyChat",{
+      body:"Notifications are enabled!"
+    });
+
+  }
+
+}
+
+async function changePassword(){
+  const oldPassword = document.getElementById("oldPassword").value;
+  const newPassword = document.getElementById("newPassword").value;
+  const status = document.getElementById("passwordStatus");
+  status.textContent = "";
+  if(newPassword.length < 6){
+    status.textContent = "New password must be at least 6 characters.";
+    return;
+  }
+  if(!auth.currentUser){
+    status.textContent = "Please log in again before changing your password.";
+    return;
+  }
+  try{
+    const credential = EmailAuthProvider.credential(auth.currentUser.email, oldPassword);
+    await reauthenticateWithCredential(auth.currentUser, credential);
+    await updatePassword(auth.currentUser, newPassword);
+    document.getElementById("oldPassword").value = "";
+    document.getElementById("newPassword").value = "";
+    status.textContent = "Password changed successfully. Use the new password on your other devices too.";
+  }catch(e){
+    status.textContent = friendlyAuthError(e);
+  }
+}
+
+/* SEARCH */
+
+function openSearch(){
+
+  if(!currentDMUser && !currentGroup && !currentRoom){
+
+    alert("Open a conversation first.");
+
+    return;
+  }
+
+  document.getElementById("searchModal")
+    .classList.remove("hidden");
+
+  document.getElementById("searchInput")
+    .value="";
+
+  document.getElementById("searchResults")
+    .innerHTML="";
+
+}
+
+function searchMessages(){
+
+  const query =
+    document.getElementById("searchInput")
+      .value
+      .trim()
+      .toLowerCase();
+
+  const results =
+    document.getElementById("searchResults");
+
+  results.innerHTML="";
+
+  if(!query) return;
+
+  for(const [id,data] of Object.entries(currentMessages)){
+
+    if(
+      (data.text||"")
+      .toLowerCase()
+      .includes(query)
+    ){
+
+      const item =
+        document.createElement("div");
+
+      item.className="listItem";
+
+      item.innerHTML=`
+        <div class="listTitle">
+          ${escapeHTML(data.username)}
+        </div>
+
+        <div class="listPreview">
+          ${escapeHTML(data.text||"[Image]")}
+        </div>
+      `;
+
+      item.onclick=()=>{
+
+        document.getElementById("searchModal")
+          .classList.add("hidden");
+
+        jumpToMessage(id);
+
+      };
+
+      results.appendChild(item);
+
+    }
+
+  }
+
+  if(!results.children.length){
+
+    results.innerHTML=
+      `<div class="empty">No matches.</div>`;
+
+  }
+
+}
+
+function showPinnedMessages(){
+
+  const pinned =
+    Object.entries(currentMessages)
+      .filter(([id,data])=>data.pinned);
+
+  if(!pinned.length){
+
+    alert("No pinned messages.");
+
+    return;
+  }
+
+  const text =
+    pinned
+      .map(([id,data])=>
+        data.username+": "+
+        (data.text||"[Image]")
+      )
+      .join("\n\n");
+
+  alert("📌 Pinned Messages\n\n"+text);
+
+}
+
+
+/* TYPING */
+
+function typingPath(){
+
+  if(currentDMUser){
+
+    return "typing/"+
+      conversationID(currentUser,currentDMUser);
+
+  }
+
+  if(currentGroup){
+
+    return "typing/group_"+currentGroup;
+
+  }
+
+  return null;
+
+}
+
+function startTyping(){
+
+  const path=typingPath();
+
+  if(!path) return;
+
+  set(
+    ref(
+      db,
+      path+"/"+key(currentUser)
+    ),
+    true
+  );
+
+  clearTimeout(typingTimer);
+
+  typingTimer =
+    setTimeout(stopTyping,2500);
+
+}
+
+function stopTyping(){
+
+  const path=typingPath();
+
+  if(!path) return;
+
+  set(
+    ref(
+      db,
+      path+"/"+key(currentUser)
+    ),
+    false
+  );
+
+}
+
+
+/* IMAGE VIEWER */
+
+window.viewImage=function(src){
+
+  document.getElementById("largeImage")
+    .src=src;
+
+  document.getElementById("imageViewer")
+    .classList.remove("hidden");
+
+};
+
+
+
+/* WEBRTC VOICE + VIDEO CALLS
+   Signaling is stored in Firebase Realtime Database under /calls.
+   WebRTC carries the actual audio/video. */
+const rtcConfig = {
+  iceServers: [
+    {urls:"stun:stun.l.google.com:19302"},
+    {urls:"stun:stun1.l.google.com:19302"}
+  ]
+};
+
+function setCallStatus(message){
+  const el=document.getElementById("callStatus");
+  if(el) el.textContent=message;
+}
+
+function showIncomingCall(callId,data){
+  if(!currentUser || !data || data.status!=="ringing" || activeCall || groupCallSession) return;
+  if(incomingCallData) return;
+  incomingCallData={callId,data,isGroupCall:!!data.isGroupCall,groupId:data.groupId};
+  document.getElementById("incomingCallTitle").textContent =
+    (data.isGroupCall ? (data.type==="video" ? "📹 Group video call" : "📞 Group voice call") : (data.type==="video" ? "📹 Incoming video call" : "📞 Incoming voice call"));
+  document.getElementById("incomingCallText").textContent = data.isGroupCall
+    ? ((data.caller||"Someone")+" started a call in “"+(data.groupName||"group chat")+"”. Everyone in the group was notified.")
+    : ((data.caller||"Someone")+" is calling you.");
+  document.getElementById("incomingCallModal").classList.remove("hidden");
+  if("Notification" in window && Notification.permission==="granted"){
+    try{new Notification("MyChat call",{body:(data.caller||"Someone")+" is calling you."});}catch(e){}
+  }
+}
+
+function setupIncomingCallListener(){
+  if(!currentUser) return;
+  if(stopIncomingCalls){stopIncomingCalls();stopIncomingCalls=null;}
+  if(groupInviteUnsub){groupInviteUnsub();groupInviteUnsub=null;}
+  const inviteRef=ref(db,"groupCallInvites/"+key(currentUser));
+  const groupInviteAdded=onChildAdded(inviteRef,snap=>{
+    const d=snap.val();
+    if(d && d.status==="ringing" && key(d.caller)!==key(currentUser)){
+      showIncomingCall(snap.key,{...d,isGroupCall:true});
+    }
+  });
+  const groupInviteChanged=onChildChanged(inviteRef,snap=>{
+    const d=snap.val();
+    if(incomingCallData?.isGroupCall && incomingCallData.callId===snap.key && (!d || d.status!=="ringing")){
+      incomingCallData=null;document.getElementById("incomingCallModal").classList.add("hidden");
+    }
+  });
+  groupInviteUnsub=()=>{groupInviteAdded();groupInviteChanged();};
+  const incomingRef=ref(db,"calls/"+key(currentUser));
+  const unsubs=[
+    onChildAdded(incomingRef,snap=>{
+      const data=snap.val();
+      if(data && data.caller && key(data.caller)!==key(currentUser)){
+        showIncomingCall(snap.key,data);
+      }
+    }),
+    onChildChanged(incomingRef,snap=>{
+      const data=snap.val();
+      if(incomingCallData?.callId===snap.key && (!data || data.status!=="ringing")){
+        incomingCallData=null;
+        document.getElementById("incomingCallModal").classList.add("hidden");
+      }
+    }),
+    onChildRemoved(incomingRef,snap=>{
+      if(incomingCallData?.callId===snap.key){
+        incomingCallData=null;
+        document.getElementById("incomingCallModal").classList.add("hidden");
+      }
+      if(activeCall?.callId===snap.key && callRole==="callee"){
+        finishCallUI("The other person ended the call.",false);
+      }
+    })
+  ];
+  stopIncomingCalls=()=>unsubs.forEach(fn=>fn());
+}
+
+async function startCall(type){
+  if(!currentUser || !currentDMUser){
+    alert("Open a friend's direct message first.");
+    return;
+  }
+  if(activeCall || groupCallSession){alert("You're already in a call.");return;}
+  if(!window.RTCPeerConnection || !navigator.mediaDevices?.getUserMedia){
+    alert("Calls aren't supported here. Open MyChat on a supported browser over HTTPS.");
+    return;
+  }
+  const peer=await getUserData(currentDMUser);
+  if(!peer){alert("That user account could not be found.");return;}
+  const callId=push(ref(db,"calls/"+key(currentDMUser))).key;
+  const callRef=ref(db,"calls/"+key(currentDMUser)+"/"+callId);
+  try{
+    callKind=type;
+    callRole="caller";
+    localMediaStream=await navigator.mediaDevices.getUserMedia({
+      audio:true,
+      video:type==="video" ? {facingMode:"user"} : false
+    });
+    beginCallUI(currentDMUser,type);
+    activeCall={callId,callRef,peer:currentDMUser,pc:new RTCPeerConnection(rtcConfig)};
+    remoteMediaStream=new MediaStream();
+    document.getElementById("remoteVideo").srcObject=remoteMediaStream;
+    document.getElementById("remoteAudio").srcObject=remoteMediaStream;
+    document.getElementById("localVideo").srcObject=localMediaStream;
+    document.getElementById("localVideoTile").classList.toggle("hidden",type!=="video");
+    document.getElementById("remoteVideoTile").classList.toggle("hidden",type!=="video");
+    localMediaStream.getTracks().forEach(track=>activeCall.pc.addTrack(track,localMediaStream));
+    activeCall.pc.ontrack=event=>{
+      event.streams[0]?.getTracks().forEach(track=>{
+        if(!remoteMediaStream.getTracks().some(t=>t.id===track.id)) remoteMediaStream.addTrack(track);
+      });
+    };
+    activeCall.pc.onicecandidate=event=>{
+      if(event.candidate && activeCall){
+        push(ref(db,"calls/"+key(activeCall.peer)+"/"+callId+"/callerCandidates"),event.candidate.toJSON()).catch(()=>{});
+      }
+    };
+    activeCall.pc.onconnectionstatechange=()=>{
+      if(!activeCall) return;
+      if(activeCall.pc.connectionState==="connected") setCallStatus("Connected");
+      if(["failed","disconnected"].includes(activeCall.pc.connectionState)) setCallStatus("Connection interrupted. Trying to reconnect…");
+      if(activeCall.pc.connectionState==="closed") finishCallUI("Call ended.",false);
+    };
+    await set(callRef,{
+      caller:currentUser,callee:currentDMUser,type,status:"ringing",
+      createdAt:Date.now()
+    });
+    activeCall.callRef=callRef;
+    const offer=await activeCall.pc.createOffer();
+    await activeCall.pc.setLocalDescription(offer);
+    await update(callRef,{offer:{type:offer.type,sdp:offer.sdp}});
+    const statusUnsub=onValue(callRef,async snap=>{
+      if(!activeCall || activeCall.callId!==callId) return;
+      const data=snap.val();
+      if(!data){finishCallUI("Call ended.",false);return;}
+      if(data.status==="declined"){finishCallUI("Call declined.",true);return;}
+      if(data.answer && !activeCall.answerApplied){
+        activeCall.answerApplied=true;
+        try{await activeCall.pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+          for(const c of queuedRemoteCandidates.splice(0)){try{await activeCall.pc.addIceCandidate(new RTCIceCandidate(c));}catch(e){}}
+          setCallStatus("Connecting…");
+        }catch(e){setCallStatus("Couldn't establish the call.");}
+      }
+    });
+    callStatusUnsub=statusUnsub;
+    candidateUnsubs.push(onChildAdded(ref(db,"calls/"+key(currentDMUser)+"/"+callId+"/calleeCandidates"),async snap=>{
+      if(!activeCall || activeCall.callId!==callId) return;
+      const c=snap.val(); if(!c)return;
+      if(activeCall.pc.remoteDescription){try{await activeCall.pc.addIceCandidate(new RTCIceCandidate(c));}catch(e){}}
+      else queuedRemoteCandidates.push(c);
+    }));
+    setCallStatus("Calling "+currentDMUser+"…");
+  }catch(error){
+    console.error("Call start failed",error);
+    alert("Couldn't start the call. Check microphone/camera permission and try again.");
+    await finishCallUI("Call could not start.",true);
+  }
+}
+
+function beginCallUI(peer,type){
+  document.getElementById("callHeading").textContent=(type==="video"?"📹 Video call with ":"📞 Voice call with ")+peer;
+  document.getElementById("remoteVideoLabel").textContent=peer;
+  document.getElementById("remoteVideo").muted=type!=="video";
+  document.getElementById("remoteAudio").muted=type==="video";
+  document.getElementById("callModal").classList.remove("hidden");
+  document.getElementById("localVideoTile").classList.toggle("hidden",type!=="video");
+  document.getElementById("remoteVideoTile").classList.toggle("hidden",type!=="video");
+  document.getElementById("cameraCallButton").classList.toggle("hidden",type!=="video");
+  document.getElementById("muteCallButton").textContent="🎙️ Mute";
+  document.getElementById("cameraCallButton").textContent="📷 Camera off";
+  setCallStatus("Preparing call…");
+}
+
+async function acceptIncomingCall(){
+  const pending=incomingCallData;
+  if(!pending || activeCall || groupCallSession) return;
+  if(pending.isGroupCall){incomingCallData=null;document.getElementById("incomingCallModal").classList.add("hidden");await joinGroupCall(pending.groupId,pending.callId,pending.data);return;}
+  const {callId,data}=pending;
+  const callRef=ref(db,"calls/"+key(currentUser)+"/"+callId);
+  document.getElementById("incomingCallModal").classList.add("hidden");
+  incomingCallData=null;
+  try{
+    if(!navigator.mediaDevices?.getUserMedia || !window.RTCPeerConnection){
+      alert("Calls aren't supported here. Open MyChat on a supported browser over HTTPS.");
+      await remove(callRef);return;
+    }
+    callRole="callee";
+    callKind=data.type||"audio";
+    localMediaStream=await navigator.mediaDevices.getUserMedia({
+      audio:true,video:callKind==="video"?{facingMode:"user"}:false
+    });
+    beginCallUI(data.caller,callKind);
+    activeCall={callId,callRef,peer:data.caller,pc:new RTCPeerConnection(rtcConfig)};
+    remoteMediaStream=new MediaStream();
+    document.getElementById("remoteVideo").srcObject=remoteMediaStream;
+    document.getElementById("remoteAudio").srcObject=remoteMediaStream;
+    document.getElementById("localVideo").srcObject=localMediaStream;
+    localMediaStream.getTracks().forEach(track=>activeCall.pc.addTrack(track,localMediaStream));
+    activeCall.pc.ontrack=event=>{
+      event.streams[0]?.getTracks().forEach(track=>{
+        if(!remoteMediaStream.getTracks().some(t=>t.id===track.id)) remoteMediaStream.addTrack(track);
+      });
+    };
+    activeCall.pc.onicecandidate=event=>{
+      if(event.candidate && activeCall){
+        push(ref(db,"calls/"+key(currentUser)+"/"+callId+"/calleeCandidates"),event.candidate.toJSON()).catch(()=>{});
+      }
+    };
+    activeCall.pc.onconnectionstatechange=()=>{
+      if(!activeCall)return;
+      if(activeCall.pc.connectionState==="connected")setCallStatus("Connected");
+      if(["failed","disconnected"].includes(activeCall.pc.connectionState))setCallStatus("Connection interrupted. Trying to reconnect…");
+      if(activeCall.pc.connectionState==="closed")finishCallUI("Call ended.",false);
+    };
+    const fresh=await get(callRef);
+    const live=fresh.val();
+    if(!live?.offer) throw new Error("The call offer is no longer available.");
+    await activeCall.pc.setRemoteDescription(new RTCSessionDescription(live.offer));
+    const answer=await activeCall.pc.createAnswer();
+    await activeCall.pc.setLocalDescription(answer);
+    await update(callRef,{answer:{type:answer.type,sdp:answer.sdp},status:"accepted",acceptedAt:Date.now()});
+    candidateUnsubs.push(onChildAdded(ref(db,"calls/"+key(currentUser)+"/"+callId+"/callerCandidates"),async snap=>{
+      if(!activeCall || activeCall.callId!==callId)return;
+      const c=snap.val();if(!c)return;
+      if(activeCall.pc.remoteDescription){try{await activeCall.pc.addIceCandidate(new RTCIceCandidate(c));}catch(e){}}
+      else queuedRemoteCandidates.push(c);
+    }));
+    setCallStatus("Connecting…");
+  }catch(error){
+    console.error("Call answer failed",error);
+    alert("Couldn't answer the call. Check microphone/camera permission and try again.");
+    await finishCallUI("Call could not start.",true);
+  }
+}
+
+async function declineIncomingCall(){
+  const pending=incomingCallData;
+  incomingCallData=null;
+  document.getElementById("incomingCallModal").classList.add("hidden");
+  if(pending){
+    if(pending.isGroupCall){try{await update(ref(db,"groupCallInvites/"+key(currentUser)+"/"+pending.callId),{status:"declined",declinedAt:Date.now()});}catch(e){} return;}
+    try{await update(ref(db,"calls/"+key(currentUser)+"/"+pending.callId),{status:"declined",declinedAt:Date.now()});}
+    catch(e){}
+    setTimeout(()=>remove(ref(db,"calls/"+key(currentUser)+"/"+pending.callId)).catch(()=>{}),2500);
+  }
+}
+
+async function finishCallUI(message="Call ended.",notifyPeer=true){
+  if(groupCallSession){await finishGroupCall(message,notifyPeer);return;}
+  const old=activeCall;
+  activeCall=null;
+  if(callStatusUnsub){callStatusUnsub();callStatusUnsub=null;}
+  candidateUnsubs.forEach(fn=>{try{fn();}catch(e){}});
+  candidateUnsubs=[];
+  queuedRemoteCandidates=[];
+  if(old?.pc){try{old.pc.onicecandidate=null;old.pc.ontrack=null;old.pc.close();}catch(e){}}
+  if(localMediaStream){localMediaStream.getTracks().forEach(t=>t.stop());localMediaStream=null;}
+  if(remoteMediaStream){remoteMediaStream.getTracks().forEach(t=>t.stop());remoteMediaStream=null;}
+  const local=document.getElementById("localVideo");
+  const remote=document.getElementById("remoteVideo");
+  const audio=document.getElementById("remoteAudio");
+  if(local)local.srcObject=null;
+  if(remote)remote.srcObject=null;
+  if(audio)audio.srcObject=null;
+  document.getElementById("callModal").classList.add("hidden");
+  document.getElementById("incomingCallModal").classList.add("hidden");
+  setCallStatus(message);
+  if(notifyPeer && old?.callRef){
+    try{await remove(old.callRef);}catch(e){}
+  }
+  callRole=null;
+}
+
+
+/* GROUP VOICE + VIDEO CALLS
+   Mesh WebRTC: every participant connects directly to every other participant.
+   Firebase carries invitations and signaling only; media stays peer-to-peer. */
+function groupCallRoot(groupId,callId){return "groupCalls/"+groupId+"/"+callId;}
+function groupLinkKey(a,b){return [key(a),key(b)].sort().join("__");}
+function setGroupRoster(){
+  const el=document.getElementById("groupCallRoster"); if(!el||!groupCallSession)return;
+  const names=Object.values(groupCallSession.participants||{}).map(p=>p.username||p.displayName||"Member");
+  el.textContent="In call: "+names.join(" · ");
+}
+function addGroupVideoTile(peerKey,username,stream){
+  const videos=document.getElementById("callVideos"); if(!videos)return;
+  const id="group-peer-"+key(peerKey).replace(/[^a-z0-9_-]/g,"_");
+  let tile=document.getElementById(id);
+  if(!tile){tile=document.createElement("div");tile.id=id;tile.className="callVideoTile";
+    const video=document.createElement("video");video.autoplay=true;video.playsInline=true;video.dataset.peer=peerKey;
+    const label=document.createElement("span");label.className="videoLabel";label.textContent=username;
+    tile.append(video,label);videos.appendChild(tile);
+  }
+  const video=tile.querySelector("video");video.srcObject=stream;
+  tile.classList.toggle("hidden",groupCallSession?.type!=="video");
+}
+function setupGroupPeerMedia(peerKey,username,stream){
+  if(groupCallSession?.type==="video")addGroupVideoTile(peerKey,username,stream);
+  else {
+    const id="group-audio-"+key(peerKey).replace(/[^a-z0-9_-]/g,"_");
+    let audio=document.getElementById(id);if(!audio){audio=document.createElement("audio");audio.id=id;audio.autoplay=true;document.getElementById("callVideos").appendChild(audio);}audio.srcObject=stream;
+  }
+}
+async function ensureGroupPeer(peerKey,participant){
+  const session=groupCallSession;if(!session||key(peerKey)===key(currentUser)||session.pcs[key(peerKey)])return;
+  const callRef=ref(db,groupCallRoot(session.groupId,session.callId));
+  const linkRef=ref(db,groupCallRoot(session.groupId,session.callId)+"/links/"+groupLinkKey(currentUser,peerKey));
+  const isOfferer=key(currentUser)<key(peerKey);
+  const pc=new RTCPeerConnection(rtcConfig);
+  const remote=new MediaStream();
+  session.pcs[key(peerKey)]={pc,remote,username:participant.username||peerKey,unsubs:[],queued:[],linkRef};
+  if(localMediaStream)localMediaStream.getTracks().forEach(t=>pc.addTrack(t,localMediaStream));
+  pc.ontrack=e=>{(e.streams[0]?.getTracks()||[e.track]).forEach(t=>{if(!remote.getTracks().some(x=>x.id===t.id))remote.addTrack(t);});setupGroupPeerMedia(peerKey,participant.username||peerKey,remote);};
+  pc.onicecandidate=e=>{if(e.candidate&&groupCallSession){push(ref(db,groupCallRoot(session.groupId,session.callId)+"/links/"+groupLinkKey(currentUser,peerKey)+"/candidates/"+key(currentUser)),e.candidate.toJSON()).catch(()=>{});}};
+  pc.onconnectionstatechange=()=>{if(!groupCallSession)return;const states=Object.values(groupCallSession.pcs).map(x=>x.pc.connectionState);setCallStatus(states.some(x=>x==="connected")?"Group call connected · "+states.filter(x=>x==="connected").length+" peer(s) connected":"Connecting to group…");};
+  const candidateUnsub=onChildAdded(ref(db,groupCallRoot(session.groupId,session.callId)+"/links/"+groupLinkKey(currentUser,peerKey)+"/candidates/"+key(peerKey)),async snap=>{
+    const c=snap.val();if(!c||!groupCallSession?.pcs[key(peerKey)])return;
+    const state=groupCallSession.pcs[key(peerKey)];if(pc.remoteDescription){try{await pc.addIceCandidate(new RTCIceCandidate(c));}catch(e){}}else state.queued.push(c);
+  });
+  session.pcs[key(peerKey)].unsubs.push(candidateUnsub);
+  if(isOfferer){
+    const snap=await get(linkRef);if(!groupCallSession||!groupCallSession.pcs[key(peerKey)])return;
+    if(!snap.exists()||!snap.val()?.offer){const offer=await pc.createOffer();await pc.setLocalDescription(offer);await update(linkRef,{offer:{type:offer.type,sdp:offer.sdp},offerFrom:key(currentUser),updatedAt:Date.now()});}
+    const unsub=onValue(linkRef,async snap2=>{const d=snap2.val();if(!d?.answer||!groupCallSession?.pcs[key(peerKey)]||pc.remoteDescription)return;try{await pc.setRemoteDescription(new RTCSessionDescription(d.answer));const st=groupCallSession.pcs[key(peerKey)];for(const c of st.queued.splice(0)){try{await pc.addIceCandidate(new RTCIceCandidate(c));}catch(e){}}}catch(e){console.warn("Group call answer failed",e);}});
+    session.pcs[key(peerKey)].unsubs.push(unsub);
+  }else{
+    const unsub=onValue(linkRef,async snap=>{const d=snap.val();if(!d?.offer||key(d.offerFrom)!==key(peerKey)||pc.remoteDescription||!groupCallSession?.pcs[key(peerKey)])return;try{await pc.setRemoteDescription(new RTCSessionDescription(d.offer));const answer=await pc.createAnswer();await pc.setLocalDescription(answer);await update(linkRef,{answer:{type:answer.type,sdp:answer.sdp},answerFrom:key(currentUser),updatedAt:Date.now()});const st=groupCallSession.pcs[key(peerKey)];for(const c of st.queued.splice(0)){try{await pc.addIceCandidate(new RTCIceCandidate(c));}catch(e){}}}catch(e){console.warn("Group call offer failed",e);}});
+    session.pcs[key(peerKey)].unsubs.push(unsub);
+  }
+}
+async function joinGroupCall(groupId,callId,inviteData={}){
+  if(activeCall||groupCallSession){alert("You're already in a call.");return;}
+  if(!window.RTCPeerConnection||!navigator.mediaDevices?.getUserMedia){alert("Group calls need a supported browser over HTTPS.");return;}
+  const root=groupCallRoot(groupId,callId);const callSnap=await get(ref(db,root));const call=callSnap.val();
+  if(!call||call.status!=="active"){alert("This group call has already ended.");return;}
+  try{
+    const type=call.type||inviteData.type||"audio";
+    localMediaStream=await navigator.mediaDevices.getUserMedia({audio:true,video:type==="video"?{facingMode:"user"}:false});
+    groupCallSession={groupId,callId,type,pcs:{},participants:{},unsubs:[],startedAt:call.startedAt||Date.now()};
+    callKind=type;callRole="group";
+    beginCallUI("Group: "+(call.groupName||inviteData.groupName||"chat"),type);
+    document.getElementById("callHeading").textContent=(type==="video"?"📹 Group video call — ":"📞 Group voice call — ")+(call.groupName||inviteData.groupName||"Group chat");
+    document.getElementById("localVideo").srcObject=localMediaStream;
+    document.getElementById("localVideoTile").classList.toggle("hidden",type!=="video");
+    document.getElementById("remoteVideoTile").classList.add("hidden");
+    document.getElementById("remoteAudio").muted=true;
+    await set(ref(db,root+"/participants/"+key(currentUser)),{username:currentUser,joinedAt:Date.now(),status:"active"});
+    await update(ref(db,"groupCallInvites/"+key(currentUser)+"/"+callId),{status:"accepted",acceptedAt:Date.now()});
+    const partsRef=ref(db,root+"/participants");
+    const partsUnsub=onValue(partsRef,async snap=>{
+      if(!groupCallSession||groupCallSession.callId!==callId)return;
+      const participants=snap.val()||{};groupCallSession.participants=participants;setGroupRoster();
+      for(const [pk,state] of Object.entries(groupCallSession.pcs)){
+        if(!participants[pk]||participants[pk].status!=="active"){
+          state.unsubs.forEach(fn=>{try{fn();}catch(e){}});try{state.pc.close();}catch(e){}
+          const safe=pk.replace(/[^a-z0-9_-]/g,"_");
+          const tile=document.getElementById("group-peer-"+safe);if(tile)tile.remove();
+          const audio=document.getElementById("group-audio-"+safe);if(audio){audio.srcObject=null;audio.remove();}
+          delete groupCallSession.pcs[pk];
+        }
+      }
+      for(const [pk,p] of Object.entries(participants)){if(p?.status==="active"&&key(pk)!==key(currentUser))await ensureGroupPeer(pk,p);}
+    });groupCallSession.unsubs.push(partsUnsub);
+    const statusUnsub=onValue(ref(db,root+"/status"),snap=>{if(groupCallSession?.callId===callId&&snap.val()!=="active")finishGroupCall("The group call ended.",false);});groupCallSession.unsubs.push(statusUnsub);
+    setCallStatus("Joining group call…");
+  }catch(e){console.error("Group call join failed",e);alert("Couldn't join the group call. Check microphone/camera permissions.");await finishGroupCall("Could not join group call.",true);}
+}
+async function startGroupCall(type){
+  if(!currentUser||!currentGroup){alert("Open a group chat first.");return;}
+  if(activeCall||groupCallSession){alert("You're already in a call.");return;}
+  const groupSnap=await get(ref(db,"groupChats/"+currentGroup));if(!groupSnap.exists()){alert("Group not found.");return;}
+  const group=groupSnap.val();const members=Object.keys(group.members||{});
+  if(members.length<2){alert("Add at least one other member before starting a group call.");return;}
+  const callId=push(ref(db,"groupCalls/"+currentGroup)).key;
+  const call={groupId:currentGroup,groupName:group.name,caller:currentUser,type,status:"active",startedAt:Date.now(),members:group.members};
+  await set(ref(db,groupCallRoot(currentGroup,callId)),call);
+  for(const member of members){if(key(member)===key(currentUser))continue;await set(ref(db,"groupCallInvites/"+key(member)+"/"+callId),{groupId:currentGroup,groupName:group.name,callId,caller:currentUser,type,status:"ringing",createdAt:Date.now()});}
+  await joinGroupCall(currentGroup,callId,{groupName:group.name,type});
+  if("Notification" in window&&Notification.permission==="granted"){try{new Notification("MyChat group call",{body:"Your group “"+group.name+"” is being called by "+currentUser+"."});}catch(e){}}
+}
+async function finishGroupCall(message="Call ended.",notify=true){
+  const session=groupCallSession;if(!session)return;groupCallSession=null;
+  session.unsubs.forEach(fn=>{try{fn();}catch(e){}});
+  for(const state of Object.values(session.pcs)){state.unsubs.forEach(fn=>{try{fn();}catch(e){}});try{state.pc.close();}catch(e){}}
+  if(localMediaStream){localMediaStream.getTracks().forEach(t=>t.stop());localMediaStream=null;}
+  document.querySelectorAll("#callVideos video[data-peer],#callVideos audio[id^='group-audio-']").forEach(el=>{try{el.srcObject=null;}catch(e){}el.parentElement?.remove();if(el.tagName==="AUDIO")el.remove();});
+  document.getElementById("localVideo").srcObject=null;document.getElementById("callModal").classList.add("hidden");document.getElementById("groupCallRoster").textContent="";
+  if(notify){try{await remove(ref(db,groupCallRoot(session.groupId,session.callId)+"/participants/"+key(currentUser)));}catch(e){} }
+  else {try{await remove(ref(db,groupCallRoot(session.groupId,session.callId)+"/participants/"+key(currentUser)));}catch(e){}}
+  const remaining=await get(ref(db,groupCallRoot(session.groupId,session.callId)+"/participants"));
+  if(notify&&Object.keys(remaining.val()||{}).length===0){
+    try{await update(ref(db,groupCallRoot(session.groupId,session.callId)),{status:"ended",endedAt:Date.now()});}catch(e){}
+    const callSnap=await get(ref(db,groupCallRoot(session.groupId,session.callId)));
+    const members=Object.keys(callSnap.val()?.members||{});
+    for(const member of members){try{await update(ref(db,"groupCallInvites/"+key(member)+"/"+session.callId),{status:"ended",endedAt:Date.now()});}catch(e){}}
+  }
+  callRole=null;setCallStatus(message);
+}
+
+/* UI */
+
+function setActiveTab(id){
+
+  const roomActions=document.getElementById("roomActionsButton");
+  if(roomActions && id!=="roomsTab") roomActions.remove();
+
+  document.querySelectorAll(".tabs button")
+    .forEach(button=>
+      button.classList.remove("active")
+    );
+
+  document.getElementById(id)
+    .classList.add("active");
+
+}
+
+function clearMessages(){
+
+  stopCurrentChat();
+
+  document.getElementById("messages")
+    .innerHTML=
+      `<div class="empty">
+        Nothing to display here.
+      </div>`;
+
+}
+
+async function showHome(){
+
+  document.getElementById("authScreen")
+    .style.display="none";
+
+  document.getElementById("app")
+    .classList.add("visible");
+
+  await refreshSidebarUser();
+
+  showFriends();
+  setupIncomingCallListener();
+
+}
+
+function openChatSettings(){
+
+  if(currentGroup){
+
+    get(
+      ref(
+        db,
+        "groupChats/"+currentGroup
+      )
+    ).then(snap=>{
+
+      if(!snap.exists()) return;
+
+      const group=snap.val();
+
+      if(key(group.creator)!==key(currentUser)){
+
+        alert("Only the group creator can manage this group.");
+
+        return;
+      }
+
+      const newName =
+        prompt("Rename group:",group.name);
+
+      if(newName){
+
+        set(
+          ref(db,"groupChats/"+currentGroup+"/name"),
+          newName
+        );
+
+        document.getElementById("chatTitle")
+          .textContent="👥 "+newName;
+
+      }
+
+    });
+
+  }
+
+}
+
+
+/* EVENT LISTENERS */
+
+document.getElementById("voiceCallButton")
+  .addEventListener("click",()=>startCall("audio"));
+
+document.getElementById("videoCallButton")
+  .addEventListener("click",()=>startCall("video"));
+document.getElementById("groupVoiceCallButton")
+  .addEventListener("click",()=>startGroupCall("audio"));
+document.getElementById("groupVideoCallButton")
+  .addEventListener("click",()=>startGroupCall("video"));
+
+document.getElementById("acceptCallButton")
+  .addEventListener("click",acceptIncomingCall);
+
+document.getElementById("declineCallButton")
+  .addEventListener("click",declineIncomingCall);
+
+document.getElementById("hangupCallButton")
+  .addEventListener("click",()=>finishCallUI("Call ended.",true));
+
+document.getElementById("muteCallButton")
+  .addEventListener("click",()=>{
+    if(!localMediaStream)return;
+    const tracks=localMediaStream.getAudioTracks();
+    if(!tracks.length)return;
+    const muted=tracks[0].enabled;
+    tracks.forEach(t=>t.enabled=!muted);
+    document.getElementById("muteCallButton").textContent=muted?"🔇 Unmute":"🎙️ Mute";
+  });
+
+document.getElementById("cameraCallButton")
+  .addEventListener("click",()=>{
+    if(!localMediaStream)return;
+    const tracks=localMediaStream.getVideoTracks();
+    if(!tracks.length)return;
+    const enabled=tracks[0].enabled;
+    tracks.forEach(t=>t.enabled=!enabled);
+    document.getElementById("cameraCallButton").textContent=enabled?"📷 Camera on":"📷 Camera off";
+  });
+
+document.getElementById("loginButton")
+  .addEventListener("click",login);
+
+document.getElementById("createButton")
+  .addEventListener("click",createAccount);
+
+document.getElementById("showCreateButton")
+  .addEventListener("click",showCreate);
+
+document.getElementById("showLoginButton")
+  .addEventListener("click",showLogin);
+
+document.getElementById("friendsTab")
+  .addEventListener("click",showFriends);
+
+document.getElementById("roomsTab")
+  .addEventListener("click",showRooms);
+
+document.getElementById("chatsTab")
+  .addEventListener("click",showChats);
+
+document.getElementById("profileTab")
+  .addEventListener("click",showProfile);
+
+document.getElementById("settingsButton")
+  .addEventListener("click",openSettings);
+
+document.getElementById("sendButton")
+  .addEventListener("click",sendMessage);
+
+document.getElementById("messageInput")
+  .addEventListener("keydown",event=>{
+
+    if(event.key==="Enter"){
+
+      event.preventDefault();
+      sendMessage();
+
+    }
+
+  });
+
+document.getElementById("messageInput")
+  .addEventListener("input",startTyping);
+
+document.getElementById("attachButton")
+  .addEventListener("click",()=>{
+
+    document.getElementById("imageInput")
+      .click();
+
+  });
+
+document.getElementById("cancelReply")
+  .addEventListener("click",clearReply);
+
+document.getElementById("closeGroupButton")
+  .addEventListener("click",()=>{
+
+    document.getElementById("groupModal")
+      .classList.add("hidden");
+
+  });
+
+document.getElementById("createGroupButton")
+  .addEventListener("click",createGroup);
+
+document.getElementById("closeUserProfile")
+  .addEventListener("click",()=>{
+
+    document.getElementById("userProfileModal")
+      .classList.add("hidden");
+
+  });
+
+document.getElementById("closeSettingsButton")
+  .addEventListener("click",()=>{
+
+    document.getElementById("settingsModal")
+      .classList.add("hidden");
+
+  });
+
+document.getElementById("notificationButton")
+  .addEventListener("click",enableNotifications);
+
+document.getElementById("changePasswordButton")
+  .addEventListener("click",changePassword);
+
+document.getElementById("logoutButton")
+  .addEventListener("click",logout);
+
+document.getElementById("darkThemeButton")
+  .addEventListener("click",()=>{
+
+    document.body.classList.remove("light");
+
+    localStorage.setItem(
+      "mychatTheme",
+      "dark"
+    );
+
+  });
+
+document.getElementById("lightThemeButton")
+  .addEventListener("click",()=>{
+
+    document.body.classList.add("light");
+
+    localStorage.setItem(
+      "mychatTheme",
+      "light"
+    );
+
+  });
+
+document.getElementById("searchButton")
+  .addEventListener("click",openSearch);
+
+document.getElementById("pinButton")
+  .addEventListener("click",showPinnedMessages);
+
+document.getElementById("closeSearchButton")
+  .addEventListener("click",()=>{
+
+    document.getElementById("searchModal")
+      .classList.add("hidden");
+
+  });
+
+document.getElementById("searchInput")
+  .addEventListener("input",searchMessages);
+
+document.getElementById("closeImageButton")
+  .addEventListener("click",()=>{
+
+    document.getElementById("imageViewer")
+      .classList.add("hidden");
+
+  });
+
+
+/* THEME RESTORE */
+
+if(localStorage.getItem("mychatTheme")==="light"){
+
+  document.body.classList.add("light");
+
+}
+
+
+/* AUTH SESSION RESTORE */
+onAuthStateChanged(auth, async firebaseUser=>{
+  if(!firebaseUser){
+    if(!activeAuthUid){
+      currentUser=null;
+    }
+    return;
+  }
+  if(activeAuthUid===firebaseUser.uid && currentUser) return;
+  const username=await usernameFromAuth(firebaseUser);
+  if(!username) return;
+  try{
+    const snap=await get(ref(db,"profiles/"+username));
+    if(snap.exists()) await activateSession(firebaseUser,snap.val());
+  }catch(e){console.warn("Automatic session restore failed",e);}
+});
+
+const requestedRoom=new URLSearchParams(location.search).get("room");
+if(requestedRoom){
+  setTimeout(async()=>{
+    if(currentUser) await joinRoom(requestedRoom);
+  },1200);
+}
+</script>
+
+</body>
+</html>
